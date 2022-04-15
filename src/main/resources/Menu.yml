@@ -1,0 +1,62 @@
+menu:
+  name: '&bMenu'
+  rows: 3
+  material: NETHER_STAR
+  itemName: '&cMenu'
+  itemlore: ['&eClick to open menu','&eIf you do not want menu item in inventory just type /menu toggle']
+  slot: 8
+  items:
+    1:
+      name: '&eBattlePass'
+      material: BEACON
+      lore: ['&6Get free and premium battle pass now','&c%50 Off']
+      actions: ['COMMAND-bp','MESSAGE-&bOpened battlePass menu']
+      slot: 10
+    2:
+      name: '&6Shop'
+      material: DIAMOND
+      lore: [ '&eBuy or sell items.' ]
+      actions: [ 'COMMAND-shop','MESSAGE-&bOpened shop menu' ]
+      slot: 11
+    3:
+      name: '&cWarps'
+      material: ENDER_EYE
+      lore: [ '&4Teleport to warps.' ]
+      actions: [ 'COMMAND-warps','MESSAGE-&bOpened warps menu' ]
+      slot: 12
+    4:
+      name: '&aKits'
+      material: DIAMOND_SWORD
+      lore: [ '&2Kits.' ]
+      actions: [ 'COMMAND-kits','MESSAGE-&bOpened kits menu' ]
+      slot: 13
+    5:
+      name: '&2ENCHANT'
+      material: ENCHANTED_BOOK
+      lore: [ '&3Player profile.' ]
+      actions: [ 'COMMAND-ce','MESSAGE-&bOpened enchant menu' ]
+      slot: 14
+    6:
+      name: '&5Island'
+      material: GRASS_BLOCK
+      lore: [ '&dIsland menu' ]
+      actions: [ 'COMMAND-is','MESSAGE-&bOpened island menu' ]
+      slot: 15
+    7:
+      name: '&f&lAuctionHouse'
+      material: ANVIL
+      lore: [ '&8&lPlayer auctions' ]
+      actions: [ 'COMMAND-ah']
+      slot: 16
+    11:
+      name: '&5&lBALANCE'
+      material: SUN_FLOWER
+      lore: [ '&e&lMoney: &f{money}','&e&lTokens: &f{token}' ]
+      actions: [ 'CANCEL' ]
+      slot: 23
+    10:
+      name: '&c&lCLOSE'
+      material: BARRIE
+      lore: [ '&4&lClose the menu' ]
+      actions: [ 'CLOSE-menu' ]
+      slot: 23
