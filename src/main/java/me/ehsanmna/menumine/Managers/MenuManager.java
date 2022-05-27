@@ -1,7 +1,8 @@
 package me.ehsanmna.menumine.Managers;
 
-import de.tr7zw.nbtapi.NBTItem;
 import me.ehsanmna.menumine.MenuMine;
+import me.ehsanmna.menumine.nbt.NBTItem;
+import me.ehsanmna.menumine.nbt.NBTItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,6 +22,8 @@ import java.util.logging.Level;
 
 public class MenuManager {
 
+
+    // Hold itemStack in player inventory
     static ItemStack menu;
     static Inventory inventory;
     public static HashMap<Integer, List<MenuAction>> actionsManager = new HashMap<>();
@@ -38,10 +41,11 @@ public class MenuManager {
 
     public static void loadMenu(){
         yml.options().copyDefaults();
-        try {
+        /*try {
             MenuMine.getInstance().saveResource("Menu.yml",false);
             yml.save(file);
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {} */
+        yml = YamlConfiguration.loadConfiguration(file);
         try {
             menu = new ItemStack(Material.valueOf(yml.getString("menu.material")));
         }catch (Exception error){
@@ -52,9 +56,9 @@ public class MenuManager {
         meta.setDisplayName(MenuMine.color(yml.getString("menu.itemName")));
         meta.setLore(MenuMine.color(yml.getStringList("menu.itemlore")));
         menu.setItemMeta(meta);
-        NBTItem nbt = new NBTItem(menu);
-        nbt.setString("menu","menu");
-        nbt.applyNBT(menu);
+        NBTItem nbt = NBTItemManager.createNBTItem(menu);
+        nbt.setTag("menu","menu");
+        nbt.save();
         // inventory
         inventory = Bukkit.createInventory(null, yml.getInt("menu.rows") * 9,MenuMine.color(yml.getString("menu.name")));
         for (String itemId : Objects.requireNonNull(yml.getConfigurationSection("menu.items.")).getKeys(false)){
@@ -95,7 +99,7 @@ public class MenuManager {
     }
 
     public static void enableMenu(Player player){
-        player.getInventory().setItem(yml.getInt("menu.slot"),menu);
+        setItemToInventory(player);
         Storage.disabledMenus.remove(player.getUniqueId());
     }
 
@@ -116,6 +120,11 @@ public class MenuManager {
     }
 
     public static void setItemToInventory(Player player){
-        player.getInventory().setItem(yml.getInt("menu.slot"),menu);
+        int slot = yml.getInt("menu.slot");
+        //player.getInventory().setItem(slot,menu);
+        NBTItem nbt = NBTItemManager.createNBTItem(menu);
+        nbt.setTag("menu","menu");
+        nbt.save();
+        player.getInventory().setItem(slot,nbt.getItem());
     }
 }

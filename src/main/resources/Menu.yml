@@ -3,60 +3,148 @@ menu:
   rows: 3
   material: NETHER_STAR
   itemName: '&cMenu'
-  itemlore: ['&eClick to open menu','&eIf you do not want menu item in inventory just type /menu toggle']
+  itemlore:
+    - '&eClick to open menu'
+    - '&eIf you do not want menu item in inventory just type /menu toggle'
   slot: 8
+  customModelData: 0
   items:
-    1:
-      name: '&eBattlePass'
-      material: BEACON
-      lore: ['&6Get free and premium battle pass now','&c%50 Off']
-      actions: ['COMMAND-bp','MESSAGE-&bOpened battlePass menu']
+    filter:
+      material: BLACK_STAINED_GLASS_PANE
+      type: fill
+      name: ' '
+    '1':
+      name: '&6&lBattlePass'
+      material: EMERALD
+      lore:
+        - '&6&n                                  '
+        - '&r '
+        - ' &e&lBattlePass &f&lSeason &e&l1'
+        - ' '
+        - '  &e&lTier: &62'
+        - '  &e&lPremium: &cFalse'
+        - '  &e&lWeek: &61'
+        - '&6&n                                  '
+      actions:
+        #avaible actions: <MESSAGE-your message>, <COMMAND-your command>, <CANCEL> no actions, <CLOSE-menu> closing menu
+        - COMMAND-bp
+        - MESSAGE-&bOpened battlePass menu
       slot: 10
-    2:
-      name: '&6Shop'
+    '2':
+      name: '&b&lShop'
       material: DIAMOND
-      lore: [ '&eBuy or sell items.' ]
-      actions: [ 'COMMAND-shop','MESSAGE-&bOpened shop menu' ]
+      lore:
+        - '&9&n                                            '
+        - ' '
+        - ' &3&lShopping center &e&lN&c&lE&a&lW &f&lItems'
+        - ' '
+        - '  &b&lBlocks, Potions, Banners'
+        - '  &b&lWeapons, Armors, Skulls'
+        - '  &b&lFoods, Spawners, Ores'
+        - '&9&n                                            '
+      actions:
+        - COMMAND-shop
+        - MESSAGE-&bOpened shop menu
       slot: 11
-    3:
-      name: '&cWarps'
+    '3':
+      name: '&c&lWarps'
       material: ENDER_EYE
-      lore: [ '&4Teleport to warps.' ]
-      actions: [ 'COMMAND-warps','MESSAGE-&bOpened warps menu' ]
+      lore:
+        - '&4&n                                                                     '
+        - ' '
+        - ' &c&lServer warps'
+        - ' '
+        - '  &f&lClick on this to open&c&l warps&f&l menus'
+        - '  &f&lWhere that you can teleport to specify&c&l warp'
+        - ' &f&l Available warps: '
+        - '  &c&lEnchant, Dungeons, Spawn, Tutorial ...'
+        - '&4&n                                                                     '
+      actions:
+        - COMMAND-warps
+        - MESSAGE-&bOpened warps menu
       slot: 12
-    4:
-      name: '&aKits'
-      material: DIAMOND_SWORD
-      lore: [ '&2Kits.' ]
-      actions: [ 'COMMAND-kits','MESSAGE-&bOpened kits menu' ]
+    '4':
+      name: '&a&lKits'
+      material: SLIME_BALL
+      lore:
+        - '&2&n                                                                '
+        - ' '
+        - ' &a&lKits & GKit'
+        - ' '
+        - '  &2&lGet your own rank kit every specify time'
+        - '  &2&lBuy new&a&l kits &2&land &a&lGKits'
+        - '  &2&lSpecial kits for ranks'
+        - '&2&n                                                                '
+      actions:
+        - COMMAND-kits
+        - MESSAGE-&bOpened kits menu
       slot: 13
-    5:
-      name: '&2ENCHANT'
+    '5':
+      name: '&d&lEnchants'
       material: ENCHANTED_BOOK
-      lore: [ '&3Player profile.' ]
-      actions: [ 'COMMAND-ce','MESSAGE-&bOpened enchant menu' ]
+      lore:
+        - '&5&n                                                                '
+        - ' '
+        - ' &f&lCustom enchantments'
+        - ' '
+        - '  &d&lBuy new enchants and use them on your tools'
+        - '  &d&lRead about new enchantment abilities'
+        - '  &d&lHigh level enchants and more'
+        - '&5&n                                                                '
+      actions:
+        - COMMAND-ce
+        - MESSAGE-&bOpened enchant menu
       slot: 14
-    6:
-      name: '&5Island'
-      material: GRASS_BLOCK
-      lore: [ '&dIsland menu' ]
-      actions: [ 'COMMAND-is','MESSAGE-&bOpened island menu' ]
+    '6':
+      name: '&f&lIsland'
+      material: SUGAR
+      lore:
+        - '&8&n                                                                '
+        - ' '
+        - ' &f&lIsland management'
+        - ' '
+        - '  &f&lEdit island setting or create new island'
+        - '  &f&lOpen or close your island'
+        - '  &f&lGet information about island'
+        - '&8&n                                                                '
+      actions:
+        - COMMAND-is
+        - MESSAGE-&bOpened island menu
       slot: 15
-    7:
-      name: '&f&lAuctionHouse'
-      material: ANVIL
-      lore: [ '&8&lPlayer auctions' ]
-      actions: [ 'COMMAND-ah']
+    '7':
+      name: '&b&lAuction&a&lHouse'
+      material: QUARTZ
+      lore:
+        - '&a&n                                                                '
+        - ' '
+        - ' &b&lPlayer auction house'
+        - ' '
+        - '  &f&lWhere the people sell they items'
+        - '  &f&lOpen menu buy new items from players'
+        - '  &f&lOr manage your selling items'
+        - '&a&n                                                                '
+      actions:
+        - COMMAND-ah
       slot: 16
-    11:
+    '11':
       name: '&5&lBALANCE'
-      material: SUN_FLOWER
-      lore: [ '&e&lMoney: &f{money}','&e&lTokens: &f{token}' ]
-      actions: [ 'CANCEL' ]
-      slot: 23
-    10:
+      material: SUNFLOWER
+      lore:
+        - '&7&n                          '
+        - ' '
+        - '&8&lMoney: &f{money}'
+        - '&8&lTokens: &f{token}'
+        - '&7&n                          '
+      actions:
+        - CANCEL
+      slot: 4
+    '10':
       name: '&c&lCLOSE'
-      material: BARRIE
-      lore: [ '&4&lClose the menu' ]
-      actions: [ 'CLOSE-menu' ]
-      slot: 23
+      material: BARRIER
+      lore:
+        - '&c&n                       '
+        - '&4&lClose the menu'
+        - '&c&n                       '
+      actions:
+        - CLOSE-menu
+      slot: 22

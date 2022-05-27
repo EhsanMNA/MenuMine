@@ -44,9 +44,39 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>de.tr7zw</groupId>
-            <artifactId>item-nbt-api-plugin</artifactId>
-            <version>2.9.2</version>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-16</artifactId>
+            <version>1.16</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/spigot-1.16.5.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-12</artifactId>
+            <version>1.12</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/spigot-1.12.2.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-8</artifactId>
+            <version>1.8</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-9</artifactId>
+            <version>1.9</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/spigot-1.9.4-R0.1-SNAPSHOT-latest.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-17</artifactId>
+            <version>1.17</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/spigot-1.17.1.jar</systemPath>
         </dependency>
     </dependencies>
 </project>

@@ -3,8 +3,6 @@ version: '${project.version}'
 main: me.ehsanmna.menumine.MenuMine
 api-version: 1.13
 authors: [ EhsanMNA ]
-depend:
-  - NBTAPI
 commands:
   menu:
     description: "Open menu - or change setting"
