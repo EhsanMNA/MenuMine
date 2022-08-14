@@ -39,12 +39,6 @@
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.13.2-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
             <artifactId>spigot-16</artifactId>
             <version>1.16</version>
             <scope>system</scope>
@@ -77,6 +71,11 @@
             <version>1.17</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/spigot-1.17.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.18.2-R0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

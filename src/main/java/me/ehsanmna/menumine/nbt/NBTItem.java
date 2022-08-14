@@ -21,6 +21,16 @@ public interface NBTItem {
 
     public Object getTag(String key);
 
+    public String getString(String key);
+
+    public int getInt(String key);
+
+    public boolean getBoolean(String key);
+
+    public float getFloat(String key);
+
+    public double getDouble(String key);
+
     public void save();
 
 

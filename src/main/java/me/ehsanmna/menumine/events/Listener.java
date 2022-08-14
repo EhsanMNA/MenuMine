@@ -2,12 +2,12 @@ package me.ehsanmna.menumine.events;
 
 import me.ehsanmna.menumine.Managers.MenuAction;
 import me.ehsanmna.menumine.Managers.MenuManager;
+import me.ehsanmna.menumine.models.MenuModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
-public class Join implements Listener {
+public class Listener implements org.bukkit.event.Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e){
@@ -29,11 +29,9 @@ public class Join implements Listener {
         switch (e.getAction()){
             case RIGHT_CLICK_AIR:
             case RIGHT_CLICK_BLOCK:
-            case LEFT_CLICK_AIR:
-            case LEFT_CLICK_BLOCK:
                 if (e.getItem() == null || e.getItem().getType() == Material.AIR) return;
                 if (!(e.getItem().getType() == MenuManager.getMenuItem().getType())) return;
-                //if (!(e.getPlayer().getOpenInventory().getTopInventory() == (e.getPlayer().getInventory()))) return;
+                if (!(e.getPlayer().getOpenInventory().getTopInventory() == (e.getPlayer().getInventory()))) return;
                 NBTItem nbt = NBTItemManager.createNBTItem(e.getItem());
 
                 if (nbt.hasTag("menu")){
@@ -49,6 +47,7 @@ public class Join implements Listener {
     public void onDrop(PlayerDropItemEvent e){
         NBTItem nbt = NBTItemManager.createNBTItem(e.getItemDrop().getItemStack());
         if (nbt.hasTag("menu")) e.setCancelled(true);
+        if (nbt.hasTag("MenuItem")) e.setCancelled(true);
     }
 
     @EventHandler
@@ -74,12 +73,21 @@ public class Join implements Listener {
             NBTItem nbt = null;
             if (item != null) nbt = NBTItemManager.createNBTItem(item);
             if (nbt != null){
-                if (nbt.hasTag("menu")){
-                    e.setCancelled(true);
-                    return;
+                if (e.getInventory() == (e.getWhoClicked().getInventory())) if (nbt.hasTag("menu")) e.setCancelled(true);
+                if (nbt.hasTag("MenuItem")){
+                    if (nbt.hasTag("FilterItem")) e.setCancelled(true);
+                    if (!e.isCancelled()){
+                        String modelId = nbt.getString("MenuModel");
+                        MenuModel model = MenuModel.getModels().get(modelId);
+                        int clickedSlot = e.getSlot();
+                        model.getActions(clickedSlot).forEach(menuAction -> {
+                            menuAction.run((Player) e.getWhoClicked());
+                        });
+                        e.setCancelled(true);
+                    }
                 }
             }
-        }catch (Exception ignored){}
+        }catch (Exception error){error.printStackTrace();}
 
 
         if (Objects.equals(e.getView().getTopInventory(), MenuManager.getGUI())){

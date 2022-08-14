@@ -54,6 +54,31 @@ public class NBTv9 implements NBTItem{
     }
 
     @Override
+    public String getString(String key) {
+        return tag.getString(key);
+    }
+
+    @Override
+    public int getInt(String key) {
+        return tag.getInt(key);
+    }
+
+    @Override
+    public boolean getBoolean(String key) {
+        return tag.getBoolean(key);
+    }
+
+    @Override
+    public float getFloat(String key) {
+        return tag.getFloat(key);
+    }
+
+    @Override
+    public double getDouble(String key) {
+        return tag.getDouble(key);
+    }
+
+    @Override
     public void save() {
         item.setTag(tag);
     }

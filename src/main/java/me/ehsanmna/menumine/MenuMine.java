@@ -5,7 +5,7 @@ import me.ehsanmna.menumine.Managers.Storage;
 import me.ehsanmna.menumine.Tasks.RefreshTask;
 import me.ehsanmna.menumine.commands.Menu;
 import me.ehsanmna.menumine.commands.MenuTabCompleter;
-import me.ehsanmna.menumine.events.Join;
+import me.ehsanmna.menumine.events.Listener;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,6 +25,7 @@ public final class MenuMine extends JavaPlugin {
         Storage.setupDataStorageYml();
         MenuManager.setUp();
         MenuManager.loadMenu();
+        MenuManager.loadMenuModels();
 
         task.run();
 
@@ -32,23 +33,20 @@ public final class MenuMine extends JavaPlugin {
         getCommand("menu").setExecutor(new Menu());
         getCommand("menu").setTabCompleter(new MenuTabCompleter());
 
-        getServer().getPluginManager().registerEvents(new Join(),this);
+        getServer().getPluginManager().registerEvents(new Listener(),this);
 
         long finalTicks = System.nanoTime();
-        int time = (int) (finalTicks - ticks);
+        long time = finalTicks - ticks;
         getServer().getConsoleSender().sendMessage(color("&b----------=======----------"));
         getServer().getConsoleSender().sendMessage(color("&3MenuMine has been enabled."));
-        getServer().getConsoleSender().sendMessage(color("&9" + (time / 100000) + "ms&3 tooked to load the plugin."));
+        getServer().getConsoleSender().sendMessage(color("&9" + (time / 100000) + "ms&3 take to load the plugin."));
         getServer().getConsoleSender().sendMessage(color("&b----------=======----------"));
 
     }
 
     @Override
     public void onDisable() {
-        try {
-            task.stop();
-        }catch (Exception ignored){}
-
+        task.stop();
 
         getServer().getConsoleSender().sendMessage(color("&4----------=======----------"));
         getServer().getConsoleSender().sendMessage(color("&cMenuMine has been disabled."));
