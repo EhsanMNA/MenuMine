@@ -67,7 +67,7 @@ menu:
         - '  &c&lEnchant, Dungeons, Spawn, Tutorial ...'
         - '&4&n                                                                     '
       actions:
-        - COMMAND-warps
+        - MENU-Warps
         - MESSAGE-&bOpened warps menu
       slot: 12
     '4':

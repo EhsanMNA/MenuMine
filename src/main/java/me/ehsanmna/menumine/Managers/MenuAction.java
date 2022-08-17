@@ -16,7 +16,10 @@ public class MenuAction {
             case COMMAND: Bukkit.getServer().dispatchCommand(player,action); break;
             case CLOSE: player.closeInventory(); break;
             case MENU:
-                if (action.equalsIgnoreCase("Main")) MenuManager.open(player);
+                if (action.equalsIgnoreCase("Main")) {
+                    player.closeInventory();
+                    MenuManager.open(player);
+                }
                 else {
                     try {
                         MenuModel model = MenuModel.getModels().get(action);

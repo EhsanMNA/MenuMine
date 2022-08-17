@@ -4,8 +4,9 @@ import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.models.MenuModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
+import me.ehsanmna.menumine.utils.SkullUtils;
+import me.ehsanmna.menumine.utils.XMaterial;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -51,7 +52,24 @@ public class MenuManager {
         yml.options().copyDefaults();
         yml = YamlConfiguration.loadConfiguration(file);
         try {
-            menu = new ItemStack(Material.valueOf(yml.getString("menu.material")));
+            String material = yml.getString("menu.material");
+            assert material != null;
+            if (material.equalsIgnoreCase("skull")){
+                String skullPath = "material.skull";
+                if (yml.contains(skullPath)){
+                    String skullId = yml.getString(skullPath);
+                    menu = XMaterial.PLAYER_HEAD.parseItem();
+                    assert menu != null;
+                    ItemMeta meta = menu.getItemMeta();
+                    assert meta != null;
+                    assert skullId != null;
+                    SkullUtils.applySkin(meta,skullId);
+                    menu.setItemMeta(meta);
+                }else {
+                    MenuMine.getInstance().getLogger().warning("could not find skull, is it correct?");
+                    menu = new ItemStack(Material.STONE);
+                }
+            }else menu = new ItemStack(Material.valueOf(material));
         }catch (Exception error){
             menu = new ItemStack(Material.STONE);
         }
@@ -76,7 +94,7 @@ public class MenuManager {
         }catch (Exception ignored){}
         assert section != null;
         for (String itemId : section.getKeys(false)){
-            ItemStack item = null;
+            ItemStack item;
             try {
                 item = new ItemStack(Material.valueOf(section.getString(itemId + ".material")));
             }catch (Exception error){
@@ -178,23 +196,34 @@ public class MenuManager {
             ConfigurationSection content = menuSection.getConfigurationSection("content");
             for (String itemId : content.getKeys(false)){
                 ConfigurationSection itemSection = content.getConfigurationSection(itemId);
-                Material material;
+                ItemStack item = new ItemStack(Material.STONE);
                 try {
-                    material = Material.valueOf(itemSection.getString("material"));
-                }catch (Exception error){
-                    material = Material.STONE;
-                }
+                    assert itemSection != null;
+                    String materialStr = itemSection.getString("material");
+                    if (materialStr.equalsIgnoreCase("skull")){
+                        if (itemSection.contains("skull")){
+                            String skullId = itemSection.getString("skull");
+                            item = XMaterial.PLAYER_HEAD.parseItem();
+                            ItemMeta meta = item.getItemMeta();
+                            assert meta != null;
+                            assert skullId != null;
+                            SkullUtils.applySkin(meta,skullId);
+                            item.setItemMeta(meta);
+                        }
+                    }else item = new ItemStack(Material.valueOf(itemSection.getString("material")));
+                }catch (IllegalArgumentException ignored){}
                 String displayName = MenuMine.color(itemSection.getString("name"));
                 int slot = itemSection.getInt("slot");
                 List<String> lore = MenuMine.color(itemSection.getStringList("lore"));
                 List<String> actionsId = itemSection.getStringList("actions");
-                ItemStack item = new ItemStack(material);
                 ItemMeta meta = item.getItemMeta();
                 meta.setDisplayName(displayName);
                 meta.setLore(lore);
-                if (itemSection.contains("glow")){
-                    meta.addEnchant(Enchantment.LURE,1,true);
-                    meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES,ItemFlag.HIDE_ENCHANTS);
+                if (itemSection.contains("glow") && !(item.getType().equals(XMaterial.PLAYER_HEAD.parseMaterial()))){
+                    if (itemSection.getBoolean("glow")){
+                        meta.addEnchant(Enchantment.LURE,1,true);
+                        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES,ItemFlag.HIDE_ENCHANTS);
+                    }
                 }
                 item.setItemMeta(meta);
                 NBTItem nbt = NBTItemManager.createNBTItem(item);
@@ -204,13 +233,10 @@ public class MenuManager {
                 item = nbt.getItem();
                 inventory.setItem(slot,item);
                 for (String actionId : actionsId){
-                    String[] actionList = actionId.split("-");
-                    String actionEnumId = actionList[0];
-                    String actionContent = actionId.replaceAll(actionEnumId + "-","");
-                    Action act = Action.valueOf(actionEnumId);
                     MenuAction action = new MenuAction();
-                    action.act = act;
-                    action.action = actionContent;
+                    String actionEnumId = actionId.split("-")[0];
+                    action.act = Action.valueOf(actionEnumId);
+                    action.action = actionId.replaceAll(actionEnumId + "-","");
                     model.addAction(slot,action);
                 }
             }

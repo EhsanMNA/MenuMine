@@ -3,7 +3,7 @@ package me.ehsanmna.menumine;
 import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.Managers.Storage;
 import me.ehsanmna.menumine.Tasks.RefreshTask;
-import me.ehsanmna.menumine.commands.Menu;
+import me.ehsanmna.menumine.commands.MenuCommand;
 import me.ehsanmna.menumine.commands.MenuTabCompleter;
 import me.ehsanmna.menumine.events.Listener;
 import org.bukkit.ChatColor;
@@ -19,7 +19,7 @@ public final class MenuMine extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        long ticks = System.nanoTime();
+        long ticks = System.currentTimeMillis();
         main = this;
         saveDefaultConfig();
         Storage.setupDataStorageYml();
@@ -30,16 +30,16 @@ public final class MenuMine extends JavaPlugin {
         task.run();
 
 
-        getCommand("menu").setExecutor(new Menu());
+        getCommand("menu").setExecutor(new MenuCommand());
         getCommand("menu").setTabCompleter(new MenuTabCompleter());
 
         getServer().getPluginManager().registerEvents(new Listener(),this);
 
-        long finalTicks = System.nanoTime();
+        long finalTicks = System.currentTimeMillis();
         long time = finalTicks - ticks;
         getServer().getConsoleSender().sendMessage(color("&b----------=======----------"));
         getServer().getConsoleSender().sendMessage(color("&3MenuMine has been enabled."));
-        getServer().getConsoleSender().sendMessage(color("&9" + (time / 100000) + "ms&3 take to load the plugin."));
+        getServer().getConsoleSender().sendMessage(color("&9" + time + "ms&3 take to load the plugin."));
         getServer().getConsoleSender().sendMessage(color("&b----------=======----------"));
 
     }

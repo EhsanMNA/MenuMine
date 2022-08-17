@@ -3,8 +3,6 @@ package me.ehsanmna.menumine.commands;
 import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.Managers.Storage;
 import me.ehsanmna.menumine.MenuMine;
-import me.ehsanmna.menumine.nbt.NBTItem;
-import me.ehsanmna.menumine.nbt.NBTItemManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,7 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.io.IOException;
 
-public class Menu implements CommandExecutor {
+public class MenuCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
@@ -40,6 +38,7 @@ public class Menu implements CommandExecutor {
                             try {
                                 Storage.refreshData();
                                 MenuManager.loadMenu();
+                                MenuManager.loadMenuModels();
                                 player.sendMessage(MenuMine.color("&bPlugin has been reloaded."));
                             } catch (IOException e) {
                                 e.printStackTrace();

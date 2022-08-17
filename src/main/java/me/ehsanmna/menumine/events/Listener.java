@@ -1,5 +1,6 @@
 package me.ehsanmna.menumine.events;
 
+import me.ehsanmna.menumine.Managers.Action;
 import me.ehsanmna.menumine.Managers.MenuAction;
 import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.models.MenuModel;
@@ -19,9 +20,9 @@ public class Listener implements org.bukkit.event.Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e){
-        if (!MenuManager.isMenuDisabled(e.getPlayer())){
+        if (!MenuManager.isMenuDisabled(e.getPlayer()))
             MenuManager.setItemToInventory(e.getPlayer());
-        }
+
     }
 
     @EventHandler
@@ -31,7 +32,7 @@ public class Listener implements org.bukkit.event.Listener {
             case RIGHT_CLICK_BLOCK:
                 if (e.getItem() == null || e.getItem().getType() == Material.AIR) return;
                 if (!(e.getItem().getType() == MenuManager.getMenuItem().getType())) return;
-                if (!(e.getPlayer().getOpenInventory().getTopInventory() == (e.getPlayer().getInventory()))) return;
+                if ((e.getPlayer().getOpenInventory().getTopInventory() == (e.getPlayer().getInventory()))) return;
                 NBTItem nbt = NBTItemManager.createNBTItem(e.getItem());
 
                 if (nbt.hasTag("menu")){
@@ -46,24 +47,23 @@ public class Listener implements org.bukkit.event.Listener {
     @EventHandler
     public void onDrop(PlayerDropItemEvent e){
         NBTItem nbt = NBTItemManager.createNBTItem(e.getItemDrop().getItemStack());
-        if (nbt.hasTag("menu")) e.setCancelled(true);
-        if (nbt.hasTag("MenuItem")) e.setCancelled(true);
+        if (nbt.hasTag("menu") || nbt.hasTag("MenuItem")) e.setCancelled(true);
+
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e){
-        if (e.getDrops().isEmpty() || e.getDrops() == null) return;
+        if (e.getDrops().isEmpty()) return;
         for (ItemStack item : e.getDrops()){
             NBTItem nbt = NBTItemManager.createNBTItem(item);
-            if (nbt.hasTag("menu")) {e.getDrops().remove(item); return;}
+            if (nbt.hasTag("menu")||nbt.hasTag("MenuItem")) {e.getDrops().remove(item); return;}
         }
     }
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent e){
-        if (!MenuManager.isMenuDisabled(e.getPlayer())){
+        if (!MenuManager.isMenuDisabled(e.getPlayer()))
             MenuManager.setItemToInventory(e.getPlayer());
-        }
     }
 
     @EventHandler
@@ -77,18 +77,15 @@ public class Listener implements org.bukkit.event.Listener {
                 if (nbt.hasTag("MenuItem")){
                     if (nbt.hasTag("FilterItem")) e.setCancelled(true);
                     if (!e.isCancelled()){
-                        String modelId = nbt.getString("MenuModel");
-                        MenuModel model = MenuModel.getModels().get(modelId);
-                        int clickedSlot = e.getSlot();
-                        model.getActions(clickedSlot).forEach(menuAction -> {
-                            menuAction.run((Player) e.getWhoClicked());
-                        });
+                        MenuModel model = MenuModel.getModels().get(nbt.getString("MenuModel"));
+                        for (MenuAction action : model.getActions(e.getSlot()))
+                            try {action.run((Player) e.getWhoClicked());}catch (Exception ignored){}
+
                         e.setCancelled(true);
                     }
                 }
             }
         }catch (Exception error){error.printStackTrace();}
-
 
         if (Objects.equals(e.getView().getTopInventory(), MenuManager.getGUI())){
             e.setCancelled(true);
