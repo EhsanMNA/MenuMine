@@ -146,6 +146,7 @@ public class MenuManager {
             item.setItemMeta(m);
             inventory.setItem(yml.getInt("menu.items." + itemId + ".slot"),item);
         }
+        Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&aSuccessfully loaded &2Main model&a."));
     }
 
     public static void loadMenuModels(){
@@ -247,6 +248,7 @@ public class MenuManager {
 
 
             MenuModel.addModel(modelName,model);
+            Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&bLoaded &9"+modelName+"&b menu model."));
         }
 
     }

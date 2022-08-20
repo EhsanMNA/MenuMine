@@ -1,6 +1,5 @@
 package me.ehsanmna.menumine.events;
 
-import me.ehsanmna.menumine.Managers.Action;
 import me.ehsanmna.menumine.Managers.MenuAction;
 import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.models.MenuModel;
@@ -16,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
-public class Listener implements org.bukkit.event.Listener {
+public class Listeners implements org.bukkit.event.Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e){
