@@ -4,19 +4,14 @@ import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.models.MenuModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
-import me.ehsanmna.menumine.utils.SkullUtils;
-import me.ehsanmna.menumine.utils.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +43,7 @@ public class MenuManager {
     }
 
     public static void loadMenu(){
+        long time = System.currentTimeMillis();
         actionsManager.clear();
         yml.options().copyDefaults();
         yml = YamlConfiguration.loadConfiguration(file);
@@ -64,17 +60,17 @@ public class MenuManager {
         }
         // filter
         if (yml.contains("menu")){
-            ConfigurationSection section = yml.getConfigurationSection("menu.filter");
-            for (String itemId : section.getKeys(false)){
+            for (String itemId : yml.getConfigurationSection("menu.filter").getKeys(false)){
+                ConfigurationSection section = yml.getConfigurationSection("menu.filter."+itemId);
                 ItemStack item= ItemWrapper.wrapItem(yml,section);
-                String type = Objects.requireNonNull(section.getString(itemId + ".type")).toLowerCase();
+                String type = Objects.requireNonNull(section.getString("type")).toLowerCase();
                 switch (type){
                     case "fill":
                         for (int slot = 0; slot < inventory.getSize(); slot++)
                             if (inventory.getItem(slot) == null || inventory.getItem(slot).getType().equals(Material.AIR)) inventory.setItem(slot,item);
                         break;
                     case "slot":
-                        for (int slot : section.getIntegerList(itemId + ".slots")) inventory.setItem(slot,item);
+                        for (int slot : section.getIntegerList("slots")) inventory.setItem(slot,item);
                         break;
                 }
             }
@@ -101,10 +97,11 @@ public class MenuManager {
             }
             inventory.setItem(yml.getInt("menu.items." + itemId + ".slot"),item);
         }
-        Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&bSuccessfully loaded &3Main model&b."));
+        Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&7[&f"+(System.currentTimeMillis()-time) +"ms&7]&bSuccessfully loaded &3Main model&b."));
     }
 
     public static void loadMenuModels(){
+        long time = System.currentTimeMillis();
         guiYml.options().copyDefaults();
         guiYml = YamlConfiguration.loadConfiguration(gui);
 
@@ -163,7 +160,7 @@ public class MenuManager {
             model.setInv(inventory);
 
             MenuModel.addModel(modelName,model);
-            Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&bLoaded &9"+modelName+"&b menu model."));
+            Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&7[&f"+(System.currentTimeMillis()-time) +"ms&7]&bLoaded &9"+modelName+"&b menu model."));
         }
 
     }

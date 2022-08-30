@@ -6,7 +6,7 @@
 
     <groupId>me.ehsanmna</groupId>
     <artifactId>MenuMine</artifactId>
-    <version>1.0</version>
+    <version>0.51</version>
     <packaging>jar</packaging>
 
     <name>MenuMine</name>

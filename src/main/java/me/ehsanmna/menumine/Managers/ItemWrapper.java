@@ -14,6 +14,8 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
+import java.util.List;
+
 public class ItemWrapper {
 
     public static ItemStack wrapItem(YamlConfiguration yml, ConfigurationSection section){
@@ -50,6 +52,14 @@ public class ItemWrapper {
                 meta.addEnchant(Enchantment.LURE,1,true);
                 meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES,ItemFlag.HIDE_ENCHANTS);
             }
+        if (section.contains("flags")){
+            List<String> flags = section.getStringList("flags");
+            for (String flagName : flags)
+                try {
+                    meta.addItemFlags(ItemFlag.valueOf(flagName));
+                }catch (IllegalArgumentException error){}
+
+        }
         item.setItemMeta(meta);
 
         return item;

@@ -25,6 +25,8 @@ menu:
       material: POTION
       potion: INVISIBILITY
       level: 1
+      flags:
+        - HIDE_POTION_EFFECTS
       lore:
         - '&6&n                                  '
         - '&r '

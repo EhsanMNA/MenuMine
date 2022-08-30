@@ -30,7 +30,6 @@ public final class MenuMine extends JavaPlugin {
 
         task.run();
 
-
         getCommand("menu").setExecutor(new MenuCommand());
         getCommand("menu").setTabCompleter(new MenuTabCompleter());
 
