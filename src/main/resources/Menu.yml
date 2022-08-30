@@ -22,7 +22,9 @@ menu:
   items:
     '1':
       name: '&6&lBattlePass'
-      material: EMERALD
+      material: POTION
+      potion: INVISIBILITY
+      level: 1
       lore:
         - '&6&n                                  '
         - '&r '

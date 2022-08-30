@@ -52,35 +52,10 @@ public class MenuManager {
         yml.options().copyDefaults();
         yml = YamlConfiguration.loadConfiguration(file);
         try {
-            String material = yml.getString("menu.material");
-            assert material != null;
-            if (material.equalsIgnoreCase("skull")){
-                String skullPath = "material.skull";
-                if (yml.contains(skullPath)){
-                    String skullId = yml.getString(skullPath);
-                    menu = XMaterial.PLAYER_HEAD.parseItem();
-                    assert menu != null;
-                    ItemMeta meta = menu.getItemMeta();
-                    assert meta != null;
-                    assert skullId != null;
-                    SkullUtils.applySkin(meta,skullId);
-                    menu.setItemMeta(meta);
-                }else {
-                    MenuMine.getInstance().getLogger().warning("could not find skull, is it correct?");
-                    menu = new ItemStack(Material.STONE);
-                }
-            }else menu = new ItemStack(Material.valueOf(material));
+            menu = ItemWrapper.wrapItem(yml,yml.getConfigurationSection("menu"));
         }catch (Exception error){
             menu = new ItemStack(Material.STONE);
         }
-        try {
-            ItemMeta meta = menu.getItemMeta();
-            assert meta != null;
-            meta.setDisplayName(MenuMine.color(yml.getString("menu.itemName")));
-            if (yml.contains("menu.itemLore"))
-                meta.setLore(MenuMine.color(yml.getStringList("menu.itemlore")));
-            menu.setItemMeta(meta);
-        }catch (Exception ignored){}
         // inventory
         try {
             inventory = Bukkit.createInventory(null, yml.getInt("menu.rows") * 9,MenuMine.color(yml.getString("menu.name")));
@@ -88,46 +63,27 @@ public class MenuManager {
             inventory = Bukkit.createInventory(null, InventoryType.CHEST, MenuMine.color("&b&lMenu"));
         }
         // filter
-        ConfigurationSection section = null;
-        try {
-            section = yml.getConfigurationSection("menu.filter");
-        }catch (Exception ignored){}
-        assert section != null;
-        for (String itemId : section.getKeys(false)){
-            ItemStack item;
-            try {
-                item = new ItemStack(Material.valueOf(section.getString(itemId + ".material")));
-            }catch (Exception error){
-                item = new ItemStack(Material.RED_STAINED_GLASS_PANE);
-            }
-            ItemMeta m = item.getItemMeta();
-            assert m != null;
-            m.setDisplayName(MenuMine.color(section.getString(itemId + ".name")));
-            if (section.contains(itemId + ".lore")) m.setLore(MenuMine.color(section.getStringList(itemId + ".lore")));
-            item.setItemMeta(m);
-            String type = Objects.requireNonNull(section.getString(itemId + ".type")).toLowerCase();
-            switch (type){
-                case "fill":
-                    for (int slot = 0; slot < inventory.getSize(); slot++)
-                        if (inventory.getItem(slot) == null || inventory.getItem(slot).getType().equals(Material.AIR)) inventory.setItem(slot,item);
-                    break;
-                case "slot":
-                    for (int slot : section.getIntegerList(itemId + ".slots")) inventory.setItem(slot,item);
-                    break;
+        if (yml.contains("menu")){
+            ConfigurationSection section = yml.getConfigurationSection("menu.filter");
+            for (String itemId : section.getKeys(false)){
+                ItemStack item= ItemWrapper.wrapItem(yml,section);
+                String type = Objects.requireNonNull(section.getString(itemId + ".type")).toLowerCase();
+                switch (type){
+                    case "fill":
+                        for (int slot = 0; slot < inventory.getSize(); slot++)
+                            if (inventory.getItem(slot) == null || inventory.getItem(slot).getType().equals(Material.AIR)) inventory.setItem(slot,item);
+                        break;
+                    case "slot":
+                        for (int slot : section.getIntegerList(itemId + ".slots")) inventory.setItem(slot,item);
+                        break;
+                }
             }
         }
-        for (String itemId : Objects.requireNonNull(yml.getConfigurationSection("menu.items.")).getKeys(false)){
-            ItemStack item = null;
-            try {
-                item = new ItemStack(Material.valueOf(yml.getString("menu.items." + itemId + ".material")));
-            }catch (Exception error){
-                item = new ItemStack(Material.STONE);
-            }
 
-            ItemMeta m = item.getItemMeta();
-            assert m != null;
-            m.setDisplayName(MenuMine.color(yml.getString("menu.items." + itemId + ".name")));
-            m.setLore(MenuMine.color(yml.getStringList("menu.items." + itemId + ".lore")));
+
+        for (String itemId : Objects.requireNonNull(yml.getConfigurationSection("menu.items.")).getKeys(false)){
+            ConfigurationSection section = yml.getConfigurationSection("menu.items."+itemId);
+            ItemStack item = ItemWrapper.wrapItem(yml,section);
             for (String action : yml.getStringList("menu.items." + itemId + ".actions")){
                 String a = "CANCEL";
                 if (action.contains("-")) a = action.split("-")[0];
@@ -143,10 +99,9 @@ public class MenuManager {
                     actionsManager.put(yml.getInt("menu.items." + itemId + ".slot"),actions);
                 }
             }
-            item.setItemMeta(m);
             inventory.setItem(yml.getInt("menu.items." + itemId + ".slot"),item);
         }
-        Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&aSuccessfully loaded &2Main model&a."));
+        Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&bSuccessfully loaded &3Main model&b."));
     }
 
     public static void loadMenuModels(){
@@ -159,29 +114,17 @@ public class MenuManager {
             int rows = menuSection.getInt("rows")*9;
             String name = MenuMine.color(menuSection.getString("name"));
             Inventory inventory = Bukkit.createInventory(null,rows,name);
-            if (menuSection.contains("filter")){
+            if (menuSection.contains("filter"))
                 for (String filterId : menuSection.getConfigurationSection("filter.").getKeys(false)){
-                    ConfigurationSection filterSection = menuSection.getConfigurationSection("filter." + filterId);
-                    Material material;
-                    try {
-                        material = Material.valueOf(filterSection.getString("material"));
-                    }catch (Exception error){
-                        material = Material.STONE;
-                    }
-                    String type = filterSection.getString("type");
-                    String displayName = MenuMine.color(filterSection.getString("name"));
-                    ItemStack item = new ItemStack(material);
-                    ItemMeta meta = item.getItemMeta();
-                    meta.setDisplayName(displayName);
-                    if (filterSection.contains("lore")) meta.setLore(MenuMine.color(filterSection.getStringList("lore")));
-                    item.setItemMeta(meta);
+                    ConfigurationSection section = menuSection.getConfigurationSection("filter." + filterId);
+                    ItemStack item = ItemWrapper.wrapItem(guiYml,section);
                     NBTItem nbt = NBTItemManager.createNBTItem(item);
                     nbt.setTag("MenuItem",true);
                     nbt.setTag("FilterItem",true);
                     nbt.setTag("MenuModel",modelName);
                     nbt.save();
                     item = nbt.getItem();
-                    switch (type.toLowerCase()){
+                    switch (section.getString("type").toLowerCase()){
                         case "fill":
                             for (int i = 0; i < inventory.getSize();){
                                 inventory.setItem(i,item);
@@ -189,44 +132,17 @@ public class MenuManager {
                         }
                             break;
                         case "slot":
-                            for (int slot: filterSection.getIntegerList("slots")) inventory.setItem(slot,item);
+                            for (int slot: section.getIntegerList("slots")) inventory.setItem(slot,item);
                             break;
                     }
                 }
-            }
+
             ConfigurationSection content = menuSection.getConfigurationSection("content");
             for (String itemId : content.getKeys(false)){
                 ConfigurationSection itemSection = content.getConfigurationSection(itemId);
-                ItemStack item = new ItemStack(Material.STONE);
-                try {
-                    assert itemSection != null;
-                    String materialStr = itemSection.getString("material");
-                    if (materialStr.equalsIgnoreCase("skull")){
-                        if (itemSection.contains("skull")){
-                            String skullId = itemSection.getString("skull");
-                            item = XMaterial.PLAYER_HEAD.parseItem();
-                            ItemMeta meta = item.getItemMeta();
-                            assert meta != null;
-                            assert skullId != null;
-                            SkullUtils.applySkin(meta,skullId);
-                            item.setItemMeta(meta);
-                        }
-                    }else item = new ItemStack(Material.valueOf(itemSection.getString("material")));
-                }catch (IllegalArgumentException ignored){}
-                String displayName = MenuMine.color(itemSection.getString("name"));
+                ItemStack item = ItemWrapper.wrapItem(guiYml,itemSection);
                 int slot = itemSection.getInt("slot");
-                List<String> lore = MenuMine.color(itemSection.getStringList("lore"));
                 List<String> actionsId = itemSection.getStringList("actions");
-                ItemMeta meta = item.getItemMeta();
-                meta.setDisplayName(displayName);
-                meta.setLore(lore);
-                if (itemSection.contains("glow") && !(item.getType().equals(XMaterial.PLAYER_HEAD.parseMaterial()))){
-                    if (itemSection.getBoolean("glow")){
-                        meta.addEnchant(Enchantment.LURE,1,true);
-                        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES,ItemFlag.HIDE_ENCHANTS);
-                    }
-                }
-                item.setItemMeta(meta);
                 NBTItem nbt = NBTItemManager.createNBTItem(item);
                 nbt.setTag("MenuItem",true);
                 nbt.setTag("MenuModel",modelName);
@@ -245,7 +161,6 @@ public class MenuManager {
             model.setDisplayName(name);
             model.setId(modelName);
             model.setInv(inventory);
-
 
             MenuModel.addModel(modelName,model);
             Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&bLoaded &9"+modelName+"&b menu model."));
