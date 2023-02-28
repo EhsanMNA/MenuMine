@@ -1,6 +1,7 @@
 package me.ehsanmna.menumine;
 
 import me.ehsanmna.menumine.Managers.MenuManager;
+import me.ehsanmna.menumine.Managers.PlayerManager;
 import me.ehsanmna.menumine.Managers.Storage;
 import me.ehsanmna.menumine.Tasks.RefreshTask;
 import me.ehsanmna.menumine.commands.MenuCommand;
@@ -31,16 +32,12 @@ public final class MenuMine extends JavaPlugin {
         if (getConfig().contains("logEnableMessages")) logMessages = getConfig().getBoolean("logEnableMessages");
         else
             try {
-                getConfig().addDefault("useSpigotAPI",false);
-                getConfig().addDefault("logEnableMessages",true);
+                getConfig().addDefault("defaultLanguage","en");
                 File config = new File(getDataFolder(),"config.yml");
                 getConfig().save(config);
             }catch (Exception ignored){}
-
         Storage.setupDataStorageYml();
         MenuManager.setUp();
-        MenuManager.loadMenu();
-        MenuManager.loadMenuModels();
 
         task.run();
 

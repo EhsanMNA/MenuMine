@@ -3,6 +3,7 @@ package me.ehsanmna.menumine.nbt;
 import me.ehsanmna.menumine.utils.ReflectionUtils;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,13 +29,16 @@ public class NBTReflection implements NBTItem{
                     nmsItemStack.getClass().getDeclaredField("tag");
             tagComponent.setAccessible(true);
 
-            Method getTag = ReflectionUtils.supports(18) ?
+            Method getOrCreateTag = ReflectionUtils.supports(18) ?
                     nmsItemStack.getClass().getDeclaredMethod("u"):
-                    nmsItemStack.getClass().getDeclaredMethod("getTag");
-            getTag.setAccessible(true);
+                    ReflectionUtils.supports(16) ?nmsItemStack.getClass().getDeclaredMethod("getOrCreateTag"):
+                            nmsItemStack.getClass().getDeclaredMethod("getTag");
+            getOrCreateTag.setAccessible(true);
 
-            nmsNBTTagCompound = tagComponent != null ? getTag.invoke(nmsItemStack) :
-                    nmsNBTTagCompoundClass.getDeclaredConstructor().newInstance();
+
+            nmsNBTTagCompound = tagComponent.get(nmsItemStack) != null ? getOrCreateTag.invoke(nmsItemStack) :
+                    ReflectionUtils.supports(16) ? getOrCreateTag.invoke(nmsItemStack) :
+                            nmsNBTTagCompoundClass.getDeclaredConstructor().newInstance();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,6 +68,8 @@ public class NBTReflection implements NBTItem{
             return (boolean) hasTag.invoke(nmsNBTTagCompound,tag);
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(nmsNBTTagCompound);
+            System.out.println(nmsItemStack);
         }
         return false;
     }

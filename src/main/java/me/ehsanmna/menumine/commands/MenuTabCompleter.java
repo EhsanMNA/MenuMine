@@ -19,10 +19,15 @@ public class MenuTabCompleter implements TabCompleter {
         Player player = null;
         if (sender instanceof Player)  player = (Player) sender;
         if (args.length == 1){
-            for (String arg : tabs){
+            for (String arg : tabs)
                 if (arg.toLowerCase().startsWith(args[0].toLowerCase())) list.add(arg);
-            }
-            if (player != null ) if (player.hasPermission("menumine.command.reload")) if ("reload".startsWith(args[0])) list.add("reload");
+            if (player != null ) {
+                if (player.hasPermission("menumine.command.reload")) if ("reload".startsWith(args[0])) list.add("reload");
+                if (player.hasPermission("menumine.command.open")) if ("open".startsWith(args[0])) list.add("open");
+                if (player.hasPermission("menumine.command.create")) if ("create".startsWith(args[0])) list.add("create");
+                if (player.hasPermission("menumine.command.language")) if ("language".startsWith(args[0])) list.add("language");
+            }else if ("open".startsWith(args[0])) list.add("open");
+
             return list;
         }
         return list;

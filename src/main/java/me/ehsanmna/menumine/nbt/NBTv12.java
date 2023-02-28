@@ -11,7 +11,7 @@ public class NBTv12 implements NBTItem {
         this.tag = this.item.hasTag() ? this.item.getTag() : new NBTTagCompound();
     }
     ItemStack item;
-    NBTTagCompound tag ;
+    NBTTagCompound tag;
 
     @Override
     public org.bukkit.inventory.ItemStack getItem() {

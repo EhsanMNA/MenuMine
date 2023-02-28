@@ -1,5 +1,6 @@
 package me.ehsanmna.menumine.nbt;
 
+import me.ehsanmna.menumine.utils.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
@@ -17,10 +18,9 @@ public class NBTItemManager {
         if (version.contains("1.17")) if (useSpigotAPI) i = new SpigotNBT(); else i = new NBTv17(item);
         else if (version.contains("1.16")) if (useSpigotAPI) i = new SpigotNBT(); else i = new NBTv16(item);
         else if (version.contains("1.12")) i = new NBTv12(item);
-        else if (version.contains("1.9")) i = new NBTv9(item);
         else if (version.contains("1.8")) i = new NBTv8(item);
 
-        if (i == null) if (useSpigotAPI) i = new SpigotNBT(); else i = new NBTReflection(item);
+        if (i == null) if (useSpigotAPI && ReflectionUtils.supports(14)) i = new SpigotNBT(); else i = new NBTReflection(item);
 
         return i;
     }

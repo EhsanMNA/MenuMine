@@ -18,13 +18,16 @@ public class Storage {
 
     public static void loadData(){
         try {
-            for (String uuid : yamlConfiguration.getStringList("players")){
+            for (String uuid : yamlConfiguration.getStringList("players"))
                 try {
                     disabledMenus.add(UUID.fromString(uuid));
-                }catch (Exception error){
-                    System.out.println(uuid + " is not a valid uuid form.");
-                }
+                }catch (Exception error){System.out.println(uuid + " is not a valid uuid form.");}
+
+            for (String uuid : yamlConfiguration.getConfigurationSection("languages").getKeys(false)){
+                UUID id = UUID.fromString(uuid);
+                PlayerManager.playerLanguages.put(id,yamlConfiguration.getString("languages."+uuid));
             }
+
         }catch (Exception ignored){
             System.out.println("Couldn't find any data's");
         }
@@ -35,8 +38,11 @@ public class Storage {
         for (UUID uuid : disabledMenus){
             list.add(uuid.toString());
         }
+        for (UUID player : PlayerManager.playerLanguages.keySet())
+            yamlConfiguration.set("languages."+player.toString(),PlayerManager.playerLanguages.get(player));
         yamlConfiguration.set("players",list);
         yamlConfiguration.save(file);
+
     }
 
     public static void setupDataStorageYml(){
@@ -45,6 +51,7 @@ public class Storage {
             MenuMine.getInstance().saveResource("Data.yml",false);
         }
         yamlConfiguration = YamlConfiguration.loadConfiguration(file);
+        loadData();
     }
 
 

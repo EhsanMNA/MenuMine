@@ -1,0 +1,18 @@
+fa:
+   prefix: "&bMenuMine&f» "
+   visibilityChange: "&aMenu penyan/nomayesh dade shod!"
+   reload: "&aPlugin reload shod!"
+   chestClick: "&aRoye yek chest click konid!"
+   successfully: "&2Ba moafagiat anjam shod!"
+   blockDetection: "&aBlock shenasayi shod shod!"
+   failed: "&cAmaliyat anjam nashod! jahat etelae bishtar console check konin."
+   menuExist: "&cMenu mored nazar peyda nashod va ya az gabl sakhte shode ast!"
+en:
+  prefix: "&bMenuMine&f» "
+  visibilityChange: "&aMenu visibility changed!"
+  reload: "&aPlugin reloaded!"
+  chestClick: "&aClick on a chest!"
+  successfully: "&2Successfully done!"
+  blockDetection: "&aBlock has been detected!"
+  failed: "&cFailed!"
+  menuExist: "&cThis menu has been exist!"

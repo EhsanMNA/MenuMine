@@ -18,6 +18,13 @@ import java.util.List;
 
 public class ItemWrapper {
 
+    public static void wrapItemToPath(ConfigurationSection section,ItemStack item,int slot){
+        section.set(slot +".material", item.getType());
+        section.set(slot +".name", item.getType().name());
+        section.set(slot +".slot", slot);
+        if (item.getItemMeta().hasLore()) section.set(slot +".lore", item.getItemMeta().getLore());
+    }
+
     public static ItemStack wrapItem(YamlConfiguration yml, ConfigurationSection section){
         ItemStack item = null;
         try {
@@ -68,12 +75,13 @@ public class ItemWrapper {
     static ItemStack getPotionItemStack(Material potionType, PotionType type, int level, boolean extend, boolean upgraded){
         ItemStack potion;
         try {
+            PotionData potionData = new PotionData(type, extend, upgraded);
             potion = new ItemStack(potionType);
             PotionMeta meta = (PotionMeta) potion.getItemMeta();
             assert meta != null;
-            meta.setBasePotionData(new PotionData(type, extend, upgraded));
+            meta.setBasePotionData(potionData);
             potion.setItemMeta(meta);
-        }catch (Exception error){
+        }catch (NoClassDefFoundError error){
             potion = XMaterial.STONE.parseItem();
         }
         return potion;

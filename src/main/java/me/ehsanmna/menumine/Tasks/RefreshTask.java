@@ -22,7 +22,7 @@ public class RefreshTask{
                         e.printStackTrace();
                     }
                 }
-            }.runTaskLater(MenuMine.getInstance(),20 * 60 );
+            }.runTaskLater(MenuMine.getInstance(),20 * 120 );
         }
         public void stop(){
             task.cancel();

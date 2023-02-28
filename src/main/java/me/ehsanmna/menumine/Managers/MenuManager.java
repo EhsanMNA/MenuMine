@@ -15,7 +15,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 public class MenuManager {
 
@@ -31,12 +34,17 @@ public class MenuManager {
     public static YamlConfiguration guiYml;
 
     public static void setUp() {
+        loadMenu();
+        loadMenuModels();
+        PlayerManager.loadMessages();
         try {
             file = new File(MenuMine.getInstance().getDataFolder(), "Menu.yml");
             gui = new File(MenuMine.getInstance().getDataFolder(), "Guis.yml");
+            File messages = new File(MenuMine.getInstance().getDataFolder(), "Messages.yml");
             if (file.createNewFile()) MenuMine.getInstance().saveResource("Menu.yml",true);
             if (gui.createNewFile()) MenuMine.getInstance().saveResource("Guis.yml",true);
-            
+            if (messages.createNewFile()) MenuMine.getInstance().saveResource("Messages.yml",true);
+
             yml = YamlConfiguration.loadConfiguration(file);
             guiYml = YamlConfiguration.loadConfiguration(gui);
         }catch (IOException ignored){}
@@ -115,12 +123,16 @@ public class MenuManager {
                 for (String filterId : menuSection.getConfigurationSection("filter.").getKeys(false)){
                     ConfigurationSection section = menuSection.getConfigurationSection("filter." + filterId);
                     ItemStack item = ItemWrapper.wrapItem(guiYml,section);
-                    NBTItem nbt = NBTItemManager.createNBTItem(item);
-                    nbt.setTag("MenuItem",true);
-                    nbt.setTag("FilterItem",true);
-                    nbt.setTag("MenuModel",modelName);
-                    nbt.save();
-                    item = nbt.getItem();
+                    try {
+                        NBTItem nbt = NBTItemManager.createNBTItem(item);
+                        nbt.setTag("MenuItem",true);
+                        nbt.setTag("FilterItem",true);
+                        nbt.setTag("MenuModel",modelName);
+                        nbt.save();
+                        item = nbt.getItem();
+                    }catch (Exception error){
+                        System.out.println("Could not save nbt item in filters!!!");
+                    }
                     switch (section.getString("type").toLowerCase()){
                         case "fill":
                             for (int i = 0; i < inventory.getSize();){
@@ -140,11 +152,16 @@ public class MenuManager {
                 ItemStack item = ItemWrapper.wrapItem(guiYml,itemSection);
                 int slot = itemSection.getInt("slot");
                 List<String> actionsId = itemSection.getStringList("actions");
-                NBTItem nbt = NBTItemManager.createNBTItem(item);
-                nbt.setTag("MenuItem",true);
-                nbt.setTag("MenuModel",modelName);
-                nbt.save();
-                item = nbt.getItem();
+                try {
+                    NBTItem nbt = NBTItemManager.createNBTItem(item);
+                    nbt.setTag("MenuItem",true);
+                    nbt.setTag("MenuModel",modelName);
+                    nbt.save();
+                    item = nbt.getItem();
+                }catch (Exception error){
+                    System.out.println("Could not load nbt item in "+modelName +"!!!");
+                }
+
                 inventory.setItem(slot,item);
                 for (String actionId : actionsId){
                     MenuAction action = new MenuAction();
@@ -197,5 +214,26 @@ public class MenuManager {
         nbt.setTag("menu","menu");
         nbt.save();
         player.getInventory().setItem(slot,nbt.getItem());
+    }
+    public static void openModel(String modelName,Player player){
+        MenuModel model = MenuModel.getModels().get(modelName);
+        if (model == null) {player.sendMessage(MenuMine.color("&cThat menu does not exists.")); return;}
+        model.openMenu(player);
+    }
+
+    public static void saveMenuModel(MenuModel model){
+        guiYml.set(model.getId()+".name",model.getDisplayName());
+        guiYml.set(model.getId()+".rows",model.getInv().getSize()/9);
+        guiYml.set(model.getId()+".content.game","This model created from game, please config actions and more...");
+
+        int slot = 0;
+        for (ItemStack itemStack : model.getInv().getContents()){
+            ItemWrapper.wrapItemToPath(guiYml.getConfigurationSection(model.getId()+".content"),itemStack,slot);
+            slot++;
+        }
+
+        MenuManager.loadMenuModels();
+
+
     }
 }

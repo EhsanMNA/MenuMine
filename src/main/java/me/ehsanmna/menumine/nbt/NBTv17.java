@@ -8,7 +8,7 @@ public class NBTv17 implements NBTItem{
 
     public NBTv17(org.bukkit.inventory.ItemStack item) {
         this.item =CraftItemStack.asNMSCopy(item);
-        this.tag = this.item.hasTag() ? this.item.getTag() : new NBTTagCompound();
+        this.tag = this.item.getOrCreateTag();
     }
     ItemStack item;
     NBTTagCompound tag;
