@@ -16,7 +16,7 @@ public class PlayerManager {
     public static HashMap<UUID,String> playersReadyToInteract = new HashMap<>();
 
     public static HashMap<UUID,String> playerLanguages = new HashMap<>();
-    private static final HashMap<String,MessageModel> langs = new HashMap<>();
+    public static final HashMap<String,MessageModel> langs = new HashMap<>();
 
     public static void loadMessages(){
         File file = new File(MenuMine.getInstance().getDataFolder(),"Messages.yml");

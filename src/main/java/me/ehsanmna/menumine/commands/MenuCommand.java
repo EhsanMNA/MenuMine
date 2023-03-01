@@ -4,6 +4,7 @@ import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.Managers.PlayerManager;
 import me.ehsanmna.menumine.Managers.Storage;
 import me.ehsanmna.menumine.MenuMine;
+import me.ehsanmna.menumine.models.MenuModel;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -50,6 +51,19 @@ public class MenuCommand implements CommandExecutor {
                             player.sendMessage(MenuMine.color("&3/Menu open [menu] &fOpen a specify menu."));
                         }
                         player.sendMessage(MenuMine.color("&b«-----------------»"));
+                    }else if (args[0].equalsIgnoreCase("language")){
+                        player.sendMessage(MenuMine.color("&3/Menu language &f[lang] select your language"));
+                    }else if (args[0].equalsIgnoreCase("list")){
+                        if (player.hasPermission("menuMine.developer")){
+                            player.sendMessage(MenuMine.color("&a&m---------------------"));
+                            try {
+                                for (MenuModel model : MenuModel.getModels().values())
+                                    player.sendMessage(MenuMine.color("&f - "+model.getName() + "&2 "+model.getId()));
+                            } catch (Exception error) {
+                                player.sendMessage(MenuMine.color("&eError!"));
+                            }
+                            player.sendMessage(MenuMine.color("&a&m---------------------"));
+                        }
                     }else if (args[0].equalsIgnoreCase("reload")){
                         if (player.hasPermission("menuMine.developer")){
                             try {
@@ -66,15 +80,19 @@ public class MenuCommand implements CommandExecutor {
                 case 2:
                     if (args[0].equalsIgnoreCase("create")){
                         if (player.hasPermission("menuMine.developer")){
-                            PlayerManager.playersReadyToInteract.put(player.getUniqueId(), args[1]);
-                            player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).chestClick));
+                            if (!MenuModel.getModels().containsKey(args[1])){
+                                PlayerManager.playersReadyToInteract.put(player.getUniqueId(), args[1]);
+                                player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).chestClick));
+                            }else player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).failed));
                         }
                     }
                     else if (args[0].equalsIgnoreCase("open"))
                         MenuManager.openModel(args[1],player);
                     else if (args[0].equalsIgnoreCase("language") || args[0].equalsIgnoreCase("lang")){
-                        PlayerManager.playerLanguages.put(player.getUniqueId(),args[1]);
-                        player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).successfully));
+                        if (PlayerManager.langs.containsKey(args[1])){
+                            PlayerManager.playerLanguages.put(player.getUniqueId(),args[1]);
+                            player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).successfully));
+                        }else player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).failed));
                     }
             }
 
@@ -85,7 +103,7 @@ public class MenuCommand implements CommandExecutor {
                         Storage.refreshData();
                         MenuManager.loadMenu();
                         MenuManager.loadMenuModels();
-                        System.out.println("Done!");
+                        System.out.println("[MenuMine] Done!");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -99,7 +117,7 @@ public class MenuCommand implements CommandExecutor {
                     Player player = Bukkit.getPlayer(args[1]);
                     assert player != null;
                     PlayerManager.playerLanguages.put(player.getUniqueId(),args[2]);
-                    System.out.println("Done!");
+                    System.out.println("[MenuMine] Done!");
                 }
             }
         }

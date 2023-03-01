@@ -44,7 +44,8 @@ public class Listeners implements org.bukkit.event.Listener {
                         PlayerManager.playersReadyToInteract.containsKey(player.getUniqueId())){
                     String modelName = PlayerManager.playersReadyToInteract.get(player.getUniqueId());
                     MenuModel model = new MenuModel();
-                    model.setDisplayName(modelName);
+                    model.setDisplayName("&a"+modelName);
+                    model.setName(modelName);
                     model.setId(modelName);
                     Chest chest = (Chest) e.getClickedBlock().getState();
                     model.setInv(chest.getBlockInventory());
@@ -58,7 +59,7 @@ public class Listeners implements org.bukkit.event.Listener {
                         MenuManager.saveMenuModel(model);
                         player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).successfully));
                     }catch (Exception error){
-                        System.out.println(ChatColor.YELLOW + "Something went wrong while saving model to yml file! please content to plugin developer:\n"+
+                        System.out.println(ChatColor.YELLOW + "[MenuMine] Something went wrong while saving model to yml file! please content to plugin developer:\n"+
                                 "-> Cause:"+error.getCause()+"\n"+
                                 "-> Message:"+error.getMessage());
                         player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).failed));
@@ -113,8 +114,12 @@ public class Listeners implements org.bukkit.event.Listener {
                     if (nbt.hasTag("FilterItem")) e.setCancelled(true);
                     if (!e.isCancelled()){
                         MenuModel model = MenuModel.getModels().get(nbt.getString("MenuModel"));
-                        for (MenuAction action : model.getActions(e.getSlot()))
-                            try {action.run((Player) e.getWhoClicked());}catch (Exception ignored){}
+                        try {
+                            for (MenuAction action : model.getActions(e.getSlot()))
+                                try {action.run((Player) e.getWhoClicked());}catch (Exception ignored){}
+                        }catch (Exception ignored){
+                        }
+
 
                         e.setCancelled(true);
                     }

@@ -18,10 +18,14 @@ public class Storage {
 
     public static void loadData(){
         try {
-            for (String uuid : yamlConfiguration.getStringList("players"))
-                try {
-                    disabledMenus.add(UUID.fromString(uuid));
-                }catch (Exception error){System.out.println(uuid + " is not a valid uuid form.");}
+            try {
+                for (String uuid : yamlConfiguration.getStringList("players"))
+                    try {disabledMenus.add(UUID.fromString(uuid));}catch (Exception error){System.out.println("[MenuMine] "+uuid + " is not a valid uuid form.");}
+
+            }catch (Exception error){
+                disabledMenus.clear();
+                disabledMenus.add(UUID.randomUUID());
+            }
 
             for (String uuid : yamlConfiguration.getConfigurationSection("languages").getKeys(false)){
                 UUID id = UUID.fromString(uuid);
@@ -29,20 +33,17 @@ public class Storage {
             }
 
         }catch (Exception ignored){
-            System.out.println("Couldn't find any data's");
+            System.out.println("[MenuMine] Couldn't find any data's");
         }
     }
 
     public static void refreshData() throws IOException {
         List<String> list = yamlConfiguration.getStringList("players");
-        for (UUID uuid : disabledMenus){
-            list.add(uuid.toString());
-        }
+        for (UUID uuid : disabledMenus) list.add(uuid.toString());
         for (UUID player : PlayerManager.playerLanguages.keySet())
             yamlConfiguration.set("languages."+player.toString(),PlayerManager.playerLanguages.get(player));
         yamlConfiguration.set("players",list);
         yamlConfiguration.save(file);
-
     }
 
     public static void setupDataStorageYml(){

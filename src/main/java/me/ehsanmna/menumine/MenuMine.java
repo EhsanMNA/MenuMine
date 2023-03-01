@@ -64,7 +64,7 @@ public final class MenuMine extends JavaPlugin {
         if (logMessages){
             getServer().getConsoleSender().sendMessage(color("&4----------=======----------"));
             getServer().getConsoleSender().sendMessage(color("&cMenuMine has been disabled."));
-            getServer().getConsoleSender().sendMessage(color("&eCreated by EhsanMNA."));
+            getServer().getConsoleSender().sendMessage(color("&eCreated by Love."));
             getServer().getConsoleSender().sendMessage(color("&4----------=======----------"));
         }
 

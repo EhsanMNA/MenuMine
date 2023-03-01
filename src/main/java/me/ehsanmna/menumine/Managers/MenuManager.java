@@ -34,9 +34,6 @@ public class MenuManager {
     public static YamlConfiguration guiYml;
 
     public static void setUp() {
-        loadMenu();
-        loadMenuModels();
-        PlayerManager.loadMessages();
         try {
             file = new File(MenuMine.getInstance().getDataFolder(), "Menu.yml");
             gui = new File(MenuMine.getInstance().getDataFolder(), "Guis.yml");
@@ -47,7 +44,12 @@ public class MenuManager {
 
             yml = YamlConfiguration.loadConfiguration(file);
             guiYml = YamlConfiguration.loadConfiguration(gui);
-        }catch (IOException ignored){}
+        }catch (IOException error){
+            error.printStackTrace();
+        }
+        loadMenu();
+        loadMenuModels();
+        PlayerManager.loadMessages();
     }
 
     public static void loadMenu(){
@@ -172,6 +174,7 @@ public class MenuManager {
                 }
             }
 
+            model.setName(modelName);
             model.setDisplayName(name);
             model.setId(modelName);
             model.setInv(inventory);
@@ -224,14 +227,25 @@ public class MenuManager {
     public static void saveMenuModel(MenuModel model){
         guiYml.set(model.getId()+".name",model.getDisplayName());
         guiYml.set(model.getId()+".rows",model.getInv().getSize()/9);
-        guiYml.set(model.getId()+".content.game","This model created from game, please config actions and more...");
+        guiYml.set(model.getId()+".game","This model created from game, please config actions and more...");
+        guiYml.createSection(model.getId()+".content");
 
         int slot = 0;
         for (ItemStack itemStack : model.getInv().getContents()){
-            ItemWrapper.wrapItemToPath(guiYml.getConfigurationSection(model.getId()+".content"),itemStack,slot);
+            try{
+                if (itemStack != null) ItemWrapper.wrapItemToPath(guiYml.getConfigurationSection(model.getId()+".content"),itemStack,slot);
+            }catch (NullPointerException e){
+                System.out.println("Error cause of " +e.getCause());
+                System.out.println("> Id: "+model.getId());
+            }
             slot++;
         }
 
+        try {
+            guiYml.save(gui);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         MenuManager.loadMenuModels();
 
 

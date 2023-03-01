@@ -19,8 +19,8 @@ import java.util.List;
 public class ItemWrapper {
 
     public static void wrapItemToPath(ConfigurationSection section,ItemStack item,int slot){
-        section.set(slot +".material", item.getType());
-        section.set(slot +".name", item.getType().name());
+        section.set(slot +".material", item.getType().toString());
+        section.set(slot +".name", item.getItemMeta().getDisplayName());
         section.set(slot +".slot", slot);
         if (item.getItemMeta().hasLore()) section.set(slot +".lore", item.getItemMeta().getLore());
     }
