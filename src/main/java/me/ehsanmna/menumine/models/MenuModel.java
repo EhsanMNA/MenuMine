@@ -1,11 +1,17 @@
 package me.ehsanmna.menumine.models;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.ehsanmna.menumine.Managers.MenuAction;
+import me.ehsanmna.menumine.Managers.Storage;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MenuModel {
 
@@ -58,6 +64,27 @@ public class MenuModel {
     }
 
     public void openMenu(Player player){
+        if (Storage.papiUse){
+            int slot = 0;
+            for (ItemStack item : inv.getContents()){
+                if (item != null || !item.getType().equals(Material.AIR)){
+                    ItemMeta meta = item.getItemMeta();
+                    List<String> lore = meta.getLore();
+                    String name = meta.getDisplayName();
+
+                    meta.setDisplayName(PlaceholderAPI.setPlaceholders(player,name));
+                    int lo = 0;
+                    for (String l : lore){
+                        lore.set(lo,PlaceholderAPI.setPlaceholders(player,l));
+                        lo++;
+                    }
+                    meta.setLore(lore);
+                    item.setItemMeta(meta);
+                    inv.setItem(slot,item);
+                }
+                slot++;
+            }
+        }
         player.openInventory(inv);
     }
 

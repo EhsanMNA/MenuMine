@@ -1,6 +1,12 @@
-version: 1.1
+version: 1.2
 # Only 1.14+
 useSpigotAPI: false
 
 defaultLanguage: 'en'
 logEnableMessages: true
+
+# Interact event used as in game menu creation system + set placeholders when someone opens the menu
+# - if you don't want to use in game menu system & optimize disable this future
+# - if you don't want to use placeholders disable it (it's also optimize the plugin)
+InteractEvent: true
+PlaceholderAPI_support: true

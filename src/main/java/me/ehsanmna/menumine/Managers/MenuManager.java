@@ -235,8 +235,8 @@ public class MenuManager {
             try{
                 if (itemStack != null) ItemWrapper.wrapItemToPath(guiYml.getConfigurationSection(model.getId()+".content"),itemStack,slot);
             }catch (NullPointerException e){
-                System.out.println("Error cause of " +e.getCause());
-                System.out.println("> Id: "+model.getId());
+                if (MenuMine.logMessages) System.out.println("Error cause of " +e.getCause());
+                if (MenuMine.logMessages) System.out.println("> Id: "+model.getId());
             }
             slot++;
         }

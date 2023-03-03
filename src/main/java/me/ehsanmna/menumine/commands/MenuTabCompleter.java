@@ -35,7 +35,7 @@ public class MenuTabCompleter implements TabCompleter {
         }
         if (args.length == 2){
             List<String> tabs = List.of("---");
-            if (args[0].equalsIgnoreCase("language") || args[0].equalsIgnoreCase("lang")) {
+            if (args[0].equalsIgnoreCase("language") || args[0].startsWith("lang")) {
                 assert player != null;
                 if (player.hasPermission("menumine.command.language")) {
                     try {

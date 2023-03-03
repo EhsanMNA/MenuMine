@@ -35,52 +35,6 @@ public class Listeners implements org.bukkit.event.Listener {
     }
 
     @EventHandler
-    public void onInteract(PlayerInteractEvent e){
-        Player player = e.getPlayer();
-        String prefix = PlayerManager.getPlayerLanguage(player).prefix;
-        switch (e.getAction()) {
-            case RIGHT_CLICK_AIR, RIGHT_CLICK_BLOCK -> {
-                if (e.getClickedBlock() != null && e.getClickedBlock().getType() == XMaterial.CHEST.parseMaterial() &&
-                        PlayerManager.playersReadyToInteract.containsKey(player.getUniqueId())){
-                    String modelName = PlayerManager.playersReadyToInteract.get(player.getUniqueId());
-                    MenuModel model = new MenuModel();
-                    model.setDisplayName("&a"+modelName);
-                    model.setName(modelName);
-                    model.setId(modelName);
-                    Chest chest = (Chest) e.getClickedBlock().getState();
-                    model.setInv(chest.getBlockInventory());
-
-                    player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).blockDetection));
-
-                    PlayerManager.playersReadyToInteract.remove(player.getUniqueId());
-                    e.setCancelled(true);
-                    try {
-                        MenuModel.addModel(modelName,model);
-                        MenuManager.saveMenuModel(model);
-                        player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).successfully));
-                    }catch (Exception error){
-                        System.out.println(ChatColor.YELLOW + "[MenuMine] Something went wrong while saving model to yml file! please content to plugin developer:\n"+
-                                "-> Cause:"+error.getCause()+"\n"+
-                                "-> Message:"+error.getMessage());
-                        player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).failed));
-                    }
-                    return;
-                }
-                if (e.getItem() == null || e.getItem().getType() == Material.AIR) return;
-                if (!(e.getItem().getType() == MenuManager.getMenuItem().getType())) return;
-                if ((player.getOpenInventory().getTopInventory() == (player.getInventory()))) return;
-                NBTItem nbt = NBTItemManager.createNBTItem(e.getItem());
-                if (nbt.hasTag("menu")) {
-                    player.openInventory(MenuManager.getGUI());
-                    e.setCancelled(true);
-                }
-            }
-
-        }
-
-    }
-
-    @EventHandler
     public void onDrop(PlayerDropItemEvent e){
         NBTItem nbt = NBTItemManager.createNBTItem(e.getItemDrop().getItemStack());
         if (nbt.hasTag("menu") || nbt.hasTag("MenuItem")) e.setCancelled(true);

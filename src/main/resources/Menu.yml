@@ -143,8 +143,8 @@ menu:
       lore:
         - '&7&n                          '
         - ' '
-        - '&8&lMoney: &f{money}'
-        - '&8&lTokens: &f{token}'
+        - '&8&lMoney: &f%vault_eco_balance_formatted%'
+        - '&8&lTokens: &f%tm_tokens_formatted%'
         - '&7&n                          '
       actions:
         - CANCEL

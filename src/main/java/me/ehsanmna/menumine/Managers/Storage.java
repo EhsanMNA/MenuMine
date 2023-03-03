@@ -11,6 +11,7 @@ import java.util.UUID;
 
 public class Storage {
 
+    public static boolean papiUse = false;
     public static HashSet<UUID> disabledMenus = new HashSet<>();
 
     static YamlConfiguration yamlConfiguration;
@@ -20,7 +21,7 @@ public class Storage {
         try {
             try {
                 for (String uuid : yamlConfiguration.getStringList("players"))
-                    try {disabledMenus.add(UUID.fromString(uuid));}catch (Exception error){System.out.println("[MenuMine] "+uuid + " is not a valid uuid form.");}
+                    try {disabledMenus.add(UUID.fromString(uuid));}catch (Exception error){if (MenuMine.logMessages) System.out.println("[MenuMine] "+uuid + " is not a valid uuid form.");}
 
             }catch (Exception error){
                 disabledMenus.clear();
@@ -33,7 +34,7 @@ public class Storage {
             }
 
         }catch (Exception ignored){
-            System.out.println("[MenuMine] Couldn't find any data's");
+            if (MenuMine.logMessages) System.out.println("[MenuMine] Couldn't find any data's");
         }
     }
 

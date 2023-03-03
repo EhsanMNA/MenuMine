@@ -22,13 +22,14 @@ public class MenuCommand implements CommandExecutor {
             try {
                 prefix = PlayerManager.getPlayerLanguage(player).prefix;
             }catch (Exception error){
-                System.out.println(ChatColor.YELLOW + "Could not find language for "+player.getName()+" setting default language!");
-                String defaultLanguage = MenuMine.getInstance().getConfig().getString("defaultLanguage");
-                System.out.println(ChatColor.YELLOW + "I think default language is "+defaultLanguage+"!");
-                PlayerManager.playerLanguages.put(player.getUniqueId(),defaultLanguage);
-                System.out.println(ChatColor.YELLOW + player.getName() + " is now "+PlayerManager.playerLanguages.get(player.getUniqueId())+" speaker!");
+                if (MenuMine.logMessages){
+                    System.out.println(ChatColor.YELLOW + "Could not find language for "+player.getName()+" setting default language!");
+                    String defaultLanguage = MenuMine.getInstance().getConfig().getString("defaultLanguage");
+                    System.out.println(ChatColor.YELLOW + "I think default language is "+defaultLanguage+"!");
+                    PlayerManager.playerLanguages.put(player.getUniqueId(),defaultLanguage);
+                    System.out.println(ChatColor.YELLOW + player.getName() + " is now "+PlayerManager.playerLanguages.get(player.getUniqueId())+" speaker!");
+                }
             }
-
 
             switch (args.length){
                 case 0:
@@ -103,7 +104,7 @@ public class MenuCommand implements CommandExecutor {
                         Storage.refreshData();
                         MenuManager.loadMenu();
                         MenuManager.loadMenuModels();
-                        System.out.println("[MenuMine] Done!");
+                        if (MenuMine.logMessages) System.out.println("[MenuMine] Done!");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -117,7 +118,7 @@ public class MenuCommand implements CommandExecutor {
                     Player player = Bukkit.getPlayer(args[1]);
                     assert player != null;
                     PlayerManager.playerLanguages.put(player.getUniqueId(),args[2]);
-                    System.out.println("[MenuMine] Done!");
+                    if (MenuMine.logMessages) System.out.println("[MenuMine] Done!");
                 }
             }
         }
