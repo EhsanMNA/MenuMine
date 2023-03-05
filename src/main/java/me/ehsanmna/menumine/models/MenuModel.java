@@ -1,6 +1,5 @@
 package me.ehsanmna.menumine.models;
 
-import me.clip.placeholderapi.PlaceholderAPI;
 import me.ehsanmna.menumine.Managers.MenuAction;
 import me.ehsanmna.menumine.Managers.Storage;
 import org.bukkit.Material;
@@ -12,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class MenuModel {
 
@@ -71,11 +71,10 @@ public class MenuModel {
                     ItemMeta meta = item.getItemMeta();
                     List<String> lore = meta.getLore();
                     String name = meta.getDisplayName();
-
-                    meta.setDisplayName(PlaceholderAPI.setPlaceholders(player,name));
+                    meta.setDisplayName(me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player,name));
                     int lo = 0;
                     for (String l : lore){
-                        lore.set(lo,PlaceholderAPI.setPlaceholders(player,l));
+                        lore.set(lo,me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player,l));
                         lo++;
                     }
                     meta.setLore(lore);
@@ -101,7 +100,11 @@ public class MenuModel {
         return actions.get(slot);
     }
 
-
-
-
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MenuModel menuModel = (MenuModel) o;
+        return Objects.equals(id, menuModel.id) && Objects.equals(name, menuModel.name) && Objects.equals(displayName, menuModel.displayName);
+    }
 }

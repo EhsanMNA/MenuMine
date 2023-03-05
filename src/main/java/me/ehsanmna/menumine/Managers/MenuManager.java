@@ -58,7 +58,7 @@ public class MenuManager {
         yml.options().copyDefaults();
         yml = YamlConfiguration.loadConfiguration(file);
         try {
-            menu = ItemWrapper.wrapItem(yml,yml.getConfigurationSection("menu"));
+            menu = ItemWrapper.wrapItem(yml.getConfigurationSection("menu"));
         }catch (Exception error){
             menu = new ItemStack(Material.STONE);
         }
@@ -72,7 +72,7 @@ public class MenuManager {
         if (yml.contains("menu")){
             for (String itemId : yml.getConfigurationSection("menu.filter").getKeys(false)){
                 ConfigurationSection section = yml.getConfigurationSection("menu.filter."+itemId);
-                ItemStack item= ItemWrapper.wrapItem(yml,section);
+                ItemStack item= ItemWrapper.wrapItem(section);
                 String type = Objects.requireNonNull(section.getString("type")).toLowerCase();
                 switch (type){
                     case "fill":
@@ -89,7 +89,7 @@ public class MenuManager {
 
         for (String itemId : Objects.requireNonNull(yml.getConfigurationSection("menu.items.")).getKeys(false)){
             ConfigurationSection section = yml.getConfigurationSection("menu.items."+itemId);
-            ItemStack item = ItemWrapper.wrapItem(yml,section);
+            ItemStack item = ItemWrapper.wrapItem(section);
             for (String action : yml.getStringList("menu.items." + itemId + ".actions")){
                 String a = "CANCEL";
                 if (action.contains("-")) a = action.split("-")[0];
@@ -124,7 +124,7 @@ public class MenuManager {
             if (menuSection.contains("filter"))
                 for (String filterId : menuSection.getConfigurationSection("filter.").getKeys(false)){
                     ConfigurationSection section = menuSection.getConfigurationSection("filter." + filterId);
-                    ItemStack item = ItemWrapper.wrapItem(guiYml,section);
+                    ItemStack item = ItemWrapper.wrapItem(section);
                     try {
                         NBTItem nbt = NBTItemManager.createNBTItem(item);
                         nbt.setTag("MenuItem",true);
@@ -151,7 +151,7 @@ public class MenuManager {
             ConfigurationSection content = menuSection.getConfigurationSection("content");
             for (String itemId : content.getKeys(false)){
                 ConfigurationSection itemSection = content.getConfigurationSection(itemId);
-                ItemStack item = ItemWrapper.wrapItem(guiYml,itemSection);
+                ItemStack item = ItemWrapper.wrapItem(itemSection);
                 int slot = itemSection.getInt("slot");
                 List<String> actionsId = itemSection.getStringList("actions");
                 try {
@@ -247,7 +247,14 @@ public class MenuManager {
             throw new RuntimeException(e);
         }
         MenuManager.loadMenuModels();
+    }
 
-
+    public static void removeMenuModel(String menu){
+        guiYml.set(menu,null);
+        MenuModel.getModels().remove(menu);
+        try {
+            guiYml.save(gui);
+        } catch (IOException e) {throw new RuntimeException(e);}
+        MenuManager.loadMenuModels();
     }
 }

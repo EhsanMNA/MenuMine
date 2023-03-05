@@ -31,12 +31,12 @@ public final class MenuMine extends JavaPlugin {
 
         if (!getConfig().getString("version").equalsIgnoreCase("1.2")) {
             try {
-                getConfig().addDefault("defaultLanguage","en");
-                getConfig().addDefault("logEnableMessages","true");
-                getConfig().addDefault("version","1.2");
-                getConfig().addDefault("InteractEvent","true");
-                getConfig().addDefault("PlaceholderAPI_support","true");
-                getConfig().save(new File(getDataFolder(),"config.yml"));
+                getConfig().set("defaultLanguage","en");
+                getConfig().set("logEnableMessages","true");
+                getConfig().set("version","1.2");
+                getConfig().set("InteractEvent","true");
+                getConfig().set("PlaceholderAPI_support","true");
+                saveDefaultConfig();
             }catch (Exception ignored){}
         }
         if (getConfig().contains("useSpigotAPI")) NBTItemManager.useSpigotAPI = getConfig().getBoolean("useSpigotAPI");

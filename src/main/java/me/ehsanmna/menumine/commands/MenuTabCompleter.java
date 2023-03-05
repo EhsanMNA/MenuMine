@@ -28,6 +28,7 @@ public class MenuTabCompleter implements TabCompleter {
                 if (player.hasPermission("menumine.command.menulist")) if ("list".startsWith(args[0])) list.add("list");
                 if (player.hasPermission("menumine.command.open")) if ("open".startsWith(args[0])) list.add("open");
                 if (player.hasPermission("menumine.command.create")) if ("create".startsWith(args[0])) list.add("create");
+                if (player.hasPermission("menumine.command.remove")) if ("remove".startsWith(args[0])) list.add("remove");
                 if (player.hasPermission("menumine.command.language")) if ("language".startsWith(args[0])) list.add("language");
             }else if ("open".startsWith(args[0])) list.add("open");
 

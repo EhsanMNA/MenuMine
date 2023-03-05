@@ -86,6 +86,13 @@ public class MenuCommand implements CommandExecutor {
                                 player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).chestClick));
                             }else player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).failed));
                         }
+                    } else if (args[0].equalsIgnoreCase("remove")){
+                        if (player.hasPermission("menuMine.developer")){
+                            if (MenuModel.getModels().containsKey(args[1])){
+                                MenuManager.removeMenuModel(args[1]);
+                                player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).successfully));
+                            }else player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).failed));
+                        }
                     }
                     else if (args[0].equalsIgnoreCase("open"))
                         MenuManager.openModel(args[1],player);
