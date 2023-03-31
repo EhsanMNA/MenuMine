@@ -35,6 +35,10 @@ public class ItemWrapper {
                 try {section.set(slot + "flags",fStr);
                 }catch (IllegalArgumentException ignored){}
         }
+        try {
+            if (item.getItemMeta().hasCustomModelData())
+                section.set(slot +".customModelData", item.getItemMeta().getCustomModelData());
+        }catch (Exception ignored){}
         if (item.getType().equals(XMaterial.PLAYER_HEAD.parseMaterial())) {
             section.set(slot + ".skull",SkullUtils.getSkinValue(item.getItemMeta()));
             section.set(slot +".material", "skull");
@@ -72,7 +76,7 @@ public class ItemWrapper {
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
         meta.setDisplayName(displayName);
-        try {if (section.contains("modeldata"))meta.setCustomModelData(section.getInt("modeldata"));}catch (Exception ignored){}
+        try {if (section.contains("customModelData"))meta.setCustomModelData(section.getInt("customModelData"));}catch (Exception ignored){}
         if (section.contains("lore")) meta.setLore(MenuMine.color(section.getStringList("lore")));
         if (section.contains("glow") && !(item.getType().equals(XMaterial.PLAYER_HEAD.parseMaterial())))
             if (section.getBoolean("glow")){

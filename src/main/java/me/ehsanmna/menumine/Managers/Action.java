@@ -1,5 +1,5 @@
 package me.ehsanmna.menumine.Managers;
 
 public enum Action {
-    COMMAND, MESSAGE, CLOSE, MENU, CANCEL
+    CONSOLE, COMMAND, MESSAGE, CLOSE, MENU, CANCEL, GIVEMONEY, TAKEMONEY, HASMONEY
 }

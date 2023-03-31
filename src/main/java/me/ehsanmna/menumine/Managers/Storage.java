@@ -11,6 +11,7 @@ import java.util.UUID;
 
 public class Storage {
 
+    public static boolean economyUse = false;
     public static boolean papiUse = false;
     public static HashSet<UUID> disabledMenus = new HashSet<>();
 

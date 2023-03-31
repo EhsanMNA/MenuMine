@@ -10,5 +10,6 @@ public class MessageModel {
     public String blockDetection;
     public String failed;
     public String menuExist;
+    public String money;
 
 }

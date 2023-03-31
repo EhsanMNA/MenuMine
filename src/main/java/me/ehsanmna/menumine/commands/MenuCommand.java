@@ -118,9 +118,8 @@ public class MenuCommand implements CommandExecutor {
                 }
             }
             if (args.length == 3){
-                if (args[0].equalsIgnoreCase("open")){
+                if (args[0].equalsIgnoreCase("open"))
                     MenuManager.openModel(args[1],Bukkit.getPlayer(args[2]));
-                }
                 else if (args[0].equalsIgnoreCase("language")){
                     Player player = Bukkit.getPlayer(args[1]);
                     assert player != null;

@@ -1,8 +1,9 @@
 package me.ehsanmna.menumine;
 
 import me.ehsanmna.menumine.Managers.MenuManager;
-import me.ehsanmna.menumine.Managers.PlayerManager;
 import me.ehsanmna.menumine.Managers.Storage;
+import me.ehsanmna.menumine.Managers.economy.EconomyManager;
+import me.ehsanmna.menumine.Managers.economy.EconomyType;
 import me.ehsanmna.menumine.Tasks.RefreshTask;
 import me.ehsanmna.menumine.commands.MenuCommand;
 import me.ehsanmna.menumine.commands.MenuTabCompleter;
@@ -12,9 +13,9 @@ import me.ehsanmna.menumine.nbt.NBTItemManager;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class MenuMine extends JavaPlugin {
 
@@ -24,32 +25,34 @@ public final class MenuMine extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getServer().getConsoleSender().sendMessage(color("&b----------=======----------"));
         long ticks = System.currentTimeMillis();
         main = this;
         saveDefaultConfig();
 
-        if (!getConfig().getString("version").equalsIgnoreCase("1.2")) {
+        if (!Objects.requireNonNull(getConfig().getString("version")).equalsIgnoreCase("1.3")) {
             try {
-                getConfig().set("defaultLanguage","en");
-                getConfig().set("logEnableMessages","true");
-                getConfig().set("version","1.2");
-                getConfig().set("InteractEvent","true");
-                getConfig().set("PlaceholderAPI_support","true");
+                getConfig().set("version","1.3");
+                getConfig().set("Economy.enabled","false");
+                getConfig().set("Economy.type","vault");
                 saveDefaultConfig();
             }catch (Exception ignored){}
         }
         if (getConfig().contains("useSpigotAPI")) NBTItemManager.useSpigotAPI = getConfig().getBoolean("useSpigotAPI");
         if (getConfig().contains("logEnableMessages")) logMessages = getConfig().getBoolean("logEnableMessages");
         if (getConfig().contains("PlaceholderAPI_support")) Storage.papiUse = getConfig().getBoolean("PlaceholderAPI_support");
+        if (getConfig().contains("Economy")) {
+            Storage.papiUse = getConfig().getBoolean("Economy.enabled");
+            EconomyManager.setup(EconomyType.valueOf(Objects.requireNonNull(getConfig().getString("Economy.type")).toUpperCase()));
+        }
 
+        if (logMessages) getServer().getConsoleSender().sendMessage(color("&b----------=======----------"));
         Storage.setupDataStorageYml();
         MenuManager.setUp();
 
         task.run();
 
-        getCommand("menu").setExecutor(new MenuCommand());
-        getCommand("menu").setTabCompleter(new MenuTabCompleter());
+        Objects.requireNonNull(getCommand("menu")).setExecutor(new MenuCommand());
+        Objects.requireNonNull(getCommand("menu")).setTabCompleter(new MenuTabCompleter());
 
         getServer().getPluginManager().registerEvents(new Listeners(),this);
         if (getConfig().getBoolean("InteractEvent")) getServer().getPluginManager().registerEvents(new InteractListener(),this);

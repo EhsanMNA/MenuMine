@@ -7,6 +7,7 @@ fa:
    blockDetection: "&aBlock shenasayi shod shod!"
    failed: "&cAmaliyat anjam nashod! jahat etelae bishtar console check konin."
    menuExist: "&cMenu mored nazar peyda nashod va ya az gabl sakhte shode ast!"
+   money: "&cShoma pool kafi baraye inkar ro nadarid!"
 en:
   prefix: "&bMenuMine&f» "
   visibilityChange: "&aMenu visibility changed!"
@@ -16,3 +17,4 @@ en:
   blockDetection: "&aBlock has been detected!"
   failed: "&cFailed!"
   menuExist: "&cThis menu has been exist!"
+  money: "&cYou don't have enough money to do this!"

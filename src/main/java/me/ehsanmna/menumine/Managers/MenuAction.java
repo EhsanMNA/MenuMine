@@ -1,5 +1,6 @@
 package me.ehsanmna.menumine.Managers;
 
+import me.ehsanmna.menumine.Managers.economy.EconomyManager;
 import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.models.MenuModel;
 import org.bukkit.Bukkit;
@@ -10,26 +11,37 @@ public class MenuAction {
     Action act;
     String action;
 
-    public void run(Player player){
+    public boolean run(Player player){
         switch (act){
-            case MESSAGE : player.sendMessage(MenuMine.color(action)); break;
-            case COMMAND: Bukkit.getServer().dispatchCommand(player,action); break;
-            case CLOSE: player.closeInventory(); break;
+            case HASMONEY: if (!EconomyManager.economy.hasMoney(player, Float.parseFloat(action))){
+                player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).money));
+                return false;
+            }else return true;
+            case GIVEMONEY: EconomyManager.economy.addMoney(player,Float.parseFloat(action)); return true;
+            case TAKEMONEY:
+                if (EconomyManager.economy.hasMoney(player,Float.parseFloat(action))) {
+                    EconomyManager.economy.takeMoney(player,Float.parseFloat(action));
+                    return true;
+                }
+                else return false;
+            case MESSAGE: player.sendMessage(MenuMine.color(action)); return true;
+            case COMMAND: Bukkit.getServer().dispatchCommand(player,action); return true;
+            case CONSOLE: Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),action);
+            case CLOSE: player.closeInventory(); return true;
             case MENU:
                 if (action.equalsIgnoreCase("Main")) {
                     player.closeInventory();
                     MenuManager.open(player);
                 }
-                else {
+                else
                     try {
                         MenuModel model = MenuModel.getModels().get(action);
                         model.openMenu(player);
-                    }catch (Exception error){
-                        player.sendMessage(MenuMine.color("&cThat menu does not exists."));
-                    }
-                }
-                break;
+                    }catch (Exception error){player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).prefix +PlayerManager.getPlayerLanguage(player).failed));}
+
+                return true;
         }
+        return false;
     }
 
 }

@@ -52,8 +52,7 @@ public class Listeners implements org.bukkit.event.Listener {
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent e){
-        if (!MenuManager.isMenuDisabled(e.getPlayer()))
-            MenuManager.setItemToInventory(e.getPlayer());
+        if (!MenuManager.isMenuDisabled(e.getPlayer())) MenuManager.setItemToInventory(e.getPlayer());
     }
 
     @EventHandler
@@ -70,11 +69,8 @@ public class Listeners implements org.bukkit.event.Listener {
                         MenuModel model = MenuModel.getModels().get(nbt.getString("MenuModel"));
                         try {
                             for (MenuAction action : model.getActions(e.getSlot()))
-                                try {action.run((Player) e.getWhoClicked());}catch (Exception ignored){}
-                        }catch (Exception ignored){
-                        }
-
-
+                                try {if (!action.run((Player) e.getWhoClicked())) break;}catch (Exception ignored){}
+                        }catch (Exception ignored){}
                         e.setCancelled(true);
                     }
                 }
@@ -83,15 +79,10 @@ public class Listeners implements org.bukkit.event.Listener {
 
         if (Objects.equals(e.getView().getTopInventory(), MenuManager.getGUI())){
             e.setCancelled(true);
-            if (Objects.equals(e.getClickedInventory(), MenuManager.getGUI())){
-                if (MenuManager.actionsManager.containsKey(e.getSlot())){
-
-                    for (MenuAction action : MenuManager.actionsManager.get(e.getSlot())){
-                        action.run((Player) e.getWhoClicked());
-                    }
-
-                }
-            }
+            if (Objects.equals(e.getClickedInventory(), MenuManager.getGUI()))
+                if (MenuManager.actionsManager.containsKey(e.getSlot()))
+                    for (MenuAction action : MenuManager.actionsManager.get(e.getSlot()))
+                        if (!action.run((Player) e.getWhoClicked())) break;
         }
     }
 

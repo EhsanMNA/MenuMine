@@ -1,9 +1,9 @@
 name: MenuMine
-version: '0.6.4'
+version: '0.7.0'
 main: me.ehsanmna.menumine.MenuMine
 api-version: 1.13
 authors: [ EhsanMNA ]
-softdepend: [PlaceholderAPI]
+softdepend: [PlaceholderAPI,Vault]
 commands:
   menu:
     description: "Open menu - or change setting"

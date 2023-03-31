@@ -69,15 +69,14 @@ public class MenuModel {
             for (ItemStack item : inv.getContents()){
                 if (item != null || !item.getType().equals(Material.AIR)){
                     ItemMeta meta = item.getItemMeta();
-                    List<String> lore = meta.getLore();
                     String name = meta.getDisplayName();
                     meta.setDisplayName(me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player,name));
-                    int lo = 0;
-                    for (String l : lore){
-                        lore.set(lo,me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player,l));
-                        lo++;
-                    }
-                    meta.setLore(lore);
+                    try{
+                        int lo = 0;
+                        List<String> lore = meta.getLore();
+                        for (String l : lore){lore.set(lo,me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player,l));lo++;}
+                        meta.setLore(lore);
+                    }catch (Exception ignored){}
                     item.setItemMeta(meta);
                     inv.setItem(slot,item);
                 }

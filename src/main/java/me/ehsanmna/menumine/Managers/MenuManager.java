@@ -2,6 +2,7 @@ package me.ehsanmna.menumine.Managers;
 
 import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.models.MenuModel;
+import me.ehsanmna.menumine.models.MessageModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
 import org.bukkit.Bukkit;
@@ -69,7 +70,7 @@ public class MenuManager {
             inventory = Bukkit.createInventory(null, InventoryType.CHEST, MenuMine.color("&b&lMenu"));
         }
         // filter
-        if (yml.contains("menu")){
+        if (yml.contains("menu.filter")){
             for (String itemId : yml.getConfigurationSection("menu.filter").getKeys(false)){
                 ConfigurationSection section = yml.getConfigurationSection("menu.filter."+itemId);
                 ItemStack item= ItemWrapper.wrapItem(section);
@@ -220,7 +221,7 @@ public class MenuManager {
     }
     public static void openModel(String modelName,Player player){
         MenuModel model = MenuModel.getModels().get(modelName);
-        if (model == null) {player.sendMessage(MenuMine.color("&cThat menu does not exists.")); return;}
+        if (model == null) {player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).menuExist)); return;}
         model.openMenu(player);
     }
 
