@@ -26,13 +26,13 @@ public class Storage {
 
             }catch (Exception error){
                 disabledMenus.clear();
-                disabledMenus.add(UUID.randomUUID());
+                if (MenuMine.logMessages) System.out.println("[MenuMine] Something went wrong while loading data's!");
             }
-
-            for (String uuid : yamlConfiguration.getConfigurationSection("languages").getKeys(false)){
-                UUID id = UUID.fromString(uuid);
-                PlayerManager.playerLanguages.put(id,yamlConfiguration.getString("languages."+uuid));
-            }
+            if (yamlConfiguration.contains("languages"))
+                for (String uuid : yamlConfiguration.getConfigurationSection("languages").getKeys(false)){
+                    UUID id = UUID.fromString(uuid);
+                    PlayerManager.playerLanguages.put(id,yamlConfiguration.getString("languages."+uuid));
+                }
 
         }catch (Exception ignored){
             if (MenuMine.logMessages) System.out.println("[MenuMine] Couldn't find any data's");
@@ -41,7 +41,7 @@ public class Storage {
 
     public static void refreshData() throws IOException {
         List<String> list = yamlConfiguration.getStringList("players");
-        for (UUID uuid : disabledMenus) list.add(uuid.toString());
+        for (UUID uuid : disabledMenus) if(!list.contains(uuid.toString())) list.add(uuid.toString());
         for (UUID player : PlayerManager.playerLanguages.keySet())
             yamlConfiguration.set("languages."+player.toString(),PlayerManager.playerLanguages.get(player));
         yamlConfiguration.set("players",list);

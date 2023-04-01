@@ -73,7 +73,9 @@ public class MenuCommand implements CommandExecutor {
                                 MenuManager.loadMenuModels();
                                 player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).reload));
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).failed));
+                                if (MenuMine.logMessages) System.out.println("Something went wring while reloading the plugin! This is not a bug or plugin problem! check your configs and reload again");
+                                if (MenuMine.logMessages) e.printStackTrace();
                             }
                         }
                     }

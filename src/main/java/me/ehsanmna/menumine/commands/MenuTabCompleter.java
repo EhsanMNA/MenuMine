@@ -6,6 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +17,7 @@ public class MenuTabCompleter implements TabCompleter {
     List<String> tabs = Arrays.asList("help","toggle");
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender,@NotNull Command command,@NotNull String alias, String[] args) {
         List<String> list = new ArrayList<>();
         Player player = null;
         if (sender instanceof Player)  player = (Player) sender;
@@ -35,19 +36,19 @@ public class MenuTabCompleter implements TabCompleter {
             return list;
         }
         if (args.length == 2){
-            List<String> tabs = List.of("---");
+            List<String> tabs = new ArrayList<>(List.of("---"));
             if (args[0].equalsIgnoreCase("language") || args[0].startsWith("lang")) {
                 assert player != null;
                 if (player.hasPermission("menumine.command.language")) {
                     try {
                         for (String language : PlayerManager.langs.keySet())
-                            if (language.startsWith(args[1])) list.add(language);
+                            if (language.startsWith(args[1])) tabs.add(language);
                     }catch ( NullPointerException e){
-                        list.add("language name");
+                        tabs.add("language name");
                     }
                 }
             else if (args[0].equalsIgnoreCase("open"))
-                for (Player p : Bukkit.getOnlinePlayers()) if (p.getName().startsWith(args[1])) list.add(p.getName());
+                for (Player p : Bukkit.getOnlinePlayers()) if (p.getName().startsWith(args[1])) tabs.add(p.getName());
             }
             return tabs;
         }
