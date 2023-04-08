@@ -29,6 +29,8 @@ public class MenuManager {
     static Inventory inventory;
     public static HashMap<Integer, List<MenuAction>> actionsManager = new HashMap<>();
 
+    public static int slot = 8;
+
     static File file;
     static File gui;
     public static YamlConfiguration yml;
@@ -51,6 +53,7 @@ public class MenuManager {
         loadMenu();
         loadMenuModels();
         PlayerManager.loadMessages();
+        slot = yml.getInt("menu.slot");
     }
 
     public static void loadMenu(){
@@ -213,7 +216,6 @@ public class MenuManager {
     }
 
     public static void setItemToInventory(Player player){
-        int slot = yml.getInt("menu.slot");
         NBTItem nbt = NBTItemManager.createNBTItem(menu);
         nbt.setTag("menu","menu");
         nbt.save();

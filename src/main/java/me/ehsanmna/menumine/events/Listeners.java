@@ -14,17 +14,20 @@ import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Objects;
 
 public class Listeners implements org.bukkit.event.Listener {
-
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e){
@@ -58,9 +61,11 @@ public class Listeners implements org.bukkit.event.Listener {
     @EventHandler
     public void onCLick(InventoryClickEvent e){
         ItemStack item = e.getCurrentItem();
+        Player player = (Player) e.getWhoClicked();
         try {
             NBTItem nbt = null;
-            if (item != null && !item.getType().equals(Material.AIR)) nbt = NBTItemManager.createNBTItem(item);
+            try {if (item != null) nbt = NBTItemManager.createNBTItem(item);
+            }catch (Exception ignored){}
             if (nbt != null){
                 if (nbt.hasTag("menu")) e.setCancelled(true);
                 if (nbt.hasTag("MenuItem")){
@@ -69,12 +74,17 @@ public class Listeners implements org.bukkit.event.Listener {
                         MenuModel model = MenuModel.getModels().get(nbt.getString("MenuModel"));
                         try {
                             for (MenuAction action : model.getActions(e.getSlot()))
-                                try {if (!action.run((Player) e.getWhoClicked())) break;}catch (Exception ignored){}
+                                try {if (!action.run(player)) break;}catch (Exception ignored){}
                         }catch (Exception ignored){}
                         e.setCancelled(true);
                     }
                 }
             }
+            if (item.getType().equals(Material.AIR))
+                if (!MenuManager.isMenuDisabled(player))
+                    if (e.getHotbarButton() == MenuManager.slot && e.getSlotType().equals(InventoryType.SlotType.QUICKBAR)
+                            && e.getClick().equals(ClickType.NUMBER_KEY) && e.getAction().equals(InventoryAction.HOTBAR_SWAP)) e.setCancelled(true);
+
         }catch (Exception error){error.printStackTrace();}
 
         if (Objects.equals(e.getView().getTopInventory(), MenuManager.getGUI())){
@@ -82,7 +92,7 @@ public class Listeners implements org.bukkit.event.Listener {
             if (Objects.equals(e.getClickedInventory(), MenuManager.getGUI()))
                 if (MenuManager.actionsManager.containsKey(e.getSlot()))
                     for (MenuAction action : MenuManager.actionsManager.get(e.getSlot()))
-                        if (!action.run((Player) e.getWhoClicked())) break;
+                        if (!action.run(player)) break;
         }
     }
 

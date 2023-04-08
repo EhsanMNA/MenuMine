@@ -1,6 +1,8 @@
 package me.ehsanmna.menumine.commands;
 
+import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.Managers.PlayerManager;
+import me.ehsanmna.menumine.models.MenuModel;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -36,7 +38,7 @@ public class MenuTabCompleter implements TabCompleter {
             return list;
         }
         if (args.length == 2){
-            List<String> tabs = new ArrayList<>(List.of("---"));
+            List<String> tabs = new ArrayList<>();
             if (args[0].equalsIgnoreCase("language") || args[0].startsWith("lang")) {
                 assert player != null;
                 if (player.hasPermission("menumine.command.language")) {
@@ -47,9 +49,8 @@ public class MenuTabCompleter implements TabCompleter {
                         tabs.add("language name");
                     }
                 }
-            else if (args[0].equalsIgnoreCase("open"))
-                for (Player p : Bukkit.getOnlinePlayers()) if (p.getName().startsWith(args[1])) tabs.add(p.getName());
-            }
+            } else if (args[0].equalsIgnoreCase("open"))
+                for (MenuModel m : MenuModel.getModels().values()) if (m.getName().startsWith(args[1])) tabs.add(m.getName());
             return tabs;
         }
         return list;
