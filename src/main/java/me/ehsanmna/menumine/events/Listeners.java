@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
@@ -58,7 +59,7 @@ public class Listeners implements org.bukkit.event.Listener {
         if (!MenuManager.isMenuDisabled(e.getPlayer())) MenuManager.setItemToInventory(e.getPlayer());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onCLick(InventoryClickEvent e){
         ItemStack item = e.getCurrentItem();
         Player player = (Player) e.getWhoClicked();
@@ -80,20 +81,22 @@ public class Listeners implements org.bukkit.event.Listener {
                     }
                 }
             }
+            assert item != null;
             if (item.getType().equals(Material.AIR))
-                if (!MenuManager.isMenuDisabled(player))
-                    if (e.getHotbarButton() == MenuManager.slot && e.getSlotType().equals(InventoryType.SlotType.QUICKBAR)
-                            && e.getClick().equals(ClickType.NUMBER_KEY) && e.getAction().equals(InventoryAction.HOTBAR_SWAP)) e.setCancelled(true);
+                if (e.getHotbarButton() == MenuManager.slot && e.getSlotType().equals(InventoryType.SlotType.QUICKBAR)
+                        && e.getClick().equals(ClickType.NUMBER_KEY) && e.getAction().equals(InventoryAction.HOTBAR_SWAP)) e.setCancelled(true);
 
-        }catch (Exception error){error.printStackTrace();}
+        }catch (Exception ignored){}
 
-        if (Objects.equals(e.getView().getTopInventory(), MenuManager.getGUI())){
-            e.setCancelled(true);
-            if (Objects.equals(e.getClickedInventory(), MenuManager.getGUI()))
-                if (MenuManager.actionsManager.containsKey(e.getSlot()))
-                    for (MenuAction action : MenuManager.actionsManager.get(e.getSlot()))
-                        if (!action.run(player)) break;
-        }
+        try{
+            if (Objects.equals(e.getView().getTopInventory(), MenuManager.getGUI())){
+                e.setCancelled(true);
+                if (Objects.equals(e.getClickedInventory(), MenuManager.getGUI()))
+                    if (MenuManager.actionsManager.containsKey(e.getSlot()))
+                        for (MenuAction action : MenuManager.actionsManager.get(e.getSlot()))
+                            if (!action.run(player)) break;
+            }
+        }catch (Exception ignored){}
     }
 
 

@@ -8,10 +8,17 @@ import me.ehsanmna.menumine.commands.MenuCommand;
 import me.ehsanmna.menumine.commands.MenuTabCompleter;
 import me.ehsanmna.menumine.events.InteractListener;
 import me.ehsanmna.menumine.events.Listeners;
+import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
 import me.ehsanmna.menumine.utils.Metrics;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,11 +36,14 @@ public final class MenuMine extends JavaPlugin {
         main = this;
         saveDefaultConfig();
 
-        if (!Objects.requireNonNull(getConfig().getString("version")).equalsIgnoreCase("1.4"))
+        if (!Objects.requireNonNull(getConfig().getString("version")).equalsIgnoreCase("1.5"))
             try {
-                getConfig().set("version","1.4");
-                getConfig().set("Metrics",true);
+                getConfig().set("version","1.5");
+                getConfig().set("MenuItemCheckerTask.enabled",true);
+                getConfig().set("MenuItemCheckerTask.time",60);
+                getConfig().options().copyDefaults();
                 saveDefaultConfig();
+                saveConfig();
             }catch (Exception ignored){}
         if (getConfig().contains("useSpigotAPI")) NBTItemManager.useSpigotAPI = getConfig().getBoolean("useSpigotAPI");
         if (getConfig().contains("logEnableMessages")) logMessages = getConfig().getBoolean("logEnableMessages");
@@ -42,12 +52,15 @@ public final class MenuMine extends JavaPlugin {
             Storage.papiUse = getConfig().getBoolean("Economy.enabled");
             EconomyManager.setup(EconomyType.valueOf(Objects.requireNonNull(getConfig().getString("Economy.type")).toUpperCase()));
         }
+        if (getConfig().contains("MenuItemCheckerTask"))
+            if (getConfig().getBoolean("MenuItemCheckerTask.enabled")) runCheckerTask(getConfig().getInt("MenuItemCheckerTask.time"));
+
 
         if (logMessages) getServer().getConsoleSender().sendMessage(color("&b----------=======----------"));
         try {
             if (getConfig().getBoolean("Metrics")) {
                 new Metrics(this,18107);
-                System.out.println(color("&3Metrics has been set."));
+                if (logMessages) System.out.println(color("&3Metrics has been set."));
             }
         }catch (Exception ignored){}
         Storage.setupDataStorageYml();
@@ -78,7 +91,6 @@ public final class MenuMine extends JavaPlugin {
         if (logMessages){
             getServer().getConsoleSender().sendMessage(color("&4----------=======----------"));
             getServer().getConsoleSender().sendMessage(color("&cMenuMine has been disabled."));
-            getServer().getConsoleSender().sendMessage(color("&eCreated by Love."));
             getServer().getConsoleSender().sendMessage(color("&4----------=======----------"));
         }
 
@@ -97,5 +109,27 @@ public final class MenuMine extends JavaPlugin {
 
     public static MenuMine getInstance(){
         return main;
+    }
+
+    public void runCheckerTask(int seconds){
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+            for (Player player : Bukkit.getOnlinePlayers()){
+                Inventory inv = player.getInventory();
+                try {
+                    int slot = 0;
+                    for (ItemStack i : inv.getContents()){
+                        if (i == null || i.getType().equals(Material.AIR)) {slot++; continue;}
+                        if (i.getType().equals(MenuManager.getMenuItem().getType())){
+                            NBTItem nbtItem = NBTItemManager.createNBTItem(i);
+                            if (nbtItem.hasTag("menu")) {
+                                inv.remove(i);
+                                MenuManager.setItemToInventory(player);
+                            }
+                        }
+                        slot++;
+                    }
+                }catch (Exception ignored){}
+            }
+        }, 0,seconds);
     }
 }

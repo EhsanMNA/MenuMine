@@ -1,4 +1,4 @@
-version: "1.4"
+version: "1.5"
 # Only 1.14+
 useSpigotAPI: false
 
@@ -14,3 +14,11 @@ PlaceholderAPI_support: true
 Economy:
   enabled: false
   type: vault
+
+#this repeater task checks players inventory every several times
+#if menuMine items is moved in inventory, this will be fix it
+#Note: this task can reduce server optimizations!
+MenuItemCheckerTask:
+  enabled: true
+  #time per seconds
+  time: 60
