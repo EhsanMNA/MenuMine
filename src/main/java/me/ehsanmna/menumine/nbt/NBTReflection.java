@@ -1,8 +1,13 @@
 package me.ehsanmna.menumine.nbt;
 
+import me.ehsanmna.menumine.Managers.MenuManager;
+import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.utils.ReflectionUtils;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -41,7 +46,7 @@ public class NBTReflection implements NBTItem{
                             nmsNBTTagCompoundClass.getDeclaredConstructor().newInstance();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            MenuManager.logError(e);
         }
     }
 
@@ -53,7 +58,7 @@ public class NBTReflection implements NBTItem{
             Object obj = method.invoke(null,nmsItemStack);
             return (ItemStack) obj;
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
+            MenuManager.logError(e);
         }
         return null;
     }
@@ -67,9 +72,7 @@ public class NBTReflection implements NBTItem{
             hasTag.setAccessible(true);
             return (boolean) hasTag.invoke(nmsNBTTagCompound,tag);
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(nmsNBTTagCompound);
-            System.out.println(nmsItemStack);
+            MenuManager.logError(e);
         }
         return false;
     }

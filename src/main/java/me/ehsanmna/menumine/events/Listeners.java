@@ -7,10 +7,7 @@ import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.models.MenuModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
-import me.ehsanmna.menumine.utils.XMaterial;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,11 +17,9 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Objects;
 

@@ -15,6 +15,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -259,5 +260,24 @@ public class MenuManager {
             guiYml.save(gui);
         } catch (IOException e) {throw new RuntimeException(e);}
         MenuManager.loadMenuModels();
+    }
+
+    public static void logError(String error){
+        try {
+            File file = new File(MenuMine.getInstance().getDataFolder(),"Errors.txt");
+            if (!file.exists()) MenuMine.getInstance().saveResource("Errors.txt",false);
+            FileWriter myWriter = new FileWriter("Errors.txt");
+            myWriter.write(error + "\n");
+            myWriter.close();
+        }catch (Exception ignored){}
+    }
+    public static void logError(Exception error){
+        try {
+            File file = new File(MenuMine.getInstance().getDataFolder(),"Errors.txt");
+            if (!file.exists()) MenuMine.getInstance().saveResource("Errors.txt",false);
+            FileWriter myWriter = new FileWriter("Errors.txt");
+            myWriter.write(error.toString() + "\n");
+            myWriter.close();
+        }catch (Exception ignored){}
     }
 }
