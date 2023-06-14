@@ -8,9 +8,11 @@ import me.ehsanmna.menumine.commands.MenuCommand;
 import me.ehsanmna.menumine.commands.MenuTabCompleter;
 import me.ehsanmna.menumine.events.InteractListener;
 import me.ehsanmna.menumine.events.Listeners;
+import me.ehsanmna.menumine.events.SwapHandItemsEvent;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
 import me.ehsanmna.menumine.utils.Metrics;
+import me.ehsanmna.menumine.utils.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -70,7 +72,10 @@ public final class MenuMine extends JavaPlugin {
         Objects.requireNonNull(getCommand("menu")).setTabCompleter(new MenuTabCompleter());
 
         getServer().getPluginManager().registerEvents(new Listeners(),this);
-        if (getConfig().getBoolean("InteractEvent")) getServer().getPluginManager().registerEvents(new InteractListener(),this);
+        if (getConfig().getBoolean("InteractEvent")) {
+            getServer().getPluginManager().registerEvents(new InteractListener(),this);
+            if (ReflectionUtils.supports(9)) getServer().getPluginManager().registerEvents(new SwapHandItemsEvent(),this);
+        }
 
         if (logMessages){
             long finalTicks = System.currentTimeMillis();

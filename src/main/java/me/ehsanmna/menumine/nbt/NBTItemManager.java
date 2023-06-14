@@ -13,16 +13,9 @@ public class NBTItemManager {
     }
 
     static NBTItem getNewItem(ItemStack item){
-        NBTItem i = null;
-        String version = Bukkit.getServer().getVersion();
-        if (version.contains("1.17")) if (useSpigotAPI) i = new SpigotNBT(); else i = new NBTv17(item);
-        else if (version.contains("1.16")) if (useSpigotAPI) i = new SpigotNBT(); else i = new NBTv16(item);
-        else if (version.contains("1.12")) i = new NBTv12(item);
-        else if (version.contains("1.8")) i = new NBTv8(item);
-
-        if (i == null) if (useSpigotAPI && ReflectionUtils.supports(14)) i = new SpigotNBT(); else i = new NBTReflection(item);
-
-        return i;
+        //NBTItem i = null;
+        //String version = Bukkit.getServer().getVersion();
+        return new NBTReflection(item);
     }
 
 }

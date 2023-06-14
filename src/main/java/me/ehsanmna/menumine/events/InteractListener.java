@@ -65,11 +65,5 @@ public class InteractListener implements Listener {
 
     }
 
-    @EventHandler
-    public void onItemHandChangeEvent(PlayerSwapHandItemsEvent e){
-        if (NBTItemManager.createNBTItem(e.getMainHandItem()).hasTag("menu") || NBTItemManager.createNBTItem(e.getOffHandItem()).hasTag("menu"))
-            e.setCancelled(true);
-    }
-
 
 }

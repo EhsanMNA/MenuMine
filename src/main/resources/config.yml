@@ -1,6 +1,5 @@
 version: "1.5"
 # Only 1.14+
-useSpigotAPI: false
 
 defaultLanguage: 'en'
 logEnableMessages: true

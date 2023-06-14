@@ -1,6 +1,7 @@
 package me.ehsanmna.menumine.Managers;
 
 import me.ehsanmna.menumine.MenuMine;
+import me.ehsanmna.menumine.utils.ReflectionUtils;
 import me.ehsanmna.menumine.utils.SkullUtils;
 import me.ehsanmna.menumine.utils.XMaterial;
 import org.bukkit.Material;
@@ -76,7 +77,7 @@ public class ItemWrapper {
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
         meta.setDisplayName(displayName);
-        try {if (section.contains("customModelData"))meta.setCustomModelData(section.getInt("customModelData"));}catch (Exception ignored){}
+        try {if (section.contains("customModelData") && ReflectionUtils.supports(16))meta.setCustomModelData(section.getInt("customModelData"));}catch (Exception ignored){}
         if (section.contains("lore")) meta.setLore(MenuMine.color(section.getStringList("lore")));
         if (section.contains("glow") && !(item.getType().equals(XMaterial.PLAYER_HEAD.parseMaterial())))
             if (section.getBoolean("glow")){

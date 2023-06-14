@@ -6,7 +6,7 @@
 
     <groupId>me.ehsanmna</groupId>
     <artifactId>MenuMine</artifactId>
-    <version>0.7.3</version>
+    <version>0.7.5</version>
     <packaging>jar</packaging>
 
     <name>MenuMine</name>
@@ -19,12 +19,8 @@
     </properties>
 
 
-
     <repositories>
-        <repository>
-            <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
+
         <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
@@ -47,36 +43,8 @@
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-16</artifactId>
-            <version>1.16</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/spigot-1.16.5.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-12</artifactId>
-            <version>1.12</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/spigot-1.12.2.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.8-R0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-9</artifactId>
-            <version>1.9</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/spigot-1.9.4-R0.1-SNAPSHOT-latest.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-17</artifactId>
-            <version>1.17</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/spigot-1.17.1.jar</systemPath>
+            <version>1.16.4-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>me.clip</groupId>
