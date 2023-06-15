@@ -5,6 +5,7 @@ import me.ehsanmna.menumine.models.MenuModel;
 import me.ehsanmna.menumine.models.MessageModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
+import me.ehsanmna.menumine.utils.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -206,6 +207,7 @@ public class MenuManager {
 
     public static void open(Player player){
         player.openInventory(inventory);
+        XSound.play(player,MenuMine.getInstance().getConfig().getString("MenuOpenSound"));
     }
 
     public static ItemStack getMenuItem(){

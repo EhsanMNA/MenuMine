@@ -1,5 +1,5 @@
 name: MenuMine
-version: '0.7.5'
+version: '0.8.0'
 main: me.ehsanmna.menumine.MenuMine
 api-version: 1.13
 authors: [ EhsanMNA ]

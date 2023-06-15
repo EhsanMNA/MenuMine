@@ -49,6 +49,7 @@ public class MenuCommand implements CommandExecutor {
                         if (player.hasPermission("mineMenu.developer")) {
                             player.sendMessage(MenuMine.color("&3/Menu reload &fReload plugin."));
                             player.sendMessage(MenuMine.color("&3/Menu create [name] &fCreate a new menu."));
+                            player.sendMessage(MenuMine.color("&7After you created a gui, click on a chest to wrap the gui!"));
                             player.sendMessage(MenuMine.color("&3/Menu open [menu] &fOpen a specify menu."));
                         }
                         player.sendMessage(MenuMine.color("&b«-----------------»"));

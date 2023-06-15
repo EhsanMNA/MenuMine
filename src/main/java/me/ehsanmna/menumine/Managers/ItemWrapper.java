@@ -24,7 +24,7 @@ public class ItemWrapper {
     public static void wrapItemToPath(ConfigurationSection section,ItemStack item,int slot){
         section.set(slot +".material", item.getType().toString());
         section.set(slot +".name", Objects.requireNonNull(item.getItemMeta()).getDisplayName());
-        try {if (item.getItemMeta().hasCustomModelData()) section.set(slot +".modeldata", item.getItemMeta().getCustomModelData());}
+        try {if (ReflectionUtils.supports(16)) if (item.getItemMeta().hasCustomModelData()) section.set(slot +".modeldata", item.getItemMeta().getCustomModelData());}
         catch (Exception ignored){}
         section.set(slot +".slot", slot);
         if (item.getItemMeta().hasLore()) section.set(slot +".lore", item.getItemMeta().getLore());
@@ -32,9 +32,8 @@ public class ItemWrapper {
             Set<ItemFlag> flags = item.getItemMeta().getItemFlags();
             List<String> fStr = new ArrayList<>();
             for (ItemFlag f : flags) fStr.add(f.toString());
-            for (ItemFlag flag : flags)
-                try {section.set(slot + "flags",fStr);
-                }catch (IllegalArgumentException ignored){}
+            try {section.set(slot + ".flags",fStr);
+            }catch (IllegalArgumentException ignored){}
         }
         try {
             if (item.getItemMeta().hasCustomModelData())
@@ -44,7 +43,6 @@ public class ItemWrapper {
             section.set(slot + ".skull",SkullUtils.getSkinValue(item.getItemMeta()));
             section.set(slot +".material", "skull");
         }
-
     }
 
     public static ItemStack wrapItem(ConfigurationSection section){

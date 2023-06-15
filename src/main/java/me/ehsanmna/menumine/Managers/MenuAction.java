@@ -3,6 +3,9 @@ package me.ehsanmna.menumine.Managers;
 import me.ehsanmna.menumine.Managers.economy.EconomyManager;
 import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.models.MenuModel;
+import me.ehsanmna.menumine.utils.ActionBar;
+import me.ehsanmna.menumine.utils.Titles;
+import me.ehsanmna.menumine.utils.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -13,6 +16,15 @@ public class MenuAction {
 
     public boolean run(Player player){
         switch (act){
+            case ACTIONBAR:
+                ActionBar.sendActionBar(player,MenuMine.color(action));
+                return true;
+            case SOUND:  XSound.play(player,action); return true;
+            case TITLE:
+                String title = action.split("-")[0];
+                String subTitle = action.split("-")[1];
+                Titles.sendTitle(player,MenuMine.color(title),MenuMine.color(subTitle));
+                return true;
             case HASMONEY: if (!EconomyManager.economy.hasMoney(player, Float.parseFloat(action))){
                 player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).money));
                 return false;
@@ -22,8 +34,7 @@ public class MenuAction {
                 if (EconomyManager.economy.hasMoney(player,Float.parseFloat(action))) {
                     EconomyManager.economy.takeMoney(player,Float.parseFloat(action));
                     return true;
-                }
-                else return false;
+                } else return false;
             case MESSAGE: player.sendMessage(MenuMine.color(action)); return true;
             case COMMAND: Bukkit.getServer().dispatchCommand(player,action); return true;
             case CONSOLE: Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),action);

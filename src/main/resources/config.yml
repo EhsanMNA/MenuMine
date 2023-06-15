@@ -1,5 +1,6 @@
-version: "1.5"
-# Only 1.14+
+version: "1.6"
+# set it to none if you don't want to play any sounds!
+MenuOpenSound: ITEM_CROSSBOW_HIT
 
 defaultLanguage: 'en'
 logEnableMessages: true

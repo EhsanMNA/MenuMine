@@ -38,16 +38,16 @@ public final class MenuMine extends JavaPlugin {
         main = this;
         saveDefaultConfig();
 
-        if (!Objects.requireNonNull(getConfig().getString("version")).equalsIgnoreCase("1.5"))
+        if (!Objects.requireNonNull(getConfig().getString("version")).equalsIgnoreCase("1.6"))
             try {
-                getConfig().set("version","1.5");
-                getConfig().set("MenuItemCheckerTask.enabled",true);
-                getConfig().set("MenuItemCheckerTask.time",60);
+                getConfig().set("version","1.6");
+                getConfig().set("MenuOpenSound","ITEM_CROSSBOW_HIT");
+                if (!getConfig().isSet("MenuItemCheckerTask.enabled"))getConfig().set("MenuItemCheckerTask.enabled",true);
+                if (!getConfig().isSet("MenuItemCheckerTask.time"))getConfig().set("MenuItemCheckerTask.time",60);
                 getConfig().options().copyDefaults();
                 saveDefaultConfig();
                 saveConfig();
             }catch (Exception ignored){}
-        if (getConfig().contains("useSpigotAPI")) NBTItemManager.useSpigotAPI = getConfig().getBoolean("useSpigotAPI");
         if (getConfig().contains("logEnableMessages")) logMessages = getConfig().getBoolean("logEnableMessages");
         if (getConfig().contains("PlaceholderAPI_support")) Storage.papiUse = getConfig().getBoolean("PlaceholderAPI_support");
         if (getConfig().contains("Economy")) {
@@ -62,7 +62,7 @@ public final class MenuMine extends JavaPlugin {
         try {
             if (getConfig().getBoolean("Metrics")) {
                 new Metrics(this,18107);
-                if (logMessages) System.out.println(color("&3Metrics has been set."));
+                if (logMessages) System.out.println(color("&3 Metrics has been set."));
             }
         }catch (Exception ignored){}
         Storage.setupDataStorageYml();
@@ -123,6 +123,7 @@ public final class MenuMine extends JavaPlugin {
                 try {
                     int slot = 0;
                     for (ItemStack i : inv.getContents()){
+                        if (slot == MenuManager.slot) {slot++; continue;}
                         if (i == null || i.getType().equals(Material.AIR)) {slot++; continue;}
                         if (i.getType().equals(MenuManager.getMenuItem().getType())){
                             NBTItem nbtItem = NBTItemManager.createNBTItem(i);

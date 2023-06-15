@@ -1,9 +1,15 @@
 package me.ehsanmna.menumine.utils;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * <b>ReflectionUtils</b> - Reflection handler for NMS and CraftBukkit.<br>
@@ -47,6 +53,46 @@ public final class ReflectionUtils {
     public static final String
             CRAFTBUKKIT = "org.bukkit.craftbukkit." + VERSION + '.',
             NMS = supports(17) ? "net.minecraft." : "net.minecraft.server." + VERSION + '.';
+    /**
+     * A nullable public accessible field only available in {@code EntityPlayer}.
+     * This can be null if the player is offline.
+     */
+    private static final MethodHandle PLAYER_CONNECTION;
+    /**
+     * Responsible for getting the NMS handler {@code EntityPlayer} object for the player.
+     * {@code CraftPlayer} is simply a wrapper for {@code EntityPlayer}.
+     * Used mainly for handling packet related operations.
+     * <p>
+     * This is also where the famous player {@code ping} field comes from!
+     */
+    private static final MethodHandle GET_HANDLE;
+    /**
+     * Sends a packet to the player's client through a {@code NetworkManager} which
+     * is where {@code ProtocolLib} controls packets by injecting channels!
+     */
+    private static final MethodHandle SEND_PACKET;
+
+    static {
+        Class<?> entityPlayer = getNMSClass("server.level", "EntityPlayer");
+        Class<?> craftPlayer = getCraftClass("entity.CraftPlayer");
+        Class<?> playerConnection = getNMSClass("server.network", "PlayerConnection");
+
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        MethodHandle sendPacket = null;
+        MethodHandle getHandle = null;
+        MethodHandle connection = null;
+        try {
+            connection = lookup.findGetter(entityPlayer, supports(17) ? "b" : "playerConnection", playerConnection);
+            getHandle = lookup.findVirtual(craftPlayer, "getHandle", MethodType.methodType(entityPlayer));
+            sendPacket = lookup.findVirtual(playerConnection, "sendPacket", MethodType.methodType(void.class, getNMSClass("network.protocol", "Packet")));
+        } catch (NoSuchMethodException | NoSuchFieldException | IllegalAccessException ex) {
+            ex.printStackTrace();
+        }
+
+        PLAYER_CONNECTION = connection;
+        SEND_PACKET = sendPacket;
+        GET_HANDLE = getHandle;
+    }
 
     private ReflectionUtils() {}
 
@@ -89,6 +135,72 @@ public final class ReflectionUtils {
             return Class.forName(NMS + name);
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Sends a packet to the player asynchronously if they're online.
+     * Packets are thread-safe.
+     *
+     * @param player  the player to send the packet to.
+     * @param packets the packets to send.
+     *
+     * @return the async thread handling the packet.
+     * @see #sendPacketSync(Player, Object...)
+     * @since 1.0.0
+     */
+    @Nonnull
+    public static CompletableFuture<Void> sendPacket(@Nonnull Player player, @Nonnull Object... packets) {
+        return CompletableFuture.runAsync(() -> sendPacketSync(player, packets))
+                .exceptionally(ex -> {
+                    ex.printStackTrace();
+                    return null;
+                });
+    }
+
+    /**
+     * Sends a packet to the player synchronously if they're online.
+     *
+     * @param player  the player to send the packet to.
+     * @param packets the packets to send.
+     *
+     * @see #sendPacket(Player, Object...)
+     * @since 2.0.0
+     */
+    public static void sendPacketSync(@Nonnull Player player, @Nonnull Object... packets) {
+        try {
+            Object handle = GET_HANDLE.invoke(player);
+            Object connection = PLAYER_CONNECTION.invoke(handle);
+
+            // Checking if the connection is not null is enough. There is no need to check if the player is online.
+            if (connection != null) {
+                for (Object packet : packets) SEND_PACKET.invoke(connection, packet);
+            }
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
+
+    @Nullable
+    public static Object getHandle(@Nonnull Player player) {
+        Objects.requireNonNull(player, "Cannot get handle of null player");
+        try {
+            return GET_HANDLE.invoke(player);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            return null;
+        }
+    }
+
+    @Nullable
+    public static Object getConnection(@Nonnull Player player) {
+        Objects.requireNonNull(player, "Cannot get connection of null player");
+        try {
+            Object handle = GET_HANDLE.invoke(player);
+            return PLAYER_CONNECTION.invoke(handle);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
             return null;
         }
     }

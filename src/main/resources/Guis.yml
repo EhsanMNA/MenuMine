@@ -64,6 +64,9 @@ Warps:
       actions:
         - COMMAND-warp market
         - CANCEL
+        - CLOSE
+        - TITLE-teleported to market warp-Have fun!
+      # separate title and subtitle with '-'
     island:
       material: GRASS_BLOCK
       name: '&f&l&nMy island'
@@ -73,3 +76,6 @@ Warps:
       actions:
         - COMMAND-is go
         - CANCEL
+        - CLOSE
+        - ACTIONBAR-&cWelcome to your home sir!
+        - SOUND-BLOCK_NETHER_ORE_HIT
