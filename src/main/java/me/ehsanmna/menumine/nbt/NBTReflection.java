@@ -1,14 +1,9 @@
 package me.ehsanmna.menumine.nbt;
 
 import me.ehsanmna.menumine.Managers.MenuManager;
-import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.utils.ReflectionUtils;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,21 +24,24 @@ public class NBTReflection implements NBTItem{
             method.setAccessible(true);
             nmsItemStack = method.invoke(null,item);
 
-            Field tagComponent = ReflectionUtils.supports(17) ?
+            Field tagComponent = ReflectionUtils.supports(19) ?
+                    nmsItemStack.getClass().getDeclaredField("v"): ReflectionUtils.supports(17) ?
                     nmsItemStack.getClass().getDeclaredField("u"):
                     nmsItemStack.getClass().getDeclaredField("tag");
             tagComponent.setAccessible(true);
 
-            Method getOrCreateTag = ReflectionUtils.supports(18) ?
+            Method getOrCreateTag = ReflectionUtils.supports(20) ?
+                    nmsItemStack.getClass().getDeclaredMethod("w"):
+                    ReflectionUtils.supports(19) ?
+                    nmsItemStack.getClass().getDeclaredMethod("v"):
+                    ReflectionUtils.supports(18) ?
                     nmsItemStack.getClass().getDeclaredMethod("u"):
                     ReflectionUtils.supports(16) ?nmsItemStack.getClass().getDeclaredMethod("getOrCreateTag"):
                             nmsItemStack.getClass().getDeclaredMethod("getTag");
             getOrCreateTag.setAccessible(true);
 
 
-            nmsNBTTagCompound = tagComponent.get(nmsItemStack) != null ? getOrCreateTag.invoke(nmsItemStack) :
-                    ReflectionUtils.supports(16) ? getOrCreateTag.invoke(nmsItemStack) :
-                            nmsNBTTagCompoundClass.getDeclaredConstructor().newInstance();
+            nmsNBTTagCompound = getOrCreateTag.invoke(nmsItemStack);
 
         } catch (Exception e) {
             MenuManager.logError(e);
@@ -87,7 +85,7 @@ public class NBTReflection implements NBTItem{
             setTag.invoke(nmsNBTTagCompound,key,value);
             setTag.setAccessible(false);
         } catch (Exception e) {
-            e.printStackTrace();
+            MenuManager.logError(e);
         }
     }
 
@@ -101,7 +99,7 @@ public class NBTReflection implements NBTItem{
             setTag.invoke(nmsNBTTagCompound,key,value);
             setTag.setAccessible(false);
         } catch (Exception e) {
-            e.printStackTrace();
+            MenuManager.logError(e);
         }
     }
 
@@ -115,7 +113,7 @@ public class NBTReflection implements NBTItem{
             setTag.invoke(nmsNBTTagCompound,key,value);
             setTag.setAccessible(false);
         } catch (Exception e) {
-            e.printStackTrace();
+            MenuManager.logError(e);
         }
     }
 
@@ -129,7 +127,7 @@ public class NBTReflection implements NBTItem{
             setTag.invoke(nmsNBTTagCompound,key,value);
             setTag.setAccessible(false);
         } catch (Exception e) {
-            e.printStackTrace();
+            MenuManager.logError(e);
         }
     }
 
@@ -143,7 +141,7 @@ public class NBTReflection implements NBTItem{
             setTag.invoke(nmsNBTTagCompound,key,value);
             setTag.setAccessible(false);
         } catch (Exception e) {
-            e.printStackTrace();
+            MenuManager.logError(e);
         }
     }
 
@@ -156,7 +154,7 @@ public class NBTReflection implements NBTItem{
             setTag.setAccessible(true);
             return setTag.invoke(nmsNBTTagCompound,key);
         } catch (Exception e) {
-            e.printStackTrace();
+            MenuManager.logError(e);
         }
         return null;
     }
@@ -170,7 +168,7 @@ public class NBTReflection implements NBTItem{
             get.setAccessible(true);
             return (String) get.invoke(nmsNBTTagCompound,key);
         } catch (Exception e) {
-            e.printStackTrace();
+            MenuManager.logError(e);
         }
         return null;
     }
@@ -184,7 +182,7 @@ public class NBTReflection implements NBTItem{
             get.setAccessible(true);
             return (int) get.invoke(nmsNBTTagCompound,key);
         } catch (Exception e) {
-            e.printStackTrace();
+            MenuManager.logError(e);
         }
         return 0;
     }
@@ -198,7 +196,7 @@ public class NBTReflection implements NBTItem{
             get.setAccessible(true);
             return (boolean) get.invoke(nmsNBTTagCompound,key);
         } catch (Exception e) {
-            e.printStackTrace();
+            MenuManager.logError(e);
         }
         return false;
     }
@@ -212,7 +210,7 @@ public class NBTReflection implements NBTItem{
             get.setAccessible(true);
             return (float) get.invoke(nmsNBTTagCompound,key);
         } catch (Exception e) {
-            e.printStackTrace();
+            MenuManager.logError(e);
         }
         return 0;
     }
@@ -226,7 +224,7 @@ public class NBTReflection implements NBTItem{
             get.setAccessible(true);
             return (double) get.invoke(nmsNBTTagCompound,key);
         } catch (Exception e) {
-            e.printStackTrace();
+            MenuManager.logError(e);
         }
         return 0;
     }
@@ -241,7 +239,7 @@ public class NBTReflection implements NBTItem{
             setTag.invoke(nmsItemStack,nmsNBTTagCompound);
             setTag.setAccessible(false);
         } catch (Exception e) {
-            e.printStackTrace();
+            MenuManager.logError(e);
         }
     }
 }
