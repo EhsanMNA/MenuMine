@@ -1,5 +1,6 @@
 package me.ehsanmna.menumine;
 
+import me.ehsanmna.menumine.Managers.MenuAction;
 import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.Managers.Storage;
 import me.ehsanmna.menumine.Managers.economy.EconomyManager;
@@ -32,26 +33,18 @@ public final class MenuMine extends JavaPlugin {
     public static boolean logMessages = true;
     static MenuMine main = null;
 
+    public static List<MenuAction> mainActions = new ArrayList<>();
+
     @Override
     public void onEnable() {
         long ticks = System.currentTimeMillis();
         main = this;
         saveDefaultConfig();
 
-        if (!Objects.requireNonNull(getConfig().getString("version")).equalsIgnoreCase("1.6"))
-            try {
-                getConfig().set("version","1.6");
-                getConfig().set("MenuOpenSound","ITEM_CROSSBOW_HIT");
-                if (!getConfig().isSet("MenuItemCheckerTask.enabled"))getConfig().set("MenuItemCheckerTask.enabled",true);
-                if (!getConfig().isSet("MenuItemCheckerTask.time"))getConfig().set("MenuItemCheckerTask.time",60);
-                getConfig().options().copyDefaults();
-                saveDefaultConfig();
-                saveConfig();
-            }catch (Exception ignored){}
         if (getConfig().contains("logEnableMessages")) logMessages = getConfig().getBoolean("logEnableMessages");
         if (getConfig().contains("PlaceholderAPI_support")) Storage.papiUse = getConfig().getBoolean("PlaceholderAPI_support");
         if (getConfig().contains("Economy")) {
-            Storage.papiUse = getConfig().getBoolean("Economy.enabled");
+            Storage.economyUse = getConfig().getBoolean("Economy.enabled");
             EconomyManager.setup(EconomyType.valueOf(Objects.requireNonNull(getConfig().getString("Economy.type")).toUpperCase()));
         }
         if (getConfig().contains("MenuItemCheckerTask"))
@@ -110,6 +103,10 @@ public final class MenuMine extends JavaPlugin {
             list.add(color(str));
         }
         return list;
+    }
+    public static void sendMessages(Player player,List<String> messages){
+        for (String message : messages)
+            player.sendMessage(color(message));
     }
 
     public static MenuMine getInstance(){

@@ -25,11 +25,14 @@ public class PlayerManager {
         for (String lang : yml.getKeys(false)){
             ConfigurationSection language = yml.getConfigurationSection(lang);
             MessageModel model = new MessageModel();
-            for (String messageName : language.getKeys(false)) for (Field msgField : model.getClass().getFields())
+            for (String messageName : language.getKeys(false)){
+                if (language.isList(messageName)) continue;
+                for (Field msgField : model.getClass().getFields())
                     if (msgField.getName().equalsIgnoreCase(messageName))
-                        try {
-                            msgField.set(model,language.getString(messageName));
+                        try {msgField.set(model,language.getString(messageName));
                         } catch (IllegalAccessException e) {throw new RuntimeException(e);}
+            }
+            model.help = language.getStringList("help");
             langs.put(lang,model);
         }
 

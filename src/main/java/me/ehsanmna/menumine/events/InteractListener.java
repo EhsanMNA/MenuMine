@@ -1,5 +1,6 @@
 package me.ehsanmna.menumine.events;
 
+import me.ehsanmna.menumine.Managers.MenuAction;
 import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.Managers.PlayerManager;
 import me.ehsanmna.menumine.MenuMine;
@@ -14,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
 public class InteractListener implements Listener {
 
@@ -56,7 +56,7 @@ public class InteractListener implements Listener {
                 if ((player.getOpenInventory().getTopInventory() == (player.getInventory()))) return;
                 NBTItem nbt = NBTItemManager.createNBTItem(e.getItem());
                 if (nbt.hasTag("menu")) {
-                    player.openInventory(MenuManager.getGUI());
+                    for (MenuAction action : MenuMine.mainActions) action.run(player,MenuManager.getMenuItem());
                     e.setCancelled(true);
                 }
             }

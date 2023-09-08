@@ -1,5 +1,6 @@
 package me.ehsanmna.menumine.commands;
 
+import me.ehsanmna.menumine.Managers.MenuAction;
 import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.Managers.PlayerManager;
 import me.ehsanmna.menumine.Managers.Storage;
@@ -33,7 +34,7 @@ public class MenuCommand implements CommandExecutor {
 
             switch (args.length){
                 case 0:
-                    MenuManager.open(player);
+                    for (MenuAction action : MenuMine.mainActions) action.run(player,MenuManager.getMenuItem());
                     break;
                 case 1:
                     if (args[0].equalsIgnoreCase("toggle")){
@@ -42,17 +43,7 @@ public class MenuCommand implements CommandExecutor {
                         }else MenuManager.disableMenu(player);
                         player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).visibilityChange));
                     }else if (args[0].equalsIgnoreCase("help")){
-                        player.sendMessage(MenuMine.color("&b«-----------------»"));
-                        player.sendMessage(MenuMine.color("&3/Menu &fOpen menu gui"));
-                        player.sendMessage(MenuMine.color("&3/Menu toggle &fDisable/enable menu in inventory"));
-                        player.sendMessage(MenuMine.color("&3/Menu language &f[lang] select your language"));
-                        if (player.hasPermission("mineMenu.developer")) {
-                            player.sendMessage(MenuMine.color("&3/Menu reload &fReload plugin."));
-                            player.sendMessage(MenuMine.color("&3/Menu create [name] &fCreate a new menu."));
-                            player.sendMessage(MenuMine.color("&7After you created a gui, click on a chest to wrap the gui!"));
-                            player.sendMessage(MenuMine.color("&3/Menu open [menu] &fOpen a specify menu."));
-                        }
-                        player.sendMessage(MenuMine.color("&b«-----------------»"));
+                        MenuMine.sendMessages(player,PlayerManager.getPlayerLanguage(player).help);
                     }else if (args[0].equalsIgnoreCase("language")){
                         player.sendMessage(MenuMine.color("&3/Menu language &f[lang] select your language"));
                     }else if (args[0].equalsIgnoreCase("list")){

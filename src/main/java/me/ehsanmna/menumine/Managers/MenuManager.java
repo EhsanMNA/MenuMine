@@ -1,8 +1,8 @@
 package me.ehsanmna.menumine.Managers;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.models.MenuModel;
-import me.ehsanmna.menumine.models.MessageModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
 import me.ehsanmna.menumine.utils.XSound;
@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -113,6 +114,14 @@ public class MenuManager {
             }
             inventory.setItem(yml.getInt("menu.items." + itemId + ".slot"),item);
         }
+
+        for (String actions : yml.getStringList("menu.actions")){
+            MenuAction menuAction = new MenuAction();
+            String actionEnumId = actions.split("-")[0];
+            menuAction.act = Action.valueOf(actionEnumId);
+            menuAction.action = actions.replaceAll(actionEnumId + "-","");
+            MenuMine.mainActions.add(menuAction);
+        }
         Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&7[&f"+(System.currentTimeMillis()-time) +"ms&7]&bSuccessfully loaded &3Main model&b."));
     }
 
@@ -206,7 +215,7 @@ public class MenuManager {
     }
 
     public static void open(Player player){
-        player.openInventory(inventory);
+        player.openInventory(setPlaceholders(inventory,player,MenuMine.color(yml.getString("menu.name"))));
         XSound.play(player,MenuMine.getInstance().getConfig().getString("MenuOpenSound"));
     }
 
@@ -262,6 +271,25 @@ public class MenuManager {
             guiYml.save(gui);
         } catch (IOException e) {throw new RuntimeException(e);}
         MenuManager.loadMenuModels();
+    }
+
+    public static Inventory setPlaceholders(Inventory inventory, Player player,String name){
+        Inventory gui = Bukkit.createInventory(null,inventory.getSize(),name);
+        for (int i = 0; i < inventory.getSize(); i++){
+            try {
+                ItemStack item = gui.getItem(i);
+                if (item == null) continue;
+                if (item.getType().equals(Material.AIR)) continue;
+                ItemMeta meta = item.getItemMeta();
+                meta.setDisplayName(MenuMine.color(PlaceholderAPI.setPlaceholders(player,meta.getDisplayName())));
+                List<String> pL = new ArrayList<>();
+                for (String l : meta.getLore()) pL.add(MenuMine.color(PlaceholderAPI.setPlaceholders(player,l)));
+                meta.setLore(pL);
+                item.setItemMeta(meta);
+                gui.setItem(i,item);
+            }catch (Exception ignored){}
+        }
+        return gui;
     }
 
     public static void logError(String error){

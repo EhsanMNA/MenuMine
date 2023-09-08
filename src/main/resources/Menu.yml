@@ -8,6 +8,9 @@ menu:
     - '&eIf you do not want menu item in inventory just type /menu toggle'
   slot: 8
   customModelData: 0
+  # Action run when clicken on menu item!
+  actions:
+    - 'MENU-Main'
   filter:
     black:
       material: BLACK_STAINED_GLASS_PANE
