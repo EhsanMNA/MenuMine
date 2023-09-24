@@ -41,16 +41,9 @@ public class MenuAction {
             case CONSOLE: Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),action.replace("%player%", player.getName()));
             case CLOSE: player.closeInventory(); return true;
             case MENU:
-                if (action.equalsIgnoreCase("Main")) {
-                    player.closeInventory();
-                    MenuManager.open(player);
-                }
-                else
-                    try {
-                        MenuModel model = MenuModel.getModels().get(action);
-                        model.openMenu(player);
-                    }catch (Exception error){player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).prefix +PlayerManager.getPlayerLanguage(player).failed));}
-
+                try {
+                    MenuModel.getModels().get(action).openMenu(player);
+                }catch (Exception error){player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).prefix +PlayerManager.getPlayerLanguage(player).failed));}
                 return true;
 
             /*case IF:

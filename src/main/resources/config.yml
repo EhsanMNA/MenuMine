@@ -1,6 +1,4 @@
-version: "1.6"
-# set it to none if you don't want to play any sounds!
-MenuOpenSound: ITEM_CROSSBOW_HIT
+version: "1.7"
 
 defaultLanguage: 'en'
 logEnableMessages: true
@@ -11,6 +9,15 @@ Metrics: true
 InteractEvent: true
 PlaceholderAPI_support: true
 
+# Available NBT systems:
+# - madeIn (Reflection)
+# - RTag (Url: https://github.com/saicone/rtag) require to be install! use this for mojang mapping servers or if madeIn has problems on your server
+# - NBTAPI (Url: https://www.spigotmc.org/resources/nbt-api.7939/) popular minecraft nbt api, need installation! (Or if any plugins shaded the nbtAPI, does not require!)
+NBTSystem: madeIn
+
+# Available Economy systems:
+# - Vault
+# - TokenManager
 Economy:
   enabled: false
   type: vault

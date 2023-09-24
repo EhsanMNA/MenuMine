@@ -42,6 +42,7 @@ public final class MenuMine extends JavaPlugin {
         saveDefaultConfig();
 
         if (getConfig().contains("logEnableMessages")) logMessages = getConfig().getBoolean("logEnableMessages");
+        if (getConfig().contains("NBTSystem")) NBTItemManager.nbtSystem = getConfig().getString("NBTSystem");
         if (getConfig().contains("PlaceholderAPI_support")) Storage.papiUse = getConfig().getBoolean("PlaceholderAPI_support");
         if (getConfig().contains("Economy")) {
             Storage.economyUse = getConfig().getBoolean("Economy.enabled");
@@ -55,7 +56,7 @@ public final class MenuMine extends JavaPlugin {
         try {
             if (getConfig().getBoolean("Metrics")) {
                 new Metrics(this,18107);
-                if (logMessages) System.out.println(color("&3 Metrics has been set."));
+                if (logMessages) getServer().getConsoleSender().sendMessage(color("&3 Metrics has been set."));
             }
         }catch (Exception ignored){}
         Storage.setupDataStorageYml();

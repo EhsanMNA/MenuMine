@@ -61,12 +61,14 @@ public class ItemWrapper {
                     SkullUtils.applySkin(meta, skullId);
                     item.setItemMeta(meta);
                 }
-            } else if(materialStr.equalsIgnoreCase("potion"))
+            }
+            else if(materialStr.equalsIgnoreCase("potion")){
                 item = getPotionItemStack(XMaterial.valueOf(materialStr).parseMaterial(),
                         PotionType.valueOf(section.getString("potion")),
                         Integer.parseInt(Objects.requireNonNull(section.getString("level"))),
                         false, false);
-            else item = XMaterial.valueOf(materialStr.toUpperCase()).parseItem();
+            }
+            else {item = XMaterial.valueOf(materialStr.toUpperCase()).parseItem();}
         }catch (Exception error){
             item = XMaterial.STONE.parseItem();
         }

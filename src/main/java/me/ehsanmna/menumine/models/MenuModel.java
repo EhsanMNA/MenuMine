@@ -2,6 +2,7 @@ package me.ehsanmna.menumine.models;
 
 import me.ehsanmna.menumine.Managers.MenuAction;
 import me.ehsanmna.menumine.Managers.Storage;
+import me.ehsanmna.menumine.utils.XSound;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -22,6 +23,7 @@ public class MenuModel {
     String name;
     String displayName;
     HashMap<Integer, ArrayList<MenuAction>> actions = new HashMap<>();
+    XSound openSound;
 
     public static HashMap<String, MenuModel> getModels() {
         return models;
@@ -64,6 +66,7 @@ public class MenuModel {
     }
 
     public void openMenu(Player player){
+        if (openSound != null) openSound.play(player);
         if (Storage.papiUse){
             int slot = 0;
             for (ItemStack item : inv.getContents()){

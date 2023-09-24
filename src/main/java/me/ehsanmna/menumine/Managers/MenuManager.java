@@ -64,63 +64,14 @@ public class MenuManager {
         actionsManager.clear();
         yml.options().copyDefaults();
         yml = YamlConfiguration.loadConfiguration(file);
-        try {
-            menu = ItemWrapper.wrapItem(yml.getConfigurationSection("menu"));
-        }catch (Exception error){
-            menu = new ItemStack(Material.STONE);
-        }
-        // inventory
-        try {
-            inventory = Bukkit.createInventory(null, yml.getInt("menu.rows") * 9,MenuMine.color(yml.getString("menu.name")));
-        }catch (Exception error){
-            inventory = Bukkit.createInventory(null, InventoryType.CHEST, MenuMine.color("&b&lMenu"));
-        }
-        // filter
-        if (yml.contains("menu.filter")){
-            for (String itemId : yml.getConfigurationSection("menu.filter").getKeys(false)){
-                ConfigurationSection section = yml.getConfigurationSection("menu.filter."+itemId);
-                ItemStack item= ItemWrapper.wrapItem(section);
-                String type = Objects.requireNonNull(section.getString("type")).toLowerCase();
-                switch (type){
-                    case "fill":
-                        for (int slot = 0; slot < inventory.getSize(); slot++)
-                            if (inventory.getItem(slot) == null || inventory.getItem(slot).getType().equals(Material.AIR)) inventory.setItem(slot,item);
-                        break;
-                    case "slot":
-                        for (int slot : section.getIntegerList("slots")) inventory.setItem(slot,item);
-                        break;
-                }
-            }
-        }
-
-
-        for (String itemId : Objects.requireNonNull(yml.getConfigurationSection("menu.items.")).getKeys(false)){
-            ConfigurationSection section = yml.getConfigurationSection("menu.items."+itemId);
-            ItemStack item = ItemWrapper.wrapItem(section);
-            for (String action : yml.getStringList("menu.items." + itemId + ".actions")){
-                String a = "CANCEL";
-                if (action.contains("-")) a = action.split("-")[0];
-                Action act = Action.valueOf(a);
-                MenuAction action1 = new MenuAction();
-                action1.act = act;
-                action1.action = action.strip().replaceAll(a + "-", "");
-                if (actionsManager.containsKey(yml.getInt("menu.items." + itemId + ".slot"))){
-                    actionsManager.get(yml.getInt("menu.items." + itemId + ".slot")).add(action1);
-                }else {
-                    List<MenuAction> actions = new ArrayList<>();
-                    actions.add(action1);
-                    actionsManager.put(yml.getInt("menu.items." + itemId + ".slot"),actions);
-                }
-            }
-            inventory.setItem(yml.getInt("menu.items." + itemId + ".slot"),item);
-        }
-
-        for (String actions : yml.getStringList("menu.actions")){
-            MenuAction menuAction = new MenuAction();
-            String actionEnumId = actions.split("-")[0];
-            menuAction.act = Action.valueOf(actionEnumId);
-            menuAction.action = actions.replaceAll(actionEnumId + "-","");
-            MenuMine.mainActions.add(menuAction);
+        try {menu = ItemWrapper.wrapItem(yml.getConfigurationSection("menu"));
+        }catch (Exception error){menu = new ItemStack(Material.STONE);}
+        for (String actionId : yml.getConfigurationSection("menu").getStringList("actions")){
+            MenuAction action = new MenuAction();
+            String actionEnumId = actionId.split("-")[0];
+            action.act = Action.valueOf(actionEnumId);
+            action.action = actionId.replaceAll(actionEnumId + "-","");
+            MenuMine.mainActions.add(action);
         }
         Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&7[&f"+(System.currentTimeMillis()-time) +"ms&7]&bSuccessfully loaded &3Main model&b."));
     }
@@ -162,7 +113,6 @@ public class MenuManager {
                             break;
                     }
                 }
-
             ConfigurationSection content = menuSection.getConfigurationSection("content");
             for (String itemId : content.getKeys(false)){
                 ConfigurationSection itemSection = content.getConfigurationSection(itemId);
@@ -215,8 +165,7 @@ public class MenuManager {
     }
 
     public static void open(Player player){
-        player.openInventory(setPlaceholders(inventory,player,MenuMine.color(yml.getString("menu.name"))));
-        XSound.play(player,MenuMine.getInstance().getConfig().getString("MenuOpenSound"));
+        openModel("main",player);
     }
 
     public static ItemStack getMenuItem(){
@@ -271,25 +220,6 @@ public class MenuManager {
             guiYml.save(gui);
         } catch (IOException e) {throw new RuntimeException(e);}
         MenuManager.loadMenuModels();
-    }
-
-    public static Inventory setPlaceholders(Inventory inventory, Player player,String name){
-        Inventory gui = Bukkit.createInventory(null,inventory.getSize(),name);
-        for (int i = 0; i < inventory.getSize(); i++){
-            try {
-                ItemStack item = gui.getItem(i);
-                if (item == null) continue;
-                if (item.getType().equals(Material.AIR)) continue;
-                ItemMeta meta = item.getItemMeta();
-                meta.setDisplayName(MenuMine.color(PlaceholderAPI.setPlaceholders(player,meta.getDisplayName())));
-                List<String> pL = new ArrayList<>();
-                for (String l : meta.getLore()) pL.add(MenuMine.color(PlaceholderAPI.setPlaceholders(player,l)));
-                meta.setLore(pL);
-                item.setItemMeta(meta);
-                gui.setItem(i,item);
-            }catch (Exception ignored){}
-        }
-        return gui;
     }
 
     public static void logError(String error){

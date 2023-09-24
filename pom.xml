@@ -6,7 +6,7 @@
 
     <groupId>me.ehsanmna</groupId>
     <artifactId>MenuMine</artifactId>
-    <version>0.9.1</version>
+    <version>1.0-BETA</version>
     <packaging>jar</packaging>
 
     <name>MenuMine</name>
@@ -62,6 +62,30 @@
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
             <version>3.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.saicone.rtag</groupId>
+            <artifactId>rtag</artifactId>
+            <version>1.4.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.saicone.rtag</groupId>
+            <artifactId>rtag-item</artifactId>
+            <version>1.4.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api-plugin</artifactId>
+            <version>2.12.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.Realizedd</groupId>
+            <artifactId>TokenManager</artifactId>
+            <version>3.2.4</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
