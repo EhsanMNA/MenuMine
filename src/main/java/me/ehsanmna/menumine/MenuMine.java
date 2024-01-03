@@ -21,7 +21,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,12 +50,11 @@ public final class MenuMine extends JavaPlugin {
         if (getConfig().contains("MenuItemCheckerTask"))
             if (getConfig().getBoolean("MenuItemCheckerTask.enabled")) runCheckerTask(getConfig().getInt("MenuItemCheckerTask.time"));
 
-
         if (logMessages) getServer().getConsoleSender().sendMessage(color("&b----------=======----------"));
         try {
             if (getConfig().getBoolean("Metrics")) {
                 new Metrics(this,18107);
-                if (logMessages) getServer().getConsoleSender().sendMessage(color("&3 Metrics has been set."));
+                if (logMessages) getServer().getConsoleSender().sendMessage(color("&3 Metrics has been enabled."));
             }
         }catch (Exception ignored){}
         Storage.setupDataStorageYml();
@@ -75,7 +73,7 @@ public final class MenuMine extends JavaPlugin {
             long finalTicks = System.currentTimeMillis();
             getServer().getConsoleSender().sendMessage(color("&b----------=======----------"));
             getServer().getConsoleSender().sendMessage(color("&3MenuMine has been enabled."));
-            getServer().getConsoleSender().sendMessage(color("&9" + (finalTicks - ticks) + "ms&3 take to load the plugin."));
+            getServer().getConsoleSender().sendMessage(color("&9" + (finalTicks - ticks) + "ms&3 took to load the plugin."));
             getServer().getConsoleSender().sendMessage(color("&b----------=======----------"));
         }
 
@@ -100,9 +98,7 @@ public final class MenuMine extends JavaPlugin {
     }
     public static List<String> color(List<String> messages){
         List<String> list = new ArrayList<>();
-        for (String str : messages){
-            list.add(color(str));
-        }
+        for (String str : messages) list.add(color(str));
         return list;
     }
     public static void sendMessages(Player player,List<String> messages){

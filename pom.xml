@@ -6,8 +6,10 @@
 
     <groupId>me.ehsanmna</groupId>
     <artifactId>MenuMine</artifactId>
-    <version>1.0-BETA</version>
+    <version>1.0-BETA-2</version>
     <packaging>jar</packaging>
+
+
 
     <name>MenuMine</name>
 
@@ -20,7 +22,6 @@
 
 
     <repositories>
-
         <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
@@ -85,7 +86,12 @@
             <groupId>com.github.Realizedd</groupId>
             <artifactId>TokenManager</artifactId>
             <version>3.2.4</version>
-            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>

@@ -1,4 +1,7 @@
 menu:
+  toggle: true
+  moveItem: false
+  dropItem: false
   material: NETHER_STAR
   name: '&cMenu'
   lore:

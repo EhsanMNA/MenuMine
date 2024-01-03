@@ -2,7 +2,9 @@ package me.ehsanmna.menumine.models;
 
 import me.ehsanmna.menumine.Managers.MenuAction;
 import me.ehsanmna.menumine.Managers.Storage;
+import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.utils.XSound;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -16,8 +18,9 @@ import java.util.Objects;
 
 public class MenuModel {
 
-    private static HashMap<String,MenuModel> models = new HashMap<>();
+    private static final HashMap<String,MenuModel> models = new HashMap<>();
 
+    boolean copy = false;
     Inventory inv;
     String id;
     String name;
@@ -65,26 +68,51 @@ public class MenuModel {
         this.displayName = displayName;
     }
 
+    public boolean isCopy() {
+        return copy;
+    }
+
+    public void setCopy(boolean copy) {
+        this.copy = copy;
+    }
+
+    public XSound getOpenSound() {
+        return openSound;
+    }
+
+    public void setOpenSound(XSound openSound) {
+        this.openSound = openSound;
+    }
+
     public void openMenu(Player player){
         if (openSound != null) openSound.play(player);
-        if (Storage.papiUse){
+        if (copy || Storage.papiUse){
+            Inventory cloneInv = Bukkit.createInventory(null,inv.getSize(),displayName);
             int slot = 0;
-            for (ItemStack item : inv.getContents()){
-                if (item != null || !item.getType().equals(Material.AIR)){
+            for (ItemStack i : inv.getContents()){
+                if (i != null || !i.getType().equals(Material.AIR)){
+                    ItemStack item = i.clone();
                     ItemMeta meta = item.getItemMeta();
+                    assert meta != null;
                     String name = meta.getDisplayName();
-                    meta.setDisplayName(me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player,name));
+                    try {if (Storage.papiUse) meta.setDisplayName(me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player,name));
+                    }catch (NoClassDefFoundError e){Storage.papiUse = false;
+                        if (MenuMine.logMessages) Bukkit.getConsoleSender().sendMessage(MenuMine.color("&c[MenuMine] &fCould not detect &c&nPlaceHolderAPI&f!"));}
                     try{
                         int lo = 0;
                         List<String> lore = meta.getLore();
-                        for (String l : lore){lore.set(lo,me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player,l));lo++;}
+                        assert lore != null;
+                        if (Storage.papiUse) for (String l : lore){lore.set(lo,me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player,l));lo++;}
+                        else for (String l : lore){lore.set(lo,l);lo++;}
                         meta.setLore(lore);
                     }catch (Exception ignored){}
                     item.setItemMeta(meta);
-                    inv.setItem(slot,item);
+                    cloneInv.setItem(slot,item);
                 }
                 slot++;
             }
+            player.openInventory(cloneInv);
+            return;
         }
         player.openInventory(inv);
     }
@@ -95,7 +123,6 @@ public class MenuModel {
             listOfActions.add(action);
             actions.put(slot,listOfActions);
         }else actions.get(slot).add(action);
-
     }
 
     public ArrayList<MenuAction> getActions(int slot){

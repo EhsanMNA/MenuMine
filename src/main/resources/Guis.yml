@@ -2,6 +2,8 @@ Main:
   name: '&bMain Menu'
   rows: 3
   openSound: "LEVEL_UP"
+  # Copy means when someone opens the menu, every items are setting in menu again! if in your menu nothing changes, you can disable this option
+  copy: false
   filter:
     black:
       material: BLACK_STAINED_GLASS_PANE
@@ -157,6 +159,7 @@ Warps:
   rows: 3
   name: '&c&lWarps'
   openSound: "LEVEL_UP"
+  copy: false
   filter:
     black:
       material: BLACK_STAINED_GLASS_PANE

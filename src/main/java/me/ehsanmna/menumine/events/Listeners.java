@@ -3,6 +3,7 @@ package me.ehsanmna.menumine.events;
 import me.ehsanmna.menumine.Managers.MenuAction;
 import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.Managers.PlayerManager;
+import me.ehsanmna.menumine.Managers.Storage;
 import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.models.MenuModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
@@ -35,13 +36,14 @@ public class Listeners implements org.bukkit.event.Listener {
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent e){
+        if (Storage.dropItem) return;
         NBTItem nbt = NBTItemManager.createNBTItem(e.getItemDrop().getItemStack());
         if (nbt.hasTag("menu") || nbt.hasTag("MenuItem")) e.setCancelled(true);
-
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e){
+        if (Storage.dropItem) return;
         if (e.getDrops().isEmpty()) return;
         for (ItemStack item : e.getDrops()){
             NBTItem nbt = NBTItemManager.createNBTItem(item);
@@ -77,10 +79,10 @@ public class Listeners implements org.bukkit.event.Listener {
                 }
             }
             assert item != null;
-            if (item.getType().equals(Material.AIR))
-                if (e.getHotbarButton() == MenuManager.slot && e.getSlotType().equals(InventoryType.SlotType.QUICKBAR)
-                        && e.getClick().equals(ClickType.NUMBER_KEY) && e.getAction().equals(InventoryAction.HOTBAR_SWAP)) e.setCancelled(true);
-
+            if (!Storage.moveItem)
+                if (item.getType().equals(Material.AIR))
+                    if (e.getHotbarButton() == MenuManager.slot && e.getSlotType().equals(InventoryType.SlotType.QUICKBAR)
+                            && e.getClick().equals(ClickType.NUMBER_KEY) && e.getAction().equals(InventoryAction.HOTBAR_SWAP)) e.setCancelled(true);
         }catch (Exception ignored){}
 
         try{

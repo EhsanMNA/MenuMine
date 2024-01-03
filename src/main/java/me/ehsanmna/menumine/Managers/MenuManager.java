@@ -1,36 +1,31 @@
 package me.ehsanmna.menumine.Managers;
 
-import me.clip.placeholderapi.PlaceholderAPI;
 import me.ehsanmna.menumine.MenuMine;
+import me.ehsanmna.menumine.models.Action;
 import me.ehsanmna.menumine.models.MenuModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
-import me.ehsanmna.menumine.utils.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class MenuManager {
 
 
     // Hold itemStack in player inventory
-    static ItemStack menu;
+    //static Map<Integer,ItemStack> inventoryItems = new HashMap<>();
+    public static ItemStack main;
     static Inventory inventory;
-    public static HashMap<Integer, List<MenuAction>> actionsManager = new HashMap<>();
+    public static Map<Integer, List<MenuAction>> actionsManager = new HashMap<>();
 
     public static int slot = 8;
 
@@ -64,8 +59,15 @@ public class MenuManager {
         actionsManager.clear();
         yml.options().copyDefaults();
         yml = YamlConfiguration.loadConfiguration(file);
-        try {menu = ItemWrapper.wrapItem(yml.getConfigurationSection("menu"));
-        }catch (Exception error){menu = new ItemStack(Material.STONE);}
+        try {main = ItemWrapper.wrapItem(yml.getConfigurationSection("menu"));
+        }catch (Exception error){main = new ItemStack(Material.STONE);}
+        /*
+        for (String itemId : yml.getKeys(false)){
+            ConfigurationSection itemSection = yml.getConfigurationSection(itemId);
+            ItemStack itemStack = ItemWrapper.wrapItem(itemSection);
+            if (itemSection.contains("toggle")) {main = itemStack; continue;}
+            inventoryItems.put(itemSection.getInt("slot"), itemStack);
+        }*/
         for (String actionId : yml.getConfigurationSection("menu").getStringList("actions")){
             MenuAction action = new MenuAction();
             String actionEnumId = actionId.split("-")[0];
@@ -73,7 +75,9 @@ public class MenuManager {
             action.action = actionId.replaceAll(actionEnumId + "-","");
             MenuMine.mainActions.add(action);
         }
-        Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&7[&f"+(System.currentTimeMillis()-time) +"ms&7]&bSuccessfully loaded &3Main model&b."));
+        if (yml.contains("menu.moveItem")) Storage.moveItem = yml.getBoolean("menu.moveItem");
+        if (yml.contains("menu.dropItem")) Storage.dropItem = yml.getBoolean("menu.dropItem");
+        if (MenuMine.logMessages) Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&7[&f"+(System.currentTimeMillis()-time) +"ms&7]&bSuccessfully loaded &3Main model&b."));
     }
 
     public static void loadMenuModels(){
@@ -143,6 +147,7 @@ public class MenuManager {
             model.setDisplayName(name);
             model.setId(modelName);
             model.setInv(inventory);
+            if (menuSection.contains("copy")) model.setCopy(menuSection.getBoolean("copy"));
 
             MenuModel.addModel(modelName,model);
             Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&7[&f"+(System.currentTimeMillis()-time) +"ms&7]&bLoaded &9"+modelName+"&b menu model."));
@@ -169,7 +174,7 @@ public class MenuManager {
     }
 
     public static ItemStack getMenuItem(){
-        return menu;
+        return main;
     }
 
     public static Inventory getGUI(){
@@ -177,7 +182,7 @@ public class MenuManager {
     }
 
     public static void setItemToInventory(Player player){
-        NBTItem nbt = NBTItemManager.createNBTItem(menu);
+        NBTItem nbt = NBTItemManager.createNBTItem(main);
         nbt.setTag("menu","menu");
         nbt.save();
         player.getInventory().setItem(slot,nbt.getItem());

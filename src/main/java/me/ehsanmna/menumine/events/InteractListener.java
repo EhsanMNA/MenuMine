@@ -10,7 +10,9 @@ import me.ehsanmna.menumine.nbt.NBTItemManager;
 import me.ehsanmna.menumine.utils.XMaterial;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,8 +34,8 @@ public class InteractListener implements Listener {
                     model.setDisplayName("&a"+modelName);
                     model.setName(modelName);
                     model.setId(modelName);
-                    Chest chest = (Chest) e.getClickedBlock().getState();
-                    model.setInv(chest.getBlockInventory());
+                    if (e.getClickedBlock().getState() instanceof DoubleChest) model.setInv(((DoubleChest) e.getClickedBlock().getState()).getInventory());
+                    else model.setInv(((Chest) e.getClickedBlock().getState()).getInventory());
 
                     player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).blockDetection));
 

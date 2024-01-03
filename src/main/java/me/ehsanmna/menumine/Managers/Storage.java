@@ -13,6 +13,8 @@ public class Storage {
 
     public static boolean economyUse = false;
     public static boolean papiUse = false;
+    public static boolean moveItem = false;
+    public static boolean dropItem = false;
     public static HashSet<UUID> disabledMenus = new HashSet<>();
 
     static YamlConfiguration yamlConfiguration;
@@ -22,18 +24,15 @@ public class Storage {
         try {
             try {
                 for (String uuid : yamlConfiguration.getStringList("players"))
-                    try {disabledMenus.add(UUID.fromString(uuid));}catch (Exception error){if (MenuMine.logMessages) System.out.println("[MenuMine] "+uuid + " is not a valid uuid form.");}
-
+                    try {disabledMenus.add(UUID.fromString(uuid));}
+                    catch (Exception error){if (MenuMine.logMessages) System.out.println("[MenuMine] "+uuid + " is not a valid uuid form.");}
             }catch (Exception error){
                 disabledMenus.clear();
                 if (MenuMine.logMessages) System.out.println("[MenuMine] Something went wrong while loading data's!");
             }
             if (yamlConfiguration.contains("languages"))
-                for (String uuid : yamlConfiguration.getConfigurationSection("languages").getKeys(false)){
-                    UUID id = UUID.fromString(uuid);
-                    PlayerManager.playerLanguages.put(id,yamlConfiguration.getString("languages."+uuid));
-                }
-
+                for (String uuid : yamlConfiguration.getConfigurationSection("languages").getKeys(false))
+                    PlayerManager.playerLanguages.put(UUID.fromString(uuid),yamlConfiguration.getString("languages."+uuid));
         }catch (Exception ignored){
             if (MenuMine.logMessages) System.out.println("[MenuMine] Couldn't find any data's");
         }
