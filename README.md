@@ -1,4 +1,10 @@
-# MenuMine
+![Git](https://img.shields.io/badge/-Git-black?style=flat-square&logo=git)
+![GitHub](https://img.shields.io/badge/-GitHub-181717?style=flat-square&logo=github)
+![IntelliJ](https://img.shields.io/badge/-IntelliJ%20IDEA-black?style=flat-square&logo=jetbrains) 
+![Java](https://img.shields.io/badge/Java-orange?style=flat-square&logo=java)
+
+
+# ⚡ MenuMine
 <p>
 MenuMine is a new item-in-hand system that allows you to toggle items in the main hand.
 <br>it's also allows you to create custom menus with multiple actions and messages.
