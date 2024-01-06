@@ -45,9 +45,7 @@ public class MenuManager {
 
             yml = YamlConfiguration.loadConfiguration(file);
             guiYml = YamlConfiguration.loadConfiguration(gui);
-        }catch (IOException error){
-            error.printStackTrace();
-        }
+        }catch (IOException error){error.printStackTrace();}
         loadMenu();
         loadMenuModels();
         PlayerManager.loadMessages();
@@ -55,7 +53,7 @@ public class MenuManager {
     }
 
     public static void loadMenu(){
-        long time = System.currentTimeMillis();
+        //long time = System.currentTimeMillis();
         actionsManager.clear();
         yml.options().copyDefaults();
         yml = YamlConfiguration.loadConfiguration(file);
@@ -68,6 +66,7 @@ public class MenuManager {
             if (itemSection.contains("toggle")) {main = itemStack; continue;}
             inventoryItems.put(itemSection.getInt("slot"), itemStack);
         }*/
+        MenuMine.mainActions.clear();
         for (String actionId : yml.getConfigurationSection("menu").getStringList("actions")){
             MenuAction action = new MenuAction();
             String actionEnumId = actionId.split("-")[0];
@@ -77,11 +76,12 @@ public class MenuManager {
         }
         if (yml.contains("menu.moveItem")) Storage.moveItem = yml.getBoolean("menu.moveItem");
         if (yml.contains("menu.dropItem")) Storage.dropItem = yml.getBoolean("menu.dropItem");
-        if (MenuMine.logMessages) Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&7[&f"+(System.currentTimeMillis()-time) +"ms&7]&bSuccessfully loaded &3Main model&b."));
+        // if (MenuMine.logMessages) Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&7[&f"+(System.currentTimeMillis()-time) +"ms&7]&bSuccessfully loaded &3Main model&b."));
     }
 
     public static void loadMenuModels(){
         long time = System.currentTimeMillis();
+        MenuModel.getModels().clear();
         guiYml.options().copyDefaults();
         guiYml = YamlConfiguration.loadConfiguration(gui);
 
@@ -91,32 +91,34 @@ public class MenuManager {
             int rows = menuSection.getInt("rows")*9;
             String name = MenuMine.color(menuSection.getString("name"));
             Inventory inventory = Bukkit.createInventory(null,rows,name);
-            if (menuSection.contains("filter"))
-                for (String filterId : menuSection.getConfigurationSection("filter.").getKeys(false)){
-                    ConfigurationSection section = menuSection.getConfigurationSection("filter." + filterId);
-                    ItemStack item = ItemWrapper.wrapItem(section);
-                    try {
-                        NBTItem nbt = NBTItemManager.createNBTItem(item);
-                        nbt.setTag("MenuItem",true);
-                        nbt.setTag("FilterItem",true);
-                        nbt.setTag("MenuModel",modelName);
-                        nbt.save();
-                        item = nbt.getItem();
-                    }catch (Exception error){
-                        System.out.println("Could not save nbt item in filters!!!");
-                    }
-                    switch (section.getString("type").toLowerCase()){
-                        case "fill":
-                            for (int i = 0; i < inventory.getSize();){
-                                inventory.setItem(i,item);
-                                i++;
+            try {
+                if (menuSection.contains("filter"))
+                    for (String filterId : menuSection.getConfigurationSection("filter.").getKeys(false)){
+                        ConfigurationSection section = menuSection.getConfigurationSection("filter." + filterId);
+                        ItemStack item = ItemWrapper.wrapItem(section);
+                        try {
+                            NBTItem nbt = NBTItemManager.createNBTItem(item);
+                            nbt.setTag("MenuItem",true);
+                            nbt.setTag("FilterItem",true);
+                            nbt.setTag("MenuModel",modelName);
+                            nbt.save();
+                            item = nbt.getItem();
+                        }catch (Exception error){
+                            System.out.println("Could not save nbt item in filters!!!");
                         }
-                            break;
-                        case "slot":
-                            for (int slot: section.getIntegerList("slots")) inventory.setItem(slot,item);
-                            break;
+                        switch (section.getString("type").toLowerCase()){
+                            case "fill":
+                                for (int i = 0; i < inventory.getSize();){
+                                    inventory.setItem(i,item);
+                                    i++;
+                                }
+                                break;
+                            case "slot":
+                                for (int slot: section.getIntegerList("slots")) inventory.setItem(slot,item);
+                                break;
+                        }
                     }
-                }
+            }catch (Exception ignored){}
             ConfigurationSection content = menuSection.getConfigurationSection("content");
             for (String itemId : content.getKeys(false)){
                 ConfigurationSection itemSection = content.getConfigurationSection(itemId);

@@ -3,7 +3,6 @@ package me.ehsanmna.menumine.models;
 import me.ehsanmna.menumine.Managers.MenuAction;
 import me.ehsanmna.menumine.Managers.Storage;
 import me.ehsanmna.menumine.MenuMine;
-import me.ehsanmna.menumine.utils.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -26,7 +25,6 @@ public class MenuModel {
     String name;
     String displayName;
     HashMap<Integer, ArrayList<MenuAction>> actions = new HashMap<>();
-    XSound openSound;
 
     public static HashMap<String, MenuModel> getModels() {
         return models;
@@ -75,22 +73,12 @@ public class MenuModel {
     public void setCopy(boolean copy) {
         this.copy = copy;
     }
-
-    public XSound getOpenSound() {
-        return openSound;
-    }
-
-    public void setOpenSound(XSound openSound) {
-        this.openSound = openSound;
-    }
-
     public void openMenu(Player player){
-        if (openSound != null) openSound.play(player);
         if (copy || Storage.papiUse){
             Inventory cloneInv = Bukkit.createInventory(null,inv.getSize(),displayName);
             int slot = 0;
             for (ItemStack i : inv.getContents()){
-                if (i != null || !i.getType().equals(Material.AIR)){
+                if (i != null && !i.getType().equals(Material.AIR)){
                     ItemStack item = i.clone();
                     ItemMeta meta = item.getItemMeta();
                     assert meta != null;
