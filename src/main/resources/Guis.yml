@@ -160,6 +160,8 @@ Warps:
   name: '&c&lWarps'
   openSound: "LEVEL_UP"
   copy: false
+  #register custom command for menu opening
+  command: 'warps'
   filter:
     black:
       material: BLACK_STAINED_GLASS_PANE

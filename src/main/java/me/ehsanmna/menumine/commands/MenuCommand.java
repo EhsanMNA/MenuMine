@@ -1,9 +1,6 @@
 package me.ehsanmna.menumine.commands;
 
-import me.ehsanmna.menumine.Managers.MenuAction;
-import me.ehsanmna.menumine.Managers.MenuManager;
-import me.ehsanmna.menumine.Managers.PlayerManager;
-import me.ehsanmna.menumine.Managers.Storage;
+import me.ehsanmna.menumine.Managers.*;
 import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.models.MenuModel;
 import org.bukkit.Bukkit;
@@ -63,6 +60,7 @@ public class MenuCommand implements CommandExecutor {
                                 Storage.refreshData();
                                 MenuManager.loadMenu();
                                 MenuManager.loadMenuModels();
+                                CommandRegManager.updateCommands();
                                 player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).reload));
                             } catch (IOException e) {
                                 player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).failed));

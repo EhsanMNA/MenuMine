@@ -1,6 +1,7 @@
 package me.ehsanmna.menumine.Managers;
 
 import me.ehsanmna.menumine.MenuMine;
+import me.ehsanmna.menumine.commands.CustomMenuCommand;
 import me.ehsanmna.menumine.models.Action;
 import me.ehsanmna.menumine.models.MenuModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
@@ -26,7 +27,7 @@ public class MenuManager {
     public static ItemStack main;
     static Inventory inventory;
     public static Map<Integer, List<MenuAction>> actionsManager = new HashMap<>();
-
+    public static Map<String,MenuModel> commandsToMenu = new HashMap<>();
     public static int slot = 8;
 
     static File file;
@@ -152,6 +153,11 @@ public class MenuManager {
             if (menuSection.contains("copy")) model.setCopy(menuSection.getBoolean("copy"));
 
             MenuModel.addModel(modelName,model);
+            if (menuSection.contains("command")) {
+                String command = menuSection.getString("command");
+                commandsToMenu.put(command,model);
+                CommandRegManager.registerCommand(command,new CustomMenuCommand());
+            }
             Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&7[&f"+(System.currentTimeMillis()-time) +"ms&7]&bLoaded &9"+modelName+"&b menu model."));
         }
 
