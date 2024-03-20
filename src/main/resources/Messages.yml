@@ -28,6 +28,7 @@ en:
   failed: "&cFailed!"
   menuExist: "&cThis menu has been exist!"
   money: "&cYou don't have enough money to do this!"
+  permission: "&cYou don't have access for this!"
   help:
     - "&b«-----------------»"
     - "&3/Menu &fOpen menu gui"

@@ -2,7 +2,7 @@ Main:
   name: '&bMain Menu'
   rows: 3
   openSound: "LEVEL_UP"
-  # Copy means when someone opens the menu, every items are setting in menu again! if in your menu nothing changes, you can disable this option
+  # Copy means when someone opens the menu, every item are setting in menu again! if in your menu nothing changes, you can disable this option
   copy: false
   filter:
     black:
@@ -34,8 +34,9 @@ Main:
         - '&6&n                                  '
       actions:
         #avaible actions: <MESSAGE-your message>, <COMMAND-your command>, <CANCEL> no actions, <CLOSE-menu> closing menu
+        # <PERMISSION-permission> <HASMONEY-money> <TAKEMONEY-money> <GIVEMONEY-money>
+        # <SOUND-sound> <ACTIONBAR-message> <TITLE-title-sub title>
         - COMMAND-bp
-        - MESSAGE-&bOpened battlePass menu
       slot: 10
     '2':
       name: '&b&lShop'
@@ -50,8 +51,12 @@ Main:
         - '  &b&lFoods, Spawners, Ores'
         - '&9&n                                            '
       actions:
+        - PERMISSION-shop.use
         - COMMAND-shop
         - MESSAGE-&bOpened shop menu
+      #When one of the boolean check of actions returns false, denyActions will be executed!
+      denyActions:
+        - COMMAND-shop2
       slot: 11
     '3':
       name: '&c&lWarps'
@@ -227,7 +232,7 @@ Warps:
         - CANCEL
         - CLOSE
         - TITLE-teleported to market warp-Have fun!
-      # separate title and subtitle with '-'
+      # split title and subtitle with '-'
     island:
       material: GRASS_BLOCK
       name: '&f&l&nMy island'

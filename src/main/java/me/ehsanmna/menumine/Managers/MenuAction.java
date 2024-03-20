@@ -28,15 +28,21 @@ public class MenuAction {
                 Titles.sendTitle(player,MenuMine.color(title),MenuMine.color(subTitle));
                 return true;
             case HASMONEY: if (!EconomyManager.economy.hasMoney(player, Float.parseFloat(action))){
-                player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).money));
+                if (Storage.autoSendMessage) player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).money));
                 return false;
             }else return true;
             case GIVEMONEY: EconomyManager.economy.addMoney(player,Float.parseFloat(action)); return true;
             case TAKEMONEY:
                 if (EconomyManager.economy.hasMoney(player,Float.parseFloat(action))) {
-                    EconomyManager.economy.takeMoney(player,Float.parseFloat(action));
+                    if (Storage.autoSendMessage) EconomyManager.economy.takeMoney(player,Float.parseFloat(action));
                     return true;
                 } else return false;
+            case PERMISSION:
+                if (player.hasPermission(action)) return true;
+                else {
+                    if (Storage.autoSendMessage) player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).permission));
+                    return false;
+                }
             case MESSAGE: player.sendMessage(MenuMine.color(action)); return true;
             case COMMAND: Bukkit.getServer().dispatchCommand(player,action); return true;
             case CONSOLE: Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),action.replace("%player%", player.getName()));

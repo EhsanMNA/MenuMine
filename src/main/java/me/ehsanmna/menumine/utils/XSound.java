@@ -19,26 +19,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-
-/**
- * <b>XSound</b> - Universal Minecraft Sound Support<br>
- * 1.13 and above as priority.
- * <p>
- * Sounds are thread-safe. But this doesn't mean you should
- * use a bukkit async scheduler for every {@link Player#playSound} call.
- * <p>
- * <b>Volume:</b> 0.0-∞ - 1.0f (normal) - Using higher values increase the distance from which the sound can be heard.<br>
- * <b>Pitch:</b> 0.5-2.0 - 1.0f (normal) - How fast the sound is play.
- * <p>
- * 1.8: http://docs.codelanx.com/Bukkit/1.8/org/bukkit/Sound.html
- * Latest: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
- * Basics: https://bukkit.org/threads/151517/
- * play command: https://minecraft.gamepedia.com/Commands/play
- *
- * @author Crypto Morin
- * @version 7.0.0
- * @see Sound
- */
 public enum XSound {
     AMBIENT_BASALT_DELTAS_ADDITIONS,
     AMBIENT_BASALT_DELTAS_LOOP,

@@ -15,6 +15,7 @@ public class Storage {
     public static boolean papiUse = false;
     public static boolean moveItem = false;
     public static boolean dropItem = false;
+    public static boolean autoSendMessage = true;
     public static HashSet<UUID> disabledMenus = new HashSet<>();
 
     static YamlConfiguration yamlConfiguration;

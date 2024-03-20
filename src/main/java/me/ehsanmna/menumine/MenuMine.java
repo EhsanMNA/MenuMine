@@ -43,6 +43,7 @@ public final class MenuMine extends JavaPlugin {
         if (getConfig().contains("logEnableMessages")) logMessages = getConfig().getBoolean("logEnableMessages");
         if (getConfig().contains("NBTSystem")) NBTItemManager.nbtSystem = getConfig().getString("NBTSystem");
         if (getConfig().contains("PlaceholderAPI_support")) Storage.papiUse = getConfig().getBoolean("PlaceholderAPI_support");
+        if (getConfig().contains("AutoMessageComplete")) Storage.autoSendMessage = getConfig().getBoolean("AutoMessageComplete");
         if (getConfig().contains("Economy")) {
             Storage.economyUse = getConfig().getBoolean("Economy.enabled");
             EconomyManager.setup(EconomyType.valueOf(Objects.requireNonNull(getConfig().getString("Economy.type")).toUpperCase()));
@@ -130,6 +131,6 @@ public final class MenuMine extends JavaPlugin {
                     }
                 }catch (Exception ignored){}
             }
-        }, 0,seconds);
+        }, 0,seconds*20L);
     }
 }

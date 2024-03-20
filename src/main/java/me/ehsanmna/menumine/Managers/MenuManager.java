@@ -120,21 +120,21 @@ public class MenuManager {
                         }
                     }
             }catch (Exception ignored){}
+
             ConfigurationSection content = menuSection.getConfigurationSection("content");
             for (String itemId : content.getKeys(false)){
                 ConfigurationSection itemSection = content.getConfigurationSection(itemId);
                 ItemStack item = ItemWrapper.wrapItem(itemSection);
                 int slot = itemSection.getInt("slot");
                 List<String> actionsId = itemSection.getStringList("actions");
+                List<String> denyActionsId = itemSection.getStringList("denyActions");
                 try {
                     NBTItem nbt = NBTItemManager.createNBTItem(item);
                     nbt.setTag("MenuItem",true);
                     nbt.setTag("MenuModel",modelName);
                     nbt.save();
                     item = nbt.getItem();
-                }catch (Exception error){
-                    System.out.println("Could not load nbt item in "+modelName +"!!!");
-                }
+                }catch (Exception error){System.out.println("Could not load nbt item in "+modelName +"!!!");}
 
                 inventory.setItem(slot,item);
                 for (String actionId : actionsId){
@@ -143,6 +143,13 @@ public class MenuManager {
                     action.act = Action.valueOf(actionEnumId);
                     action.action = actionId.replaceAll(actionEnumId + "-","");
                     model.addAction(slot,action);
+                }
+                for (String actionId : denyActionsId){
+                    MenuAction action = new MenuAction();
+                    String actionEnumId = actionId.split("-")[0];
+                    action.act = Action.valueOf(actionEnumId);
+                    action.action = actionId.replaceAll(actionEnumId + "-","");
+                    model.addDenyAction(slot,action);
                 }
             }
 

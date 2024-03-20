@@ -72,7 +72,13 @@ public class Listeners implements org.bukkit.event.Listener {
                         MenuModel model = MenuModel.getModels().get(nbt.getString("MenuModel"));
                         try {
                             for (MenuAction action : model.getActions(e.getSlot()))
-                                try {if (!action.run(player,item)) break;}catch (Exception ignored){}
+                                try {
+                                    if (!action.run(player,item)){
+                                        for (MenuAction denyAction : model.getDenyActions(e.getSlot()))
+                                            if (!denyAction.run(player,item)) break;
+                                        break;
+                                    }
+                                }catch (Exception ignored){}
                         }catch (Exception ignored){}
                         e.setCancelled(true);
                     }

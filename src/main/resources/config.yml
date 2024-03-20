@@ -1,4 +1,4 @@
-version: "1.7"
+version: "1.8"
 
 defaultLanguage: 'en'
 logEnableMessages: true
@@ -9,9 +9,13 @@ Metrics: true
 InteractEvent: true
 PlaceholderAPI_support: true
 
+# When an action returns false, automatically plugin use preLoaded language messages.
+# if you use the denyActions in new versions, you can disable this
+AutoMessageComplete: true
+
 # Available NBT systems:
 # - madeIn (Reflection)
-# - RTag (Url: https://github.com/saicone/rtag) require to be install! use this for mojang mapping servers or if madeIn has problems on your server
+# - RTag (Url: https://github.com/saicone/rtag) require to be installed! use this for Mojang mapping servers or if madeIn has problems on your server
 # - NBTAPI (Url: https://www.spigotmc.org/resources/nbt-api.7939/) popular minecraft nbt api, need installation! (Or if any plugins shaded the nbtAPI, does not require!)
 NBTSystem: madeIn
 

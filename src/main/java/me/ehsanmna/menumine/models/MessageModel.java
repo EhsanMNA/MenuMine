@@ -13,6 +13,7 @@ public class MessageModel {
     public String failed;
     public String menuExist;
     public String money;
+    public String permission;
     public List<String> help;
 
 }

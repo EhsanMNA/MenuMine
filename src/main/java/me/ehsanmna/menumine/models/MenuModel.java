@@ -25,6 +25,7 @@ public class MenuModel {
     String name;
     String displayName;
     HashMap<Integer, ArrayList<MenuAction>> actions = new HashMap<>();
+    HashMap<Integer, ArrayList<MenuAction>> actionsDeny = new HashMap<>();
 
     public static HashMap<String, MenuModel> getModels() {
         return models;
@@ -64,6 +65,22 @@ public class MenuModel {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public HashMap<Integer, ArrayList<MenuAction>> getActions() {
+        return actions;
+    }
+
+    public void setActions(HashMap<Integer, ArrayList<MenuAction>> actions) {
+        this.actions = actions;
+    }
+
+    public HashMap<Integer, ArrayList<MenuAction>> getActionsDeny() {
+        return actionsDeny;
+    }
+
+    public void setActionsDeny(HashMap<Integer, ArrayList<MenuAction>> actionsDeny) {
+        this.actionsDeny = actionsDeny;
     }
 
     public boolean isCopy() {
@@ -113,9 +130,21 @@ public class MenuModel {
         }else actions.get(slot).add(action);
     }
 
+    public void addDenyAction(int slot, MenuAction action){
+        if (!actionsDeny.containsKey(slot)){
+            ArrayList<MenuAction> listOfActions = new ArrayList<>();
+            listOfActions.add(action);
+            actionsDeny.put(slot,listOfActions);
+        }else actionsDeny.get(slot).add(action);
+    }
+
     public ArrayList<MenuAction> getActions(int slot){
         return actions.get(slot);
     }
+    public ArrayList<MenuAction> getDenyActions(int slot){
+        return actionsDeny.get(slot);
+    }
+
 
     @Override
     public boolean equals(Object o) {
