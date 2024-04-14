@@ -1,10 +1,14 @@
 package me.ehsanmna.menumine.models;
 
 import me.ehsanmna.menumine.Managers.MenuAction;
+import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.Managers.Storage;
 import me.ehsanmna.menumine.MenuMine;
+import me.ehsanmna.menumine.nbt.NBTItemManager;
+import me.ehsanmna.menumine.utils.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -24,7 +28,10 @@ public class MenuModel {
     String id;
     String name;
     String displayName;
+    Sound openSound;
     HashMap<Integer, ArrayList<MenuAction>> actions = new HashMap<>();
+    List<MenuAction> requireActions = new ArrayList<>();
+    List<MenuAction> notAllowActions = new ArrayList<>();
     HashMap<Integer, ArrayList<MenuAction>> actionsDeny = new HashMap<>();
 
     public static HashMap<String, MenuModel> getModels() {
@@ -90,16 +97,34 @@ public class MenuModel {
     public void setCopy(boolean copy) {
         this.copy = copy;
     }
-    public void openMenu(Player player){
+
+    public Sound getOpenSound() {
+        return openSound;
+    }
+
+    public void setOpenSound(Sound openSound) {
+        this.openSound = openSound;
+    }
+
+    public void openMenu(Player player,List<String> inputs){
         if (copy || Storage.papiUse){
-            Inventory cloneInv = Bukkit.createInventory(null,inv.getSize(),displayName);
+            String menuTitle = displayName;
+            if (!inputs.isEmpty())
+                menuTitle = MenuManager.replacePlaceholders(menuTitle,inputs);
+            Inventory cloneInv = Bukkit.createInventory(null,inv.getSize(),menuTitle);
             int slot = 0;
             for (ItemStack i : inv.getContents()){
                 if (i != null && !i.getType().equals(Material.AIR)){
                     ItemStack item = i.clone();
+                    if (!inputs.isEmpty() && NBTItemManager.createNBTItem(item).hasTag("Material"))
+                        for (String arg : inputs) if (XMaterial.matchXMaterial(arg) != null) {
+                            item.setType(Objects.requireNonNull(XMaterial.valueOf(arg.toUpperCase()).parseMaterial()));
+                            break;
+                        }
                     ItemMeta meta = item.getItemMeta();
                     assert meta != null;
                     String name = meta.getDisplayName();
+                    if (!inputs.isEmpty()) name = MenuManager.replacePlaceholders(name,inputs);
                     try {if (Storage.papiUse) meta.setDisplayName(me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player,name));
                     }catch (NoClassDefFoundError e){Storage.papiUse = false;
                         if (MenuMine.logMessages) Bukkit.getConsoleSender().sendMessage(MenuMine.color("&c[MenuMine] &fCould not detect &c&nPlaceHolderAPI&f!"));}
@@ -109,6 +134,7 @@ public class MenuModel {
                         assert lore != null;
                         if (Storage.papiUse) for (String l : lore){lore.set(lo,me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player,l));lo++;}
                         else for (String l : lore){lore.set(lo,l);lo++;}
+                        if (!inputs.isEmpty()) MenuManager.replacePlaceholders(lore, inputs);
                         meta.setLore(lore);
                     }catch (Exception ignored){}
                     item.setItemMeta(meta);
@@ -138,13 +164,32 @@ public class MenuModel {
         }else actionsDeny.get(slot).add(action);
     }
 
+    public void addRequire(MenuAction action){
+        requireActions.add(action);
+    }
+
+    public void addNowAllowAction(MenuAction action){
+        notAllowActions.add(action);
+    }
+
     public ArrayList<MenuAction> getActions(int slot){
         return actions.get(slot);
     }
     public ArrayList<MenuAction> getDenyActions(int slot){
         return actionsDeny.get(slot);
     }
-
+    public List<MenuAction> getRequireActions() {
+        return requireActions;
+    }
+    public void setRequireActions(List<MenuAction> requireActions) {
+        this.requireActions = requireActions;
+    }
+    public List<MenuAction> getNotAllowActions() {
+        return notAllowActions;
+    }
+    public void setNotAllowActions(List<MenuAction> notAllowActions) {
+        this.notAllowActions = notAllowActions;
+    }
 
     @Override
     public boolean equals(Object o) {

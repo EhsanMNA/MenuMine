@@ -79,6 +79,7 @@ public class ItemWrapper {
         meta.setDisplayName(displayName);
         try {if (section.contains("customModelData") && ReflectionUtils.supports(16))meta.setCustomModelData(section.getInt("customModelData"));}catch (Exception ignored){}
         if (section.contains("lore")) meta.setLore(MenuMine.color(section.getStringList("lore")));
+        if (section.contains("amount")) item.setAmount(section.getInt("amount"));
         if (section.contains("glow") && !(item.getType().equals(XMaterial.PLAYER_HEAD.parseMaterial())))
             if (section.getBoolean("glow")){
                 meta.addEnchant(Enchantment.LURE,1,true);
@@ -91,6 +92,19 @@ public class ItemWrapper {
         item.setItemMeta(meta);
 
         return item;
+    }
+
+    public static void wrapFilterToPath(ConfigurationSection section,ItemStack item,int slot){
+        if (section.contains("filter."+item.getType().name())){
+            List<Integer> slots = section.getIntegerList("filter."+item.getType().name()+".slots");
+            slots.add(slot);
+            section.set("filter."+item.getType().name()+".slots",slots);
+            return;
+        }
+        section.set("filter."+item.getType().name()+".material",item.getType().name());
+        section.set("filter."+item.getType().name()+".type","slot");
+        section.set("filter."+item.getType().name()+".name","&r ");
+        section.set("filter."+item.getType().name()+".slots",List.of(slot));
     }
 
     static ItemStack getPotionItemStack(Material potionType, PotionType type, int level, boolean extend, boolean upgraded){

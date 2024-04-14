@@ -73,13 +73,17 @@ public class Listeners implements org.bukkit.event.Listener {
                         try {
                             for (MenuAction action : model.getActions(e.getSlot()))
                                 try {
+                                    if (PlayerManager.debugers.contains(player.getUniqueId()))
+                                        player.sendMessage("Action: "+action.getAction().name() +", Arguments: "+action.getActionArgument()
+                                        +", Inputs: "+action.getArguments().toString());
                                     if (!action.run(player,item)){
-                                        for (MenuAction denyAction : model.getDenyActions(e.getSlot()))
-                                            if (!denyAction.run(player,item)) break;
+                                        if (!model.getActionsDeny().isEmpty())
+                                            for (MenuAction denyAction : model.getDenyActions(e.getSlot()))
+                                                if (!denyAction.run(player,item)) break;
                                         break;
                                     }
-                                }catch (Exception ignored){}
-                        }catch (Exception ignored){}
+                                }catch (Exception error){error.printStackTrace();}
+                        }catch (Exception error){error.printStackTrace();}
                         e.setCancelled(true);
                     }
                 }

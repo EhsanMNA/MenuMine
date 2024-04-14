@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class PlayerManager {
@@ -17,6 +19,7 @@ public class PlayerManager {
 
     public static HashMap<UUID,String> playerLanguages = new HashMap<>();
     public static final HashMap<String,MessageModel> langs = new HashMap<>();
+    public static final Set<UUID> debugers = new HashSet<>();
 
     public static void loadMessages(){
         File file = new File(MenuMine.getInstance().getDataFolder(),"Messages.yml");

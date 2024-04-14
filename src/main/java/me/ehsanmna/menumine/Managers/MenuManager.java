@@ -6,8 +6,10 @@ import me.ehsanmna.menumine.models.Action;
 import me.ehsanmna.menumine.models.MenuModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
+import me.ehsanmna.menumine.utils.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -132,25 +134,16 @@ public class MenuManager {
                     NBTItem nbt = NBTItemManager.createNBTItem(item);
                     nbt.setTag("MenuItem",true);
                     nbt.setTag("MenuModel",modelName);
+                    if ((itemSection.getString("material")).contains("<arg")) nbt.setTag("Material",itemSection.getString("material"));
                     nbt.save();
                     item = nbt.getItem();
                 }catch (Exception error){System.out.println("Could not load nbt item in "+modelName +"!!!");}
 
                 inventory.setItem(slot,item);
-                for (String actionId : actionsId){
-                    MenuAction action = new MenuAction();
-                    String actionEnumId = actionId.split("-")[0];
-                    action.act = Action.valueOf(actionEnumId);
-                    action.action = actionId.replaceAll(actionEnumId + "-","");
-                    model.addAction(slot,action);
-                }
-                for (String actionId : denyActionsId){
-                    MenuAction action = new MenuAction();
-                    String actionEnumId = actionId.split("-")[0];
-                    action.act = Action.valueOf(actionEnumId);
-                    action.action = actionId.replaceAll(actionEnumId + "-","");
-                    model.addDenyAction(slot,action);
-                }
+                for (String actionId : actionsId)
+                    model.addAction(slot,buildAction(actionId));
+                for (String actionId : denyActionsId)
+                    model.addDenyAction(slot,buildAction(actionId));
             }
 
             model.setName(modelName);
@@ -158,6 +151,15 @@ public class MenuManager {
             model.setId(modelName);
             model.setInv(inventory);
             if (menuSection.contains("copy")) model.setCopy(menuSection.getBoolean("copy"));
+            if (menuSection.contains("requires"))
+                for (String actionString : menuSection.getStringList("requires"))
+                    model.addRequire(buildAction(actionString));
+            if (menuSection.contains("notAllow"))
+                for (String actionString : menuSection.getStringList("notAllow"))
+                    model.addNowAllowAction(buildAction(actionString));
+
+            try {model.setOpenSound(XSound.valueOf(menuSection.getString("openSound")).parseSound());
+            }catch (Exception ignored){}
 
             MenuModel.addModel(modelName,model);
             if (menuSection.contains("command")) {
@@ -205,7 +207,63 @@ public class MenuManager {
     public static void openModel(String modelName,Player player){
         MenuModel model = MenuModel.getModels().get(modelName);
         if (model == null) {player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).menuExist)); return;}
-        model.openMenu(player);
+
+        boolean notAllow = false;
+        for (MenuAction action : model.getRequireActions())
+            if (!action.run(player,null)) {notAllow = true; break;}
+
+        if (notAllow) {
+            for (MenuAction action : model.getNotAllowActions())
+                action.run(player,null);
+            return;
+        }
+
+        model.openMenu(player,List.of());
+    }
+
+    public static void openModel(String modelName,Player player,List<String> inputs){
+        MenuModel model = MenuModel.getModels().get(modelName);
+        if (model == null) {player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).menuExist)); return;}
+
+        boolean notAllow = false;
+        for (MenuAction action : model.getRequireActions())
+            if (!action.run(player,null)) {notAllow = true; break;}
+
+        if (notAllow) {
+            for (MenuAction action : model.getNotAllowActions())
+                action.run(player,null);
+            return;
+        }
+
+        model.openMenu(player,inputs);
+    }
+
+    private static MenuAction buildAction(String actionString){
+        MenuAction action = new MenuAction();
+        String actionId = actionString.split("-")[0];
+        action.act = Action.valueOf(actionId);
+        if (!actionString.contains("-")) return action;
+        String actionArguments = actionString.split("-")[1];
+        if (actionArguments.contains("]")){
+            String actionDetails = actionArguments.split("]")[1];
+            String actionInputs = actionArguments.split("]")[0].replace("[","");
+            action.action = actionDetails;
+            if (!actionDetails.isEmpty())
+                action.arguments = List.of(actionInputs.split(","));
+        }else action.action = actionArguments;
+        return action;
+    }
+
+    public static String replacePlaceholders(String string,List<String> listStr){
+        for (int i = 0; i<= listStr.size();i++)
+            if (!(listStr.size() <= i))
+                string = string.replaceAll("<arg"+i+">", listStr.get(i).replace("[","").replaceAll("]",""));
+        return string;
+    }
+
+    public static List<String> replacePlaceholders(List<String> stringList,List<String> inputs){
+        for (String str : stringList) replacePlaceholders(str,inputs);
+        return stringList;
     }
 
     public static void saveMenuModel(MenuModel model){
@@ -217,7 +275,13 @@ public class MenuManager {
         int slot = 0;
         for (ItemStack itemStack : model.getInv().getContents()){
             try{
-                if (itemStack != null) ItemWrapper.wrapItemToPath(guiYml.getConfigurationSection(model.getId()+".content"),itemStack,slot);
+                if (itemStack != null){
+                    if (itemStack.getType().name().contains("GLASS_PANE")){
+                        ItemWrapper.wrapFilterToPath(guiYml.getConfigurationSection(model.getId()),itemStack,slot);
+                        continue;
+                    }
+                    ItemWrapper.wrapItemToPath(guiYml.getConfigurationSection(model.getId()+".content"),itemStack,slot);
+                }
             }catch (NullPointerException e){
                 if (MenuMine.logMessages) System.out.println("Error cause of " +e.getCause());
                 if (MenuMine.logMessages) System.out.println("> Id: "+model.getId());

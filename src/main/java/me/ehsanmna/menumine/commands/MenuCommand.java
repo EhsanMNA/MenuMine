@@ -68,6 +68,15 @@ public class MenuCommand implements CommandExecutor {
                                 if (MenuMine.logMessages) e.printStackTrace();
                             }
                         }
+                    }else if (args[0].equalsIgnoreCase("debug")) {
+                        if(!player.hasPermission("menu.command.debug")) return false;
+                        if (PlayerManager.debugers.contains(player.getUniqueId())){
+                            PlayerManager.debugers.remove(player.getUniqueId());
+                            player.sendMessage(MenuMine.color(prefix + "&c Debugging off!"));
+                        }else {
+                            PlayerManager.debugers.add(player.getUniqueId());
+                            player.sendMessage(MenuMine.color(prefix + "&a Debugging on!"));
+                        }
                     }
                     break;
                 case 2:

@@ -62,9 +62,7 @@ public class InteractListener implements Listener {
                     e.setCancelled(true);
                 }
             }
-
         }
-
     }
 
 
