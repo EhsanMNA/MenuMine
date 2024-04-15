@@ -31,7 +31,7 @@ public class InteractListener implements Listener {
                         PlayerManager.playersReadyToInteract.containsKey(player.getUniqueId())){
                     String modelName = PlayerManager.playersReadyToInteract.get(player.getUniqueId());
                     MenuModel model = new MenuModel();
-                    model.setDisplayName("&a"+modelName);
+                    model.setDisplayName(modelName);
                     model.setName(modelName);
                     model.setId(modelName);
                     if (e.getClickedBlock().getState() instanceof DoubleChest) model.setInv(((DoubleChest) e.getClickedBlock().getState()).getInventory());

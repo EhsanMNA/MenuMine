@@ -63,31 +63,16 @@ public class MenuAction {
                 }catch (Exception error){player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).prefix +PlayerManager.getPlayerLanguage(player).failed));}
                 return true;
             case CHANGE:
-                String change = action.split("]")[0].replace("[","").replace("]","");
                 ItemMeta meta = item.getItemMeta();
-                String arguments = action.replace("["+change+"]","");
-                if (change.equalsIgnoreCase("MODEL")){
-                    meta.setCustomModelData(Integer.valueOf(arguments));
-                }else if (change.equalsIgnoreCase("NAME")){
-                    meta.setDisplayName(MenuMine.color(arguments));
-                } else if (change.equalsIgnoreCase("ITEM")) {
-                    item.setType(Objects.requireNonNull(XMaterial.valueOf(arguments).parseMaterial()));
-                }
+                String type = arguments.get(0);
+                if (type.equalsIgnoreCase("MODEL"))
+                    meta.setCustomModelData(Integer.valueOf(action));
+                else if (type.equalsIgnoreCase("NAME"))
+                    meta.setDisplayName(MenuMine.color(action));
+                else if (type.equalsIgnoreCase("ITEM"))
+                    item.setType(Objects.requireNonNull(XMaterial.valueOf(action).parseMaterial()));
+
                 item.setItemMeta(meta);
-            /*case IF:
-                // IF-[bool][value] action
-                String act = action.split("]")[0].replace("[","").replace("]","");
-                if (act.equalsIgnoreCase("CustomModelData")){
-                    if (item.getItemMeta().getCustomModelData() == Integer.parseInt(action.split("]")[1].replace("[","").replace("]",""))) return true;
-                    else return false;
-                }else if (act.equalsIgnoreCase("Name")){
-                    if (item.getItemMeta().getDisplayName().equalsIgnoreCase(action.split("]")[1].replace("[","").replace("]",""))) return true;
-                    else return false;
-                } else System.out.println("Could not done menu action! because the value of IF [boolean] is not correctly! input [true] or [false] for first one!!!");
-
-            case ELSE:
-
-            */
         }
         return false;
     }

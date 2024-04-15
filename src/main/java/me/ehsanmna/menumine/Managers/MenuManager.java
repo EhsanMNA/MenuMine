@@ -276,11 +276,10 @@ public class MenuManager {
         for (ItemStack itemStack : model.getInv().getContents()){
             try{
                 if (itemStack != null){
-                    if (itemStack.getType().name().contains("GLASS_PANE")){
+                    if (itemStack.getType().name().contains("GLASS_PANE"))
                         ItemWrapper.wrapFilterToPath(guiYml.getConfigurationSection(model.getId()),itemStack,slot);
-                        continue;
-                    }
-                    ItemWrapper.wrapItemToPath(guiYml.getConfigurationSection(model.getId()+".content"),itemStack,slot);
+                    else
+                        ItemWrapper.wrapItemToPath(guiYml.getConfigurationSection(model.getId()+".content"),itemStack,slot);
                 }
             }catch (NullPointerException e){
                 if (MenuMine.logMessages) System.out.println("Error cause of " +e.getCause());
