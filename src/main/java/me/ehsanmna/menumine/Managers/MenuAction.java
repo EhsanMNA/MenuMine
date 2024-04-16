@@ -9,6 +9,7 @@ import me.ehsanmna.menumine.utils.ActionBar;
 import me.ehsanmna.menumine.utils.Titles;
 import me.ehsanmna.menumine.utils.XMaterial;
 import me.ehsanmna.menumine.utils.XSound;
+import me.ehsanmna.menumine.utils.skills.AuraSkillsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -73,6 +74,62 @@ public class MenuAction {
                     item.setType(Objects.requireNonNull(XMaterial.valueOf(action).parseMaterial()));
 
                 item.setItemMeta(meta);
+                return true;
+            case HASSKILL:
+                try {
+                    return AuraSkillsManager.hasSkillLevel(player.getUniqueId(),arguments.get(0),Integer.parseInt(action));
+                }catch (Exception ignored){
+                    MenuMine.getInstance().getLogger().warning("AuraSkills could not detect!");
+                }
+                return false;
+            case HASMANA:
+                try {
+                    return AuraSkillsManager.hasMana(player.getUniqueId(),Integer.parseInt(action));
+                }catch (Exception ignored){
+                    MenuMine.getInstance().getLogger().warning("AuraSkills could not detect!");
+                }
+            case ADDRAWSKILLXP:
+                try {
+                    AuraSkillsManager.addSkillRawExp(player.getUniqueId(),arguments.get(0),Integer.parseInt(action));
+                    return true;
+                }catch (Exception ignored){
+                    MenuMine.getInstance().getLogger().warning("AuraSkills could not detect!");
+                }
+            case ADDSKILLXP:
+                try {
+                    AuraSkillsManager.addSkillExp(player.getUniqueId(),arguments.get(0),Integer.parseInt(action));
+                    return true;
+                }catch (Exception ignored){
+                    MenuMine.getInstance().getLogger().warning("AuraSkills could not detect!");
+                }
+            case SETMANA:
+                try {
+                    AuraSkillsManager.setMana(player.getUniqueId(),Integer.parseInt(action));
+                    return true;
+                }catch (Exception ignored){
+                    MenuMine.getInstance().getLogger().warning("AuraSkills could not detect!");
+                }
+            case SETSKILLXP:
+                try {
+                    AuraSkillsManager.setSkillExp(player.getUniqueId(),arguments.get(0),Integer.parseInt(action));
+                    return true;
+                }catch (Exception ignored){
+                    MenuMine.getInstance().getLogger().warning("AuraSkills could not detect!");
+                }
+            case SETSTATSMODIFIER:
+                try {
+                    AuraSkillsManager.setStatsModifier(player.getUniqueId(),arguments.get(0),arguments.get(1),Integer.parseInt(action));
+                    return true;
+                }catch (Exception ignored){
+                    MenuMine.getInstance().getLogger().warning("AuraSkills could not detect!");
+                }
+            case REMOVESTATSMODIFIER:
+                try {
+                    AuraSkillsManager.removeStatsModifier(player.getUniqueId(),action);
+                    return true;
+                }catch (Exception ignored){
+                    MenuMine.getInstance().getLogger().warning("AuraSkills could not detect!");
+                }
         }
         return false;
     }
