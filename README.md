@@ -15,9 +15,13 @@ MenuMine is a new item-in-hand system that allows you to toggle items in the mai
 * Built-in NBT system 
 * Multiple NBT APIs support `(NBT API,NBT R-Tag)`
 * Multiple Economies support `(Vault,TokenManager)`
+* AuroSKills support
 * Skull texture support
+* Deny actions!
+* Menu open require system
+* **PMenu** Per player menu system `(like Enderchest)`
 
 ### Item in inventory
 * **Toggleable item in your inventory** 
 * Multiple actions to execute
-* Economy system with custom actions
+* Economy system with **Actions**
