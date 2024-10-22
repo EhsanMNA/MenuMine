@@ -5,7 +5,7 @@ import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.Managers.Storage;
 import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
-import me.ehsanmna.menumine.utils.XMaterial;
+import me.ehsanmna.menumine.utils.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -19,11 +19,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-public class MenuModel {
+public class MenuModel implements Cloneable{
 
     private static final HashMap<String,MenuModel> models = new HashMap<>();
 
-    boolean copy = false;
+    boolean copy = true;
+    boolean itemMove = false;
+    boolean playerMenu = false;
     Inventory inv;
     String id;
     String name;
@@ -98,6 +100,14 @@ public class MenuModel {
         this.copy = copy;
     }
 
+    public boolean isItemMove() {
+        return itemMove;
+    }
+
+    public void setItemMove(boolean itemMove) {
+        this.itemMove = itemMove;
+    }
+
     public Sound getOpenSound() {
         return openSound;
     }
@@ -106,8 +116,20 @@ public class MenuModel {
         this.openSound = openSound;
     }
 
-    public void openMenu(Player player,List<String> inputs){
-        if (copy || Storage.papiUse){
+    public boolean isPlayerMenu() {
+        return playerMenu;
+    }
+
+    public void setPlayerMenu(boolean playerMenu) {
+        this.playerMenu = playerMenu;
+    }
+
+    public void openMenu(Player player, List<String> inputs){
+        if (!copy) {
+            player.openInventory(inv);
+            return;
+        }
+        if (Storage.papiUse){
             String menuTitle = displayName;
             if (!inputs.isEmpty())
                 menuTitle = MenuManager.replacePlaceholders(menuTitle,inputs);
@@ -198,4 +220,17 @@ public class MenuModel {
         MenuModel menuModel = (MenuModel) o;
         return Objects.equals(id, menuModel.id) && Objects.equals(name, menuModel.name) && Objects.equals(displayName, menuModel.displayName);
     }
+
+    @Override
+    public Object clone() {
+        try {
+            MenuModel model = (MenuModel) super.clone();
+            Inventory inv = MenuManager.copy(model.getInv());
+            model.setInv(inv);
+            return model;
+        }catch (CloneNotSupportedException e){e.printStackTrace();}
+        return null;
+    }
+
+
 }

@@ -3,6 +3,7 @@ package me.ehsanmna.menumine.utils;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import me.ehsanmna.menumine.utils.xseries.XMaterial;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

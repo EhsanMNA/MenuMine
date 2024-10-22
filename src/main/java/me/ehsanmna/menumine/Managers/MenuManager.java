@@ -1,15 +1,17 @@
 package me.ehsanmna.menumine.Managers;
 
+import me.ehsanmna.menumine.Managers.controller.PlayerMenuController;
 import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.commands.CustomMenuCommand;
 import me.ehsanmna.menumine.models.Action;
 import me.ehsanmna.menumine.models.MenuModel;
+import me.ehsanmna.menumine.models.PMenuModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
-import me.ehsanmna.menumine.utils.XSound;
+import me.ehsanmna.menumine.utils.xseries.XItemStack;
+import me.ehsanmna.menumine.utils.xseries.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -20,6 +22,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+
+import static me.ehsanmna.menumine.MenuMine.color;
 
 public class MenuManager {
 
@@ -34,23 +38,29 @@ public class MenuManager {
 
     static File file;
     static File gui;
+    static File playerMenu;
     public static YamlConfiguration yml;
     public static YamlConfiguration guiYml;
+    public static YamlConfiguration pMYml;
 
     public static void setUp() {
         try {
             file = new File(MenuMine.getInstance().getDataFolder(), "Menu.yml");
             gui = new File(MenuMine.getInstance().getDataFolder(), "Guis.yml");
+            playerMenu = new File(MenuMine.getInstance().getDataFolder(), "PlayerMenu.yml");
             File messages = new File(MenuMine.getInstance().getDataFolder(), "Messages.yml");
             if (file.createNewFile()) MenuMine.getInstance().saveResource("Menu.yml",true);
             if (gui.createNewFile()) MenuMine.getInstance().saveResource("Guis.yml",true);
+            if (playerMenu.createNewFile()) MenuMine.getInstance().saveResource("PlayerMenu.yml",true);
             if (messages.createNewFile()) MenuMine.getInstance().saveResource("Messages.yml",true);
 
             yml = YamlConfiguration.loadConfiguration(file);
             guiYml = YamlConfiguration.loadConfiguration(gui);
+            pMYml = YamlConfiguration.loadConfiguration(playerMenu);
         }catch (IOException error){error.printStackTrace();}
         loadMenu();
         loadMenuModels();
+        loadPMenuModels();
         PlayerManager.loadMessages();
         slot = yml.getInt("menu.slot");
     }
@@ -95,6 +105,8 @@ public class MenuManager {
             String name = MenuMine.color(menuSection.getString("name"));
             Inventory inventory = Bukkit.createInventory(null,rows,name);
             try {
+                if (menuSection.contains("moveItems")) model.setItemMove(menuSection.getBoolean("moveItems"));
+                // if (menuSection.contains("perPlayer")) model.setItemMove(menuSection.getBoolean("perPlayer"));
                 if (menuSection.contains("filter"))
                     for (String filterId : menuSection.getConfigurationSection("filter.").getKeys(false)){
                         ConfigurationSection section = menuSection.getConfigurationSection("filter." + filterId);
@@ -122,28 +134,29 @@ public class MenuManager {
                         }
                     }
             }catch (Exception ignored){}
+            if (!menuSection.contains("pMenu") || !menuSection.getBoolean("pMenu")){
+                ConfigurationSection content = menuSection.getConfigurationSection("content");
+                for (String itemId : content.getKeys(false)){
+                    ConfigurationSection itemSection = content.getConfigurationSection(itemId);
+                    ItemStack item = ItemWrapper.wrapItem(itemSection);
+                    int slot = itemSection.getInt("slot");
+                    List<String> actionsId = itemSection.getStringList("actions");
+                    List<String> denyActionsId = itemSection.getStringList("denyActions");
+                    try {
+                        NBTItem nbt = NBTItemManager.createNBTItem(item);
+                        nbt.setTag("MenuItem",true);
+                        nbt.setTag("MenuModel",modelName);
+                        if ((itemSection.getString("material")).contains("<arg")) nbt.setTag("Material",itemSection.getString("material"));
+                        nbt.save();
+                        item = nbt.getItem();
+                    }catch (Exception error){System.out.println("Could not load nbt item in "+modelName +"!!!");}
 
-            ConfigurationSection content = menuSection.getConfigurationSection("content");
-            for (String itemId : content.getKeys(false)){
-                ConfigurationSection itemSection = content.getConfigurationSection(itemId);
-                ItemStack item = ItemWrapper.wrapItem(itemSection);
-                int slot = itemSection.getInt("slot");
-                List<String> actionsId = itemSection.getStringList("actions");
-                List<String> denyActionsId = itemSection.getStringList("denyActions");
-                try {
-                    NBTItem nbt = NBTItemManager.createNBTItem(item);
-                    nbt.setTag("MenuItem",true);
-                    nbt.setTag("MenuModel",modelName);
-                    if ((itemSection.getString("material")).contains("<arg")) nbt.setTag("Material",itemSection.getString("material"));
-                    nbt.save();
-                    item = nbt.getItem();
-                }catch (Exception error){System.out.println("Could not load nbt item in "+modelName +"!!!");}
-
-                inventory.setItem(slot,item);
-                for (String actionId : actionsId)
-                    model.addAction(slot,buildAction(actionId));
-                for (String actionId : denyActionsId)
-                    model.addDenyAction(slot,buildAction(actionId));
+                    inventory.setItem(slot,item);
+                    for (String actionId : actionsId)
+                        model.addAction(slot,buildAction(actionId));
+                    for (String actionId : denyActionsId)
+                        model.addDenyAction(slot,buildAction(actionId));
+                }
             }
 
             model.setName(modelName);
@@ -161,15 +174,42 @@ public class MenuManager {
             try {model.setOpenSound(XSound.valueOf(menuSection.getString("openSound")).parseSound());
             }catch (Exception ignored){}
 
-            MenuModel.addModel(modelName,model);
             if (menuSection.contains("command")) {
                 String command = menuSection.getString("command");
                 commandsToMenu.put(command,model);
                 CommandRegManager.registerCommand(command,new CustomMenuCommand());
             }
+
+            MenuModel.addModel(modelName,model);
             Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&7[&f"+(System.currentTimeMillis()-time) +"ms&7]&bLoaded &9"+modelName+"&b menu model."));
         }
 
+    }
+
+    public static void loadPMenuModels(){
+        long time = System.currentTimeMillis();
+        int n = 0;
+
+        for (String id : pMYml.getKeys(false)){
+            UUID uuid = UUID.fromString(id);
+            for (String menuId : pMYml.getConfigurationSection(id).getKeys(false)){
+                MenuModel model = (MenuModel) MenuModel.getModels().get(menuId).clone();
+                ConfigurationSection menuSection = pMYml.getConfigurationSection(id+"."+menuId);
+                for (String slotNumber : menuSection.getConfigurationSection("items").getKeys(false)){
+                    int slot = Integer.parseInt(slotNumber);
+                    try {
+                        ItemStack item = XItemStack.deserialize(Objects.requireNonNull(menuSection.getConfigurationSection("items."+slotNumber)));
+                        model.getInv().setItem(slot,item);
+                    }catch (NullPointerException e){
+                        MenuMine.getInstance().getLogger().warning("Cannot deserialize item from a configuration section.");
+                    }
+                }
+                PMenuModel pMenuModel = PlayerMenuController.setupPMenu(uuid);
+                pMenuModel.addModel(model);
+                n++;
+            }
+        }
+        Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&7[&f"+(System.currentTimeMillis()-time) +"&7]&bLoaded &9"+n+"&b players menu model."));
     }
 
     public static void disableMenu(Player player){
@@ -178,6 +218,7 @@ public class MenuManager {
     }
 
     public static void enableMenu(Player player){
+        if (!MenuMine.menuItem) return;
         setItemToInventory(player);
         Storage.disabledMenus.remove(player.getUniqueId());
     }
@@ -204,8 +245,14 @@ public class MenuManager {
         nbt.save();
         player.getInventory().setItem(slot,nbt.getItem());
     }
-    public static void openModel(String modelName,Player player){
-        MenuModel model = MenuModel.getModels().get(modelName);
+
+    //public static MenuModel cloneMenuModel(MenuModel model){
+    //    MenuModel newMenuModel = new MenuModel();
+    //    newMenuModel = (MenuModel) model.clone();
+    //    return newMenuModel;
+    //}
+
+    public static void openModel(MenuModel model,Player player,List<String> inputs){
         if (model == null) {player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).menuExist)); return;}
 
         boolean notAllow = false;
@@ -218,24 +265,25 @@ public class MenuManager {
             return;
         }
 
-        model.openMenu(player,List.of());
+        if (model.isPlayerMenu())
+            try {
+                if (MenuMine.debug) Bukkit.getServer().getConsoleSender().sendMessage(color("&f[MenuMine] Opening a PMenu for "+player.getUniqueId()));
+                PlayerMenuController.openMenuModel(player,model.getId(),inputs);
+                return;
+            }catch (Exception e){e.printStackTrace();}
+
+        model.openMenu(player,inputs);
+    }
+    public static void openModel(String modelName,Player player){
+        MenuModel model = MenuModel.getModels().get(modelName);
+        if (model == null) {player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).menuExist)); return;}
+        openModel(MenuModel.getModels().get(modelName),player,List.of());
     }
 
     public static void openModel(String modelName,Player player,List<String> inputs){
         MenuModel model = MenuModel.getModels().get(modelName);
         if (model == null) {player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).menuExist)); return;}
-
-        boolean notAllow = false;
-        for (MenuAction action : model.getRequireActions())
-            if (!action.run(player,null)) {notAllow = true; break;}
-
-        if (notAllow) {
-            for (MenuAction action : model.getNotAllowActions())
-                action.run(player,null);
-            return;
-        }
-
-        model.openMenu(player,inputs);
+        openModel(MenuModel.getModels().get(modelName),player,inputs);
     }
 
     private static MenuAction buildAction(String actionString){
@@ -303,6 +351,18 @@ public class MenuManager {
             guiYml.save(gui);
         } catch (IOException e) {throw new RuntimeException(e);}
         MenuManager.loadMenuModels();
+    }
+
+    public static Inventory copy(Inventory inventory) {
+        Inventory inv = Bukkit.createInventory(null, inventory.getSize(), "");
+
+        ItemStack[] orginal = inv.getContents();
+        ItemStack[] clone = new ItemStack[orginal.length];
+
+        System.arraycopy(orginal, 0, clone, 0, orginal.length);
+
+        inv.setContents(clone);
+        return inv;
     }
 
     public static void logError(String error){

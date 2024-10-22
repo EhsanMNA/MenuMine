@@ -3,7 +3,7 @@ package me.ehsanmna.menumine.Managers;
 import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.utils.ReflectionUtils;
 import me.ehsanmna.menumine.utils.SkullUtils;
-import me.ehsanmna.menumine.utils.XMaterial;
+import me.ehsanmna.menumine.utils.xseries.XMaterial;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;

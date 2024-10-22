@@ -1,4 +1,4 @@
-package me.ehsanmna.menumine.utils;
+package me.ehsanmna.menumine.utils.xseries;
 
 import com.google.common.base.Enums;
 import com.google.common.base.Strings;
@@ -819,9 +819,6 @@ public enum XSound {
     ENTITY_PARROT_IMITATE_CREEPER,
     ENTITY_PARROT_IMITATE_DROWNED,
     ENTITY_PARROT_IMITATE_ELDER_GUARDIAN,
-    /**
-     * Removed in 1.15
-     */
     ENTITY_PARROT_IMITATE_ENDERMAN,
     ENTITY_PARROT_IMITATE_ENDERMITE,
     ENTITY_PARROT_IMITATE_ENDER_DRAGON,
@@ -836,9 +833,6 @@ public enum XSound {
     ENTITY_PARROT_IMITATE_PIGLIN,
     ENTITY_PARROT_IMITATE_PIGLIN_BRUTE,
     ENTITY_PARROT_IMITATE_PILLAGER,
-    /**
-     * Removed in 1.15
-     */
     ENTITY_PARROT_IMITATE_POLAR_BEAR,
     ENTITY_PARROT_IMITATE_RAVAGER,
     ENTITY_PARROT_IMITATE_SHULKER,
@@ -852,9 +846,6 @@ public enum XSound {
     ENTITY_PARROT_IMITATE_WITCH,
     ENTITY_PARROT_IMITATE_WITHER,
     ENTITY_PARROT_IMITATE_WITHER_SKELETON,
-    /**
-     * Removed in 1.15
-     */
     ENTITY_PARROT_IMITATE_WOLF,
     ENTITY_PARROT_IMITATE_ZOGLIN,
     ENTITY_PARROT_IMITATE_ZOMBIE,
@@ -1223,12 +1214,6 @@ public enum XSound {
     WEATHER_RAIN("AMBIENCE_RAIN"),
     WEATHER_RAIN_ABOVE;
 
-    /**
-     * Cached list of {@link XSound#values()} to avoid allocating memory for
-     * calling the method every time.
-     *
-     * @since 2.0.0
-     */
     public static final XSound[] VALUES = values();
 
     public static final float DEFAULT_VOLUME = 1.0f, DEFAULT_PITCH = 1.0f;
@@ -1252,17 +1237,6 @@ public enum XSound {
         }
     }
 
-    /**
-     * Attempts to build the string like an enum name.<br>
-     * Removes all the spaces, numbers and extra non-English characters. Also removes some config/in-game based strings.
-     * While this method is hard to maintain, it's extremely efficient. It's approximately more than x5 times faster than
-     * the normal RegEx + String Methods approach for both formatted and unformatted material names.
-     *
-     * @param name the sound name to format.
-     *
-     * @return an enum name.
-     * @since 1.0.0
-     */
     @Nonnull
     private static String format(@Nonnull String name) {
         int len = name.length();
@@ -1292,44 +1266,18 @@ public enum XSound {
         return new String(chs, 0, count);
     }
 
-    /**
-     * Parses the XSound with the given name.
-     *
-     * @param sound the name of the sound.
-     *
-     * @return a matched XSound.
-     * @since 1.0.0
-     */
     @Nonnull
     public static Optional<XSound> matchXSound(@Nonnull String sound) {
         Validate.notEmpty(sound, "Cannot match XSound of a null or empty sound name");
         return Optional.ofNullable(Data.NAMES.get(format(sound)));
     }
 
-    /**
-     * Parses the XSound with the given bukkit sound.
-     *
-     * @param sound the Bukkit sound.
-     *
-     * @return a matched sound.
-     * @throws IllegalArgumentException may be thrown as an unexpected exception.
-     * @since 2.0.0
-     */
     @Nonnull
     public static XSound matchXSound(@Nonnull Sound sound) {
         Objects.requireNonNull(sound, "Cannot match XSound of a null sound");
         return Objects.requireNonNull(Data.NAMES.get(sound.name()), () -> "Unsupported sound: " + sound.name());
     }
 
-    /**
-     * A quick async way to play a sound from the config.
-     *
-     * @param player the player to play the sound to.
-     * @param sound  the sound to play to the player.
-     *
-     * @see #play(Location, String)
-     * @since 1.0.0
-     */
     @Nonnull
     public static CompletableFuture<Record> play(@Nonnull Player player, @Nullable String sound) {
         Objects.requireNonNull(player, "Cannot play sound to null player");
@@ -1344,12 +1292,6 @@ public enum XSound {
         });
     }
 
-    /**
-     * A quick async way to play a sound from the config.
-     *
-     * @see #play(Location, String)
-     * @since 3.0.0
-     */
     @Nonnull
     public static CompletableFuture<Record> play(@Nonnull Location location, @Nullable String sound) {
         Objects.requireNonNull(location, "Cannot play sound to null location");
@@ -1364,43 +1306,6 @@ public enum XSound {
         });
     }
 
-    /**
-     * Just an extra feature that loads sounds from strings.
-     * Useful for getting sounds from config files.
-     * Sounds are thread safe.
-     * <p>
-     * It's strongly recommended to use this method while using it inside a loop.
-     * This can help to avoid parsing the sound properties multiple times.
-     * A simple usage of using it in a loop is:
-     * <blockquote><pre>
-     *     Record record = XSound.parse(player, location, sound, false).join();
-     *     // Loop:
-     *     if (record != null) record.play();
-     * </pre></blockquote>
-     * <p>
-     * This will also ignore {@code none} and {@code null} strings.
-     * <p>
-     * <b>Format:</b> [~]Sound, [Volume], [Pitch]<br>
-     * Where {@code ~} prefix will play the sound at the location even if a player is specified.
-     * A sound played at a location will be heard by everyone around.
-     * <p>
-     * <b>Examples:</b>
-     * <p>
-     * <pre>
-     *     ~ENTITY_PLAYER_BURP, 2.5f, 0.5
-     *     ENTITY_PLAYER_BURP, 0.5, 1f
-     *     BURP, 0.5f, 1
-     *     MUSIC_END, 10f
-     *     ~MUSIC_END, 10
-     *     none (case-insensitive)
-     *     null (~ in yml)
-     * </pre>
-     * <p>
-     *
-     * @param sound the string of the sound with volume and pitch (if needed).
-     *
-     * @since 7.0.0
-     */
     @Nullable
     public static Record parse(@Nullable String sound) {
         if (Strings.isNullOrEmpty(sound) || sound.equalsIgnoreCase("none")) return null;
@@ -1430,19 +1335,6 @@ public enum XSound {
         return new Record(soundType.get(), null, null, volume, pitch, playAtLocation);
     }
 
-    /**
-     * Stops all the playing musics (not all the sounds)
-     * <p>
-     * Note that this method will only work for the sound
-     * that are sent from {@link Player#playSound} and
-     * the sounds played from the client will not be
-     * affected by this.
-     *
-     * @param player the player to stop all the sounds from.
-     *
-     * @see #stopSound(Player)
-     * @since 2.0.0
-     */
     public static void stopMusic(@Nonnull Player player) {
         Objects.requireNonNull(player, "Cannot stop playing musics from null player");
 
@@ -1462,20 +1354,6 @@ public enum XSound {
         }
     }
 
-    /**
-     * Plays an instrument's notes in an ascending form.
-     * This method is not really relevant to this utility class, but a nice feature.
-     *
-     * @param plugin      the plugin handling schedulers.
-     * @param player      the player to play the note from.
-     * @param playTo      the entity to play the note to.
-     * @param instrument  the instrument.
-     * @param ascendLevel the ascend level of notes. Can only be positive and not higher than 7
-     * @param delay       the delay between each play.
-     *
-     * @return the async task handling the operation.
-     * @since 2.0.0
-     */
     @Nonnull
     public static BukkitTask playAscendingNote(@Nonnull JavaPlugin plugin, @Nonnull Player player, @Nonnull Entity playTo, @Nonnull Instrument instrument,
                                                int ascendLevel, int delay) {
@@ -1497,57 +1375,20 @@ public enum XSound {
         }.runTaskTimerAsynchronously(plugin, 0, delay);
     }
 
-    /**
-     * In most cases your should be using {@link #name()} instead.
-     *
-     * @return a friendly readable string name.
-     */
     @Override
     public String toString() {
         return WordUtils.capitalize(this.name().replace('_', ' ').toLowerCase(Locale.ENGLISH));
     }
 
-    /**
-     * Parses the XSound as a {@link Sound} based on the server version.
-     *
-     * @return the vanilla sound.
-     * @since 1.0.0
-     */
     @Nullable
     public Sound parseSound() {
         return this.sound;
     }
 
-    /**
-     * Checks if this sound is supported in the current Minecraft version.
-     * <p>
-     * An invocation of this method yields exactly the same result as the expression:
-     * <p>
-     * <blockquote>
-     * {@link #parseSound()} != null
-     * </blockquote>
-     *
-     * @return true if the current version has this sound, otherwise false.
-     * @since 1.0.0
-     */
     public boolean isSupported() {
         return this.parseSound() != null;
     }
 
-    /**
-     * Plays a sound repeatedly with the given delay at a moving target's location.
-     *
-     * @param plugin the plugin handling schedulers. (You can replace this with a static instance)
-     * @param entity the entity to play the sound to. We exactly need an entity to keep the track of location changes.
-     * @param volume the volume of the sound.
-     * @param pitch  the pitch of the sound.
-     * @param repeat the amount of times to repeat playing.
-     * @param delay  the delay between each repeat.
-     *
-     * @return the async task handling this operation.
-     * @see #play(Location, float, float)
-     * @since 2.0.0
-     */
     @Nonnull
     public BukkitTask playRepeatedly(@Nonnull JavaPlugin plugin, @Nonnull Entity entity, float volume, float pitch, int repeat, int delay) {
         Objects.requireNonNull(plugin, "Cannot play repeating sound from null plugin");

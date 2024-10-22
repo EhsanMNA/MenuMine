@@ -1,4 +1,6 @@
-version: "1.8"
+version: "1.9"
+
+debug: false
 
 defaultLanguage: 'en'
 logEnableMessages: true
@@ -8,6 +10,8 @@ Metrics: true
 # - if you don't want to use placeholders disable it (it's also optimize the plugin)
 InteractEvent: true
 PlaceholderAPI_support: true
+
+MenuItem: true
 
 # When an action returns false, automatically plugin use preLoaded language messages.
 # if you use the denyActions in new versions, you can disable this

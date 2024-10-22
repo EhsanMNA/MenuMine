@@ -1,0 +1,7 @@
+#N: Item serializer of players is different from the main one
+302173d0-150d-4104-98eb-a0fe8fde280f:
+  bag:
+    items:
+      "10":
+        material: STONE
+        name: "test"

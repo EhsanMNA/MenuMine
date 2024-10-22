@@ -3,14 +3,13 @@ package me.ehsanmna.menumine.Managers;
 import me.ehsanmna.menumine.Managers.economy.EconomyManager;
 import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.models.Action;
-import me.ehsanmna.menumine.models.MenuModel;
-import me.ehsanmna.menumine.nbt.NBTItemManager;
 import me.ehsanmna.menumine.utils.ActionBar;
 import me.ehsanmna.menumine.utils.Titles;
-import me.ehsanmna.menumine.utils.XMaterial;
-import me.ehsanmna.menumine.utils.XSound;
+import me.ehsanmna.menumine.utils.xseries.XMaterial;
+import me.ehsanmna.menumine.utils.xseries.XSound;
 import me.ehsanmna.menumine.utils.skills.AuraSkillsManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -44,7 +43,8 @@ public class MenuAction {
             case GIVEMONEY: EconomyManager.economy.addMoney(player,Float.parseFloat(action)); return true;
             case TAKEMONEY:
                 if (EconomyManager.economy.hasMoney(player,Float.parseFloat(action))) {
-                    if (Storage.autoSendMessage) EconomyManager.economy.takeMoney(player,Float.parseFloat(action));
+                    if (Storage.autoSendMessage) player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).successfully));
+                    EconomyManager.economy.takeMoney(player,Float.parseFloat(action));
                     return true;
                 } else return false;
             case PERMISSION:
@@ -63,6 +63,7 @@ public class MenuAction {
                     else MenuManager.openModel(action,player,arguments);
                 }catch (Exception error){player.sendMessage(MenuMine.color(PlayerManager.getPlayerLanguage(player).prefix +PlayerManager.getPlayerLanguage(player).failed));}
                 return true;
+            case CANCEL: return false;
             case CHANGE:
                 ItemMeta meta = item.getItemMeta();
                 String type = arguments.get(0);
@@ -130,6 +131,20 @@ public class MenuAction {
                 }catch (Exception ignored){
                     MenuMine.getInstance().getLogger().warning("AuraSkills could not detect!");
                 }
+            case ADDITEM:
+                // ADDITEM-MATERIAL-AMOUNT
+                Material material = Material.STONE;
+                try {
+                    if (action.contains("-"))
+                        material = Material.valueOf(action.split("-")[0]);
+                    else material = Material.valueOf(action);
+                }catch (Exception ignored){}
+                int amount = 1;
+                if (action.contains("-")) amount = Integer.parseInt(action.split("-")[1]);
+
+                ItemStack i = new ItemStack(material,amount);
+                player.getInventory().addItem(i);
+                return true;
         }
         return false;
     }

@@ -30,7 +30,9 @@ import java.util.Objects;
 public final class MenuMine extends JavaPlugin {
 
     public static boolean logMessages = true;
+    public static boolean debug = false;
     static MenuMine main = null;
+    public static boolean menuItem = true;
 
     public static List<MenuAction> mainActions = new ArrayList<>();
 
@@ -41,9 +43,11 @@ public final class MenuMine extends JavaPlugin {
         saveDefaultConfig();
 
         if (getConfig().contains("logEnableMessages")) logMessages = getConfig().getBoolean("logEnableMessages");
+        if (getConfig().contains("debug")) debug = getConfig().getBoolean("debug");
         if (getConfig().contains("NBTSystem")) NBTItemManager.nbtSystem = getConfig().getString("NBTSystem");
         if (getConfig().contains("PlaceholderAPI_support")) Storage.papiUse = getConfig().getBoolean("PlaceholderAPI_support");
         if (getConfig().contains("AutoMessageComplete")) Storage.autoSendMessage = getConfig().getBoolean("AutoMessageComplete");
+        if (getConfig().contains("MenuItem")) menuItem = getConfig().getBoolean("MenuItem");
         if (getConfig().contains("Economy")) {
             Storage.economyUse = getConfig().getBoolean("Economy.enabled");
             EconomyManager.setup(EconomyType.valueOf(Objects.requireNonNull(getConfig().getString("Economy.type")).toUpperCase()));
@@ -83,7 +87,10 @@ public final class MenuMine extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        try {Storage.refreshData();}
+        try {
+            Storage.refreshData();
+            Storage.refreshPMenus();
+        }
         catch (IOException ignored) {}
 
         if (logMessages){

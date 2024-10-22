@@ -58,6 +58,7 @@ public class MenuCommand implements CommandExecutor {
                         if (player.hasPermission("menuMine.developer")){
                             try {
                                 Storage.refreshData();
+                                Storage.refreshPMenus();
                                 MenuManager.loadMenu();
                                 MenuManager.loadMenuModels();
                                 CommandRegManager.updateCommands();
@@ -102,6 +103,10 @@ public class MenuCommand implements CommandExecutor {
                             PlayerManager.playerLanguages.put(player.getUniqueId(),args[1]);
                             player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).successfully));
                         }else player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).failed));
+                    }else if (args[0].equalsIgnoreCase("debug")) {
+                        if(!player.hasPermission("menu.command.debug")) return false;
+                        if (args[1].equalsIgnoreCase("console")) MenuMine.debug = true;
+                        player.sendMessage(MenuMine.color(prefix + PlayerManager.getPlayerLanguage(player).successfully));
                     }
             }
 

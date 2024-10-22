@@ -5,6 +5,7 @@ import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.Managers.PlayerManager;
 import me.ehsanmna.menumine.Managers.Storage;
 import me.ehsanmna.menumine.MenuMine;
+import me.ehsanmna.menumine.models.Action;
 import me.ehsanmna.menumine.models.MenuModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
@@ -28,6 +29,7 @@ public class Listeners implements org.bukkit.event.Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e){
+        if (!MenuMine.menuItem) return;
         if (!MenuManager.isMenuDisabled(e.getPlayer()))
             MenuManager.setItemToInventory(e.getPlayer());
 
@@ -36,6 +38,7 @@ public class Listeners implements org.bukkit.event.Listener {
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent e){
+        if (!MenuMine.menuItem) return;
         if (Storage.dropItem) return;
         NBTItem nbt = NBTItemManager.createNBTItem(e.getItemDrop().getItemStack());
         if (nbt.hasTag("menu") || nbt.hasTag("MenuItem")) e.setCancelled(true);
@@ -43,6 +46,7 @@ public class Listeners implements org.bukkit.event.Listener {
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e){
+        if (!MenuMine.menuItem) return;
         if (Storage.dropItem) return;
         if (e.getDrops().isEmpty()) return;
         for (ItemStack item : e.getDrops()){
@@ -53,6 +57,7 @@ public class Listeners implements org.bukkit.event.Listener {
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent e){
+        if (!MenuMine.menuItem) return;
         if (!MenuManager.isMenuDisabled(e.getPlayer())) MenuManager.setItemToInventory(e.getPlayer());
     }
 
@@ -65,31 +70,31 @@ public class Listeners implements org.bukkit.event.Listener {
             try {if (item != null) nbt = NBTItemManager.createNBTItem(item);
             }catch (Exception ignored){}
             if (nbt != null){
-                if (nbt.hasTag("menu")) e.setCancelled(true);
+                if (nbt.hasTag("menu") && !Storage.moveItem) e.setCancelled(true);
                 if (nbt.hasTag("MenuItem")){
                     if (nbt.hasTag("FilterItem")) e.setCancelled(true);
                     if (!e.isCancelled()){
                         MenuModel model = MenuModel.getModels().get(nbt.getString("MenuModel"));
-                        try {
-                            for (MenuAction action : model.getActions(e.getSlot()))
-                                try {
-                                    if (PlayerManager.debugers.contains(player.getUniqueId()))
-                                        player.sendMessage("Action: "+action.getAction().name() +", Arguments: "+action.getActionArgument()
-                                        +", Inputs: "+action.getArguments().toString());
-                                    if (!action.run(player,item)){
-                                        if (!model.getActionsDeny().isEmpty())
+                        if (model.getActions(e.getSlot())==null || model.getActions(e.getSlot()).isEmpty()) return;
+                        for (MenuAction action : model.getActions(e.getSlot()))
+                            try {
+                                if (!model.isItemMove() || action.getAction().equals(Action.CANCEL)) e.setCancelled(true);
+                                if (PlayerManager.debugers.contains(player.getUniqueId()))
+                                    player.sendMessage("Action: "+action.getAction().name() +", Arguments: "+action.getActionArgument()
+                                    +", Inputs: "+action.getArguments().toString());
+                                if (!action.run(player,item)){
+                                    if (model.getActionsDeny()!=null && !model.getActionsDeny().isEmpty())
+                                        if (model.getDenyActions(e.getSlot()) !=null && !model.getDenyActions(e.getSlot()).isEmpty())
                                             for (MenuAction denyAction : model.getDenyActions(e.getSlot()))
                                                 if (!denyAction.run(player,item)) break;
-                                        break;
-                                    }
-                                }catch (Exception error){error.printStackTrace();}
-                        }catch (Exception error){error.printStackTrace();}
-                        e.setCancelled(true);
+                                    break;
+                                }
+                            }catch (Exception error){error.printStackTrace();}
                     }
                 }
             }
             assert item != null;
-            if (!Storage.moveItem)
+            if (!Storage.moveItem && MenuMine.menuItem)
                 if (item.getType().equals(Material.AIR))
                     if (e.getHotbarButton() == MenuManager.slot && e.getSlotType().equals(InventoryType.SlotType.QUICKBAR)
                             && e.getClick().equals(ClickType.NUMBER_KEY) && e.getAction().equals(InventoryAction.HOTBAR_SWAP)) e.setCancelled(true);

@@ -1,5 +1,6 @@
 package me.ehsanmna.menumine.utils;
 
+import me.ehsanmna.menumine.MenuMine;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -95,7 +96,7 @@ public final class ReflectionUtils {
                     v(18, "a").orElse("sendPacket"),
                     MethodType.methodType(void.class, getNMSClass("network.protocol", "Packet")));
         } catch (NoSuchMethodException | NoSuchFieldException | IllegalAccessException ex) {
-            ex.printStackTrace();
+            MenuMine.getInstance().getLogger().warning("It seem you are in version 1.20+, this version does not support some actions!");
         }
 
         PLAYER_CONNECTION = connection;
