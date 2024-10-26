@@ -187,6 +187,7 @@ public class MenuManager {
     }
 
     public static void loadPMenuModels(){
+        MenuMine.getInstance().getLogger().warning("Player menus are currently in development.");
         long time = System.currentTimeMillis();
         int n = 0;
 

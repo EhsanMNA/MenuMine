@@ -148,23 +148,6 @@ public final class Titles {
         sendTitle(player, 10, 20, 10, title, subtitle);
     }
 
-    /**
-     * Parses and sends a title from the config.
-     * The configuration section must at least
-     * contain {@code title} or {@code subtitle}
-     *
-     * <p>
-     * <b>Example:</b>
-     * <blockquote><pre>
-     *     ConfigurationSection titleSection = plugin.getConfig().getConfigurationSection("restart-title");
-     *     Titles.sendTitle(player, titleSection);
-     * </pre></blockquote>
-     *
-     * @param player the player to send the title to.
-     * @param config the configuration section to parse the title properties from.
-     *
-     * @since 1.0.0
-     */
     public static void sendTitle(@Nonnull Player player, @Nonnull ConfigurationSection config) {
         String title = config.getString("title");
         String subtitle = config.getString("subtitle");

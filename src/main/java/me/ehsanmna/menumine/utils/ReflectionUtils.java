@@ -1,5 +1,6 @@
 package me.ehsanmna.menumine.utils;
 
+import me.ehsanmna.menumine.Managers.Storage;
 import me.ehsanmna.menumine.MenuMine;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -76,9 +77,9 @@ public final class ReflectionUtils {
     public static final String
             CRAFTBUKKIT_PACKAGE = "org.bukkit.craftbukkit." + NMS_VERSION + '.',
             NMS_PACKAGE = v(17, "net.minecraft.").orElse("net.minecraft.server." + NMS_VERSION + '.');
-    private static final MethodHandle PLAYER_CONNECTION;
-    private static final MethodHandle GET_HANDLE;
-    private static final MethodHandle SEND_PACKET;
+    private static MethodHandle PLAYER_CONNECTION = null;
+    private static MethodHandle GET_HANDLE = null;
+    private static MethodHandle SEND_PACKET = null;
 
     static {
         Class<?> entityPlayer = getNMSClass("server.level", "EntityPlayer");
@@ -89,19 +90,26 @@ public final class ReflectionUtils {
         MethodHandle sendPacket = null, getHandle = null, connection = null;
 
         try {
-            connection = lookup.findGetter(entityPlayer,
-                    v(20, "c").v(17, "b").orElse("playerConnection"), playerConnection);
-            getHandle = lookup.findVirtual(craftPlayer, "getHandle", MethodType.methodType(entityPlayer));
-            sendPacket = lookup.findVirtual(playerConnection,
-                    v(18, "a").orElse("sendPacket"),
-                    MethodType.methodType(void.class, getNMSClass("network.protocol", "Packet")));
+            if (supports(20)){
+                if (!Storage.ignoreNew) {
+                    MenuMine.getInstance().getLogger().warning("It seem you are in version 1.20+, this version does not support some actions! if you want to ignore this, set ignoreNew to true in config.yml!");
+                    connection = lookup.findGetter(entityPlayer,
+                            v(20, "c").v(17, "b").orElse("playerConnection"), playerConnection);
+                    getHandle = lookup.findVirtual(craftPlayer, "getHandle", MethodType.methodType(entityPlayer));
+                    sendPacket = lookup.findVirtual(playerConnection,
+                            v(18, "a").orElse("sendPacket"),
+                            MethodType.methodType(void.class, getNMSClass("network.protocol", "Packet")));
+                }
+            }
         } catch (NoSuchMethodException | NoSuchFieldException | IllegalAccessException ex) {
             MenuMine.getInstance().getLogger().warning("It seem you are in version 1.20+, this version does not support some actions!");
         }
 
-        PLAYER_CONNECTION = connection;
-        SEND_PACKET = sendPacket;
-        GET_HANDLE = getHandle;
+        if (!Storage.ignoreNew) {
+            PLAYER_CONNECTION = connection;
+            SEND_PACKET = sendPacket;
+            GET_HANDLE = getHandle;
+        }
     }
 
     private ReflectionUtils() {}

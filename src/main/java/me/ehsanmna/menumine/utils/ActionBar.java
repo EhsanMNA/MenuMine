@@ -128,7 +128,7 @@ public final class ActionBar {
         Objects.requireNonNull(player, "Cannot send action bar to null player");
         Objects.requireNonNull(message, "Cannot send null actionbar message");
 
-        if (USE_SPIGOT_API) {
+        if (USE_SPIGOT_API || supports(16)) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
             return;
         }
