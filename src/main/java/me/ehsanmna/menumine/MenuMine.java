@@ -14,6 +14,7 @@ import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
 import me.ehsanmna.menumine.utils.Metrics;
 import me.ehsanmna.menumine.utils.ReflectionUtils;
+import me.ehsanmna.menumine.utils.addons.MenuMineStorageAddon;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -42,23 +43,24 @@ public final class MenuMine extends JavaPlugin {
         main = this;
         saveDefaultConfig();
 
-        if (getConfig().contains("logEnableMessages")) logMessages = getConfig().getBoolean("logEnableMessages");
-        if (getConfig().contains("debug")) debug = getConfig().getBoolean("debug");
-        if (getConfig().contains("NBTSystem")) NBTItemManager.nbtSystem = getConfig().getString("NBTSystem");
-        if (getConfig().contains("PlaceholderAPI_support")) Storage.papiUse = getConfig().getBoolean("PlaceholderAPI_support");
-        if (getConfig().contains("ignoreNew")) Storage.ignoreNew = getConfig().getBoolean("ignoreNew");
-        if (getConfig().contains("AutoMessageComplete")) Storage.autoSendMessage = getConfig().getBoolean("AutoMessageComplete");
-        if (getConfig().contains("MenuItem")) menuItem = getConfig().getBoolean("MenuItem");
+        logMessages = getConfig().getBoolean("logMessages", true);
+        debug = getConfig().getBoolean("debug", false);
+        NBTItemManager.nbtSystem = getConfig().getString("NBTSystem", "spigot");
+        Storage.papiUse = getConfig().getBoolean("PlaceholderAPI_support", false);
+        Storage.ignoreNew = getConfig().getBoolean("ignoreNew", true);
+        Storage.autoSendMessage = getConfig().getBoolean("AutoMessageComplete", true);
+        menuItem = getConfig().getBoolean("MenuItem", true);
         if (getConfig().contains("Economy")) {
             Storage.economyUse = getConfig().getBoolean("Economy.enabled");
             EconomyManager.setup(EconomyType.valueOf(Objects.requireNonNull(getConfig().getString("Economy.type")).toUpperCase()));
         }
-        if (getConfig().contains("MenuItemCheckerTask"))
-            if (getConfig().getBoolean("MenuItemCheckerTask.enabled")) runCheckerTask(getConfig().getInt("MenuItemCheckerTask.time"));
+        if (getConfig().getBoolean("MenuItemCheckerTask.enabled",true)) runCheckerTask(getConfig().getInt("MenuItemCheckerTask.time"));
+
+        // MenuMineStorageAddon.initialize();
 
         if (logMessages) getServer().getConsoleSender().sendMessage(color("&b----------=======----------"));
         try {
-            if (getConfig().getBoolean("Metrics")) {
+            if (getConfig().getBoolean("Metrics",true)) {
                 new Metrics(this,18107);
                 if (logMessages) getServer().getConsoleSender().sendMessage(color("&3 Metrics has been enabled."));
             }
@@ -70,7 +72,7 @@ public final class MenuMine extends JavaPlugin {
         Objects.requireNonNull(getCommand("menu")).setTabCompleter(new MenuTabCompleter());
 
         getServer().getPluginManager().registerEvents(new Listeners(),this);
-        if (getConfig().getBoolean("InteractEvent")) {
+        if (getConfig().getBoolean("InteractEvent",true)) {
             getServer().getPluginManager().registerEvents(new InteractListener(),this);
             if (ReflectionUtils.supports(9)) getServer().getPluginManager().registerEvents(new SwapHandItemsEvent(),this);
         }

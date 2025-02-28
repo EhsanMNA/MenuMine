@@ -3,7 +3,7 @@ Main:
   rows: 3
   openSound: "LEVEL_UP"
   # Copy means when someone opens the menu, every item are setting in menu again! if in your menu nothing changes, you can disable this option
-  copy: false
+  copy: true
   # Require actions to open the menu
   # You cant use some of the actions here like <CHANGE>
   requires:
@@ -16,7 +16,7 @@ Main:
       material: BLACK_STAINED_GLASS_PANE
       type: fill
       name: '&r '
-      # However, you can add lore to item => lore: ['First Line','Second Line']
+      # => lore: ['First Line','Second Line']
     corner:
       material: WHITE_STAINED_GLASS_PANE
       type: slot
@@ -31,16 +31,16 @@ Main:
       flags:
         - HIDE_POTION_EFFECTS
       lore:
-        - '&6&n                                  '
+        - '&6&n                                     '
         - '&r '
-        - ' &e&lBattlePass &f&lSeason &e&l1'
+        - ' &e&lBattlePass &6&lS&e&l1'
         - ' '
         - '  &e&lTier: &62'
-        - '  &e&lPremium: &cFalse'
+        - '  &e&lPremium: &eFalse'
         - '  &e&lWeek: &61'
-        - '&6&n                                  '
+        - '&6&n                                     '
       actions:
-        #avaible actions: <MESSAGE-your message>, <COMMAND-your command>, <CANCEL> no actions, <CLOSE-menu> closing menu
+        #avaible actions: <MESSAGE-your message>, <COMMAND-your command>, <CANCEL> no actions, <CLOSE> closing menu
         # <PERMISSION-permission> <HASMONEY-money> <TAKEMONEY-money> <GIVEMONEY-money>
         # <SOUND-sound> <ACTIONBAR-message> <TITLE-title-sub title>
         # <CHANGE-[TYPE(ITEM,NAME,MODEL)]>
@@ -65,8 +65,8 @@ Main:
         - MESSAGE-&bOpened shop menu
       #When one of the boolean check of actions returns false, denyActions will be executed!
       denyActions:
-        - COMMAND-shop2
         - CHANGE-[ITEM]BARRIER
+        - CHANGE-[NAME]You don't have access!
         - SOUND-LEVELUP
         - CHANGE-[NAME] &cYou don't have permission!
       slot: 11
@@ -176,7 +176,7 @@ Warps:
   rows: 3
   name: '&c&lWarps'
   openSound: "LEVEL_UP"
-  copy: false
+  copy: true
   #register custom command for menu opening
   command: 'warps'
   filter:
@@ -257,22 +257,3 @@ Warps:
         - CLOSE
         - ACTIONBAR-&cWelcome to your home sir!
         - SOUND-BLOCK_NETHER_ORE_HIT
-bag:
-  name: '&8Private bag'
-  rows: 3
-  openSound: "LEVEL_UP"
-  copy: false
-  pMenu: true
-  command: 'bag'
-  moveItems: true
-  requires:
-    - PERMISSION-menu.bag
-  notAllow:
-    - "MESSAGE-&cYou haven't unlock the bag yet!"
-    - CLOSE
-  filter:
-    black:
-      material: BLACK_STAINED_GLASS_PANE
-      type: slot
-      name: '&r '
-      slots: [0,1,2,3,4,5,6,7,8,18,19,20,21,22,23,24,25,26]

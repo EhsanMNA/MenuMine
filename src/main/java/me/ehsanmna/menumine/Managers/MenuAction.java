@@ -24,6 +24,20 @@ public class MenuAction {
     String action;
     List<String> arguments = new ArrayList<>();
 
+    public MenuAction() {
+    }
+
+    public MenuAction(Action act, String action, List<String> arguments) {
+        this.act = act;
+        this.action = action;
+        this.arguments = arguments;
+    }
+
+    public MenuAction(Action act, String action) {
+        this.act = act;
+        this.action = action;
+    }
+
     public boolean run(Player player, ItemStack item){
         switch (act){
             case ACTIONBAR:
@@ -145,6 +159,15 @@ public class MenuAction {
                 ItemStack i = new ItemStack(material,amount);
                 player.getInventory().addItem(i);
                 return true;
+
+            case CUTSOME:
+                // CUSTOME-ACTIONNAME-argument
+                String actionName;
+                if (action.contains("-")) actionName = (action.split("-")[0]);
+                else actionName = (action);
+
+                if (actionName.equalsIgnoreCase("StorageMenu"))
+                break;
         }
         return false;
     }

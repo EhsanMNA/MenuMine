@@ -2,11 +2,15 @@ version: "1.9"
 
 debug: false
 
+# Addons- install the plugins to get support from menu mine!
+addons:
+  MenuMineStorage: true
+
 # setting this true will be use SpigotAPI for some actions like ActionBar or Titles from 1.20 to new versions!
 ignoreNew: true
 
 defaultLanguage: 'en'
-logEnableMessages: true
+logMessages: true
 Metrics: true
 # Interact event used as in game menu creation system + set placeholders when someone opens the menu
 # - if you don't want to use in game menu system & optimize disable this future
@@ -21,10 +25,11 @@ MenuItem: true
 AutoMessageComplete: true
 
 # Available NBT systems:
-# - madeIn (Reflection)
+# - spigot (for 1.14+)
+# - madeIn (Reflection -> use this for 1.8 - 1.12)
 # - RTag (Url: https://github.com/saicone/rtag) require to be installed! use this for Mojang mapping servers or if madeIn has problems on your server
 # - NBTAPI (Url: https://www.spigotmc.org/resources/nbt-api.7939/) popular minecraft nbt api, need installation! (Or if any plugins shaded the nbtAPI, does not require!)
-NBTSystem: madeIn
+NBTSystem: spigot
 
 # Available Economy systems:
 # - Vault

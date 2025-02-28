@@ -26,6 +26,7 @@ public class MenuModel implements Cloneable{
     boolean copy = true;
     boolean itemMove = false;
     boolean playerMenu = false;
+    boolean specialMenu = false;
     Inventory inv;
     String id;
     String name;
@@ -122,6 +123,14 @@ public class MenuModel implements Cloneable{
 
     public void setPlayerMenu(boolean playerMenu) {
         this.playerMenu = playerMenu;
+    }
+
+    public boolean isSpecialMenu() {
+        return specialMenu;
+    }
+
+    public void setSpecialMenu(boolean specialMenu) {
+        this.specialMenu = specialMenu;
     }
 
     public void openMenu(Player player, List<String> inputs){

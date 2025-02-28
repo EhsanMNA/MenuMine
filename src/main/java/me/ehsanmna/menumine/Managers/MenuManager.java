@@ -1,11 +1,13 @@
 package me.ehsanmna.menumine.Managers;
 
 import me.ehsanmna.menumine.Managers.controller.PlayerMenuController;
+import me.ehsanmna.menumine.Managers.controller.SpecialMenuManager;
 import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.commands.CustomMenuCommand;
 import me.ehsanmna.menumine.models.Action;
 import me.ehsanmna.menumine.models.MenuModel;
 import me.ehsanmna.menumine.models.PMenuModel;
+import me.ehsanmna.menumine.models.SpecialMenuModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
 import me.ehsanmna.menumine.utils.xseries.XItemStack;
@@ -60,7 +62,7 @@ public class MenuManager {
         }catch (IOException error){error.printStackTrace();}
         loadMenu();
         loadMenuModels();
-        loadPMenuModels();
+        // loadPMenuModels();
         PlayerManager.loadMessages();
         slot = yml.getInt("menu.slot");
     }
@@ -89,7 +91,6 @@ public class MenuManager {
         }
         if (yml.contains("menu.moveItem")) Storage.moveItem = yml.getBoolean("menu.moveItem");
         if (yml.contains("menu.dropItem")) Storage.dropItem = yml.getBoolean("menu.dropItem");
-        // if (MenuMine.logMessages) Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&7[&f"+(System.currentTimeMillis()-time) +"ms&7]&bSuccessfully loaded &3Main model&b."));
     }
 
     public static void loadMenuModels(){
@@ -105,8 +106,7 @@ public class MenuManager {
             String name = MenuMine.color(menuSection.getString("name"));
             Inventory inventory = Bukkit.createInventory(null,rows,name);
             try {
-                if (menuSection.contains("moveItems")) model.setItemMove(menuSection.getBoolean("moveItems"));
-                // if (menuSection.contains("perPlayer")) model.setItemMove(menuSection.getBoolean("perPlayer"));
+                model.setItemMove(menuSection.getBoolean("moveItems",false));
                 if (menuSection.contains("filter"))
                     for (String filterId : menuSection.getConfigurationSection("filter.").getKeys(false)){
                         ConfigurationSection section = menuSection.getConfigurationSection("filter." + filterId);
@@ -134,29 +134,31 @@ public class MenuManager {
                         }
                     }
             }catch (Exception ignored){}
-            if (!menuSection.contains("pMenu") || !menuSection.getBoolean("pMenu")){
+            model.setSpecialMenu(menuSection.getBoolean("specialMenu",false));
+            if (!menuSection.getBoolean("pMenu", false) && !model.isSpecialMenu()){
                 ConfigurationSection content = menuSection.getConfigurationSection("content");
-                for (String itemId : content.getKeys(false)){
-                    ConfigurationSection itemSection = content.getConfigurationSection(itemId);
-                    ItemStack item = ItemWrapper.wrapItem(itemSection);
-                    int slot = itemSection.getInt("slot");
-                    List<String> actionsId = itemSection.getStringList("actions");
-                    List<String> denyActionsId = itemSection.getStringList("denyActions");
-                    try {
-                        NBTItem nbt = NBTItemManager.createNBTItem(item);
-                        nbt.setTag("MenuItem",true);
-                        nbt.setTag("MenuModel",modelName);
-                        if ((itemSection.getString("material")).contains("<arg")) nbt.setTag("Material",itemSection.getString("material"));
-                        nbt.save();
-                        item = nbt.getItem();
-                    }catch (Exception error){System.out.println("Could not load nbt item in "+modelName +"!!!");}
+                if (content != null)
+                    for (String itemId : content.getKeys(false)){
+                        ConfigurationSection itemSection = content.getConfigurationSection(itemId);
+                        ItemStack item = ItemWrapper.wrapItem(itemSection);
+                        int slot = itemSection.getInt("slot");
+                        List<String> actionsId = itemSection.getStringList("actions");
+                        List<String> denyActionsId = itemSection.getStringList("denyActions");
+                        try {
+                            NBTItem nbt = NBTItemManager.createNBTItem(item);
+                            nbt.setTag("MenuItem",true);
+                            nbt.setTag("MenuModel",modelName);
+                            if ((itemSection.getString("material")).contains("<arg")) nbt.setTag("Material",itemSection.getString("material"));
+                            nbt.save();
+                            item = nbt.getItem();
+                        }catch (Exception error){System.out.println("Could not load nbt item in "+modelName +"!!!");}
 
-                    inventory.setItem(slot,item);
-                    for (String actionId : actionsId)
-                        model.addAction(slot,buildAction(actionId));
-                    for (String actionId : denyActionsId)
-                        model.addDenyAction(slot,buildAction(actionId));
-                }
+                        inventory.setItem(slot,item);
+                        for (String actionId : actionsId)
+                            model.addAction(slot,buildAction(actionId));
+                        for (String actionId : denyActionsId)
+                            model.addDenyAction(slot,buildAction(actionId));
+                    }
             }
 
             model.setName(modelName);
@@ -181,6 +183,7 @@ public class MenuManager {
             }
 
             MenuModel.addModel(modelName,model);
+            // if (model.isSpecialMenu()) SpecialMenuManager.setup(menuSection,model);
             Bukkit.getServer().getConsoleSender().sendMessage(MenuMine.color("&7[&f"+(System.currentTimeMillis()-time) +"ms&7]&bLoaded &9"+modelName+"&b menu model."));
         }
 
@@ -272,6 +275,11 @@ public class MenuManager {
                 PlayerMenuController.openMenuModel(player,model.getId(),inputs);
                 return;
             }catch (Exception e){e.printStackTrace();}
+
+        if (model.isSpecialMenu()){
+            SpecialMenuManager.openSpecialMenu(player,model.getId());
+            return;
+        }
 
         model.openMenu(player,inputs);
     }

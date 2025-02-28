@@ -17,8 +17,10 @@ public class NBTItemManager {
             return new NBTRTag(item);
         else if (nbtSystem.equalsIgnoreCase("NBTAPI"))
             return new NBTAPI(item);
+        else if (nbtSystem.equalsIgnoreCase("spigot"))
+            return new NBTSpigotPDC(item);
 
-        return new NBTReflection(item);
+        return new NBTSpigotPDC(item);
     }
 
 }

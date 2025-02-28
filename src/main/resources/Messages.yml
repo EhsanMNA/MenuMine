@@ -8,6 +8,7 @@ fa:
    failed: "&cAmaliyat anjam nashod! jahat etelae bishtar console check konin."
    menuExist: "&cMenu mored nazar peyda nashod va ya az gabl sakhte shode ast!"
    money: "&cShoma pool kafi baraye inkar ro nadarid!"
+   language: "&6/Menu language <lang> &eBaraye tagir zaban menu"
    help:
      - "&b«-----------------»"
      - "&3/Menu &fbaz kardan gui"
@@ -29,6 +30,7 @@ en:
   menuExist: "&cThis menu has been exist!"
   money: "&cYou don't have enough money to do this!"
   permission: "&cYou don't have access for this!"
+  language: "&6/Menu language <lang> &eTo change menu language"
   help:
     - "&b«-----------------»"
     - "&3/Menu &fOpen menu gui"

@@ -14,6 +14,7 @@ public class MessageModel {
     public String menuExist;
     public String money;
     public String permission;
+    public String language;
     public List<String> help;
 
 }
