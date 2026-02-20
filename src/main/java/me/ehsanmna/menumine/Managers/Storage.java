@@ -1,12 +1,12 @@
 package me.ehsanmna.menumine.Managers;
 
+import com.cryptomorin.xseries.XItemStack;
 import me.ehsanmna.menumine.Managers.controller.PlayerMenuController;
 import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.models.MenuModel;
 import me.ehsanmna.menumine.models.PMenuModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
-import me.ehsanmna.menumine.utils.xseries.XItemStack;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;

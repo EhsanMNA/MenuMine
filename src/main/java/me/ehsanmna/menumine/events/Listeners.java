@@ -1,5 +1,6 @@
 package me.ehsanmna.menumine.events;
 
+import com.cryptomorin.xseries.reflection.XReflection;
 import me.ehsanmna.menumine.Managers.MenuAction;
 import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.Managers.PlayerManager;
@@ -19,6 +20,7 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
@@ -73,7 +75,10 @@ public class Listeners implements org.bukkit.event.Listener {
                 if ((nbt.hasTag("menu") && !Storage.moveItem) || nbt.hasTag("FilterItem")) e.setCancelled(true);
                 if (nbt.hasTag("MenuItem")){
                     MenuModel model = MenuModel.getModels().get(nbt.getString("MenuModel"));
-                    if (model.getActions(e.getSlot())==null || model.getActions(e.getSlot()).isEmpty()) return;
+                    if (model.getActions(e.getSlot())==null || model.getActions(e.getSlot()).isEmpty()) {
+                        if(!model.isItemMove()) e.setCancelled(true);
+                        return;
+                    }
                     for (MenuAction action : model.getActions(e.getSlot()))
                         try {
                             // debug
@@ -110,6 +115,14 @@ public class Listeners implements org.bukkit.event.Listener {
     }
 
 
+    @EventHandler
+    public void onHotBarSwitch(PlayerItemHeldEvent event) {
+        if (XReflection.supports(21)) return;
+        Player player = event.getPlayer();
+        if (MenuManager.isMenuDisabled(player)) return;
+        int newSlot = event.getNewSlot();
+        if (newSlot == MenuManager.slot) event.setCancelled(true);
+    }
 
 
 }

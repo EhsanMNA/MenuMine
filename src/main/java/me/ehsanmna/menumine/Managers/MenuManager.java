@@ -1,5 +1,7 @@
 package me.ehsanmna.menumine.Managers;
 
+import com.cryptomorin.xseries.XItemStack;
+import com.cryptomorin.xseries.XSound;
 import me.ehsanmna.menumine.Managers.controller.PlayerMenuController;
 import me.ehsanmna.menumine.Managers.controller.SpecialMenuManager;
 import me.ehsanmna.menumine.MenuMine;
@@ -10,8 +12,6 @@ import me.ehsanmna.menumine.models.PMenuModel;
 import me.ehsanmna.menumine.models.SpecialMenuModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
-import me.ehsanmna.menumine.utils.xseries.XItemStack;
-import me.ehsanmna.menumine.utils.xseries.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -173,8 +173,8 @@ public class MenuManager {
                 for (String actionString : menuSection.getStringList("notAllow"))
                     model.addNowAllowAction(buildAction(actionString));
 
-            try {model.setOpenSound(XSound.valueOf(menuSection.getString("openSound")).parseSound());
-            }catch (Exception ignored){}
+            if (menuSection.contains("openSound"))
+                model.setOpenSound(XSound.of(menuSection.getString("openSound")).orElse(XSound.ENTITY_ALLAY_ITEM_GIVEN).parseSound());
 
             if (menuSection.contains("command")) {
                 String command = menuSection.getString("command");

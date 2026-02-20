@@ -1,5 +1,6 @@
 package me.ehsanmna.menumine;
 
+import com.cryptomorin.xseries.reflection.XReflection;
 import me.ehsanmna.menumine.Managers.MenuAction;
 import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.Managers.Storage;
@@ -13,8 +14,6 @@ import me.ehsanmna.menumine.events.SwapHandItemsEvent;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
 import me.ehsanmna.menumine.utils.Metrics;
-import me.ehsanmna.menumine.utils.ReflectionUtils;
-import me.ehsanmna.menumine.utils.addons.MenuMineStorageAddon;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -74,7 +73,7 @@ public final class MenuMine extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new Listeners(),this);
         if (getConfig().getBoolean("InteractEvent",true)) {
             getServer().getPluginManager().registerEvents(new InteractListener(),this);
-            if (ReflectionUtils.supports(9)) getServer().getPluginManager().registerEvents(new SwapHandItemsEvent(),this);
+            if (XReflection.supports(9)) getServer().getPluginManager().registerEvents(new SwapHandItemsEvent(),this);
         }
 
         if (logMessages){

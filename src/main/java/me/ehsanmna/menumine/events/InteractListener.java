@@ -1,5 +1,6 @@
 package me.ehsanmna.menumine.events;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.ehsanmna.menumine.Managers.MenuAction;
 import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.Managers.PlayerManager;
@@ -7,7 +8,6 @@ import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.models.MenuModel;
 import me.ehsanmna.menumine.nbt.NBTItem;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
-import me.ehsanmna.menumine.utils.xseries.XMaterial;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
@@ -26,7 +26,7 @@ public class InteractListener implements Listener {
         String prefix = PlayerManager.getPlayerLanguage(player).prefix;
         switch (e.getAction()) {
             case RIGHT_CLICK_AIR, RIGHT_CLICK_BLOCK -> {
-                if (e.getClickedBlock() != null && e.getClickedBlock().getType() == XMaterial.CHEST.parseMaterial() &&
+                if (e.getClickedBlock() != null && e.getClickedBlock().getType() == XMaterial.CHEST.parseItem().getType() &&
                         PlayerManager.playersReadyToInteract.containsKey(player.getUniqueId())){
                     String modelName = PlayerManager.playersReadyToInteract.get(player.getUniqueId());
                     MenuModel model = new MenuModel();

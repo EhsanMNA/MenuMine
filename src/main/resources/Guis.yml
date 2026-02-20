@@ -25,9 +25,11 @@ Main:
   content:
     '1':
       name: '&6&lBattlePass'
-      material: POTION
-      potion: INVISIBILITY
-      level: 1
+      type: POTION
+      material: SPLASH_POTION
+      color: 100,100,100
+      effects:
+        - "INVISIBILITY"
       flags:
         - HIDE_POTION_EFFECTS
       lore:

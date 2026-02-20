@@ -1,5 +1,6 @@
 package me.ehsanmna.menumine.utils;
 
+import com.cryptomorin.xseries.reflection.XReflection;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
@@ -13,7 +14,8 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.Objects;
 
-import static me.ehsanmna.menumine.utils.ReflectionUtils.*;
+import static com.cryptomorin.xseries.reflection.XReflection.*;
+import static com.cryptomorin.xseries.reflection.minecraft.MinecraftConnection.sendPacket;
 
 /**
  * A reflection API for action bars in Minecraft.
@@ -35,7 +37,7 @@ import static me.ehsanmna.menumine.utils.ReflectionUtils.*;
  *
  * @author Crypto Morin
  * @version 4.0.0
- * @see ReflectionUtils
+ * @see XReflection
  */
 public final class ActionBar {
     /**
@@ -45,7 +47,7 @@ public final class ActionBar {
      * to use NMS for anything below 1.12
      * We're not going to support Bukkit.
      */
-    private static final boolean USE_SPIGOT_API = ReflectionUtils.supports(12);
+    private static final boolean USE_SPIGOT_API = supports(12);
     /**
      * ChatComponentText JSON message builder.
      */

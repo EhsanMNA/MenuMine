@@ -1,12 +1,12 @@
 package me.ehsanmna.menumine.Managers;
 
+import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XSound;
 import me.ehsanmna.menumine.Managers.economy.EconomyManager;
 import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.models.Action;
 import me.ehsanmna.menumine.utils.ActionBar;
 import me.ehsanmna.menumine.utils.Titles;
-import me.ehsanmna.menumine.utils.xseries.XMaterial;
-import me.ehsanmna.menumine.utils.xseries.XSound;
 import me.ehsanmna.menumine.utils.skills.AuraSkillsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -43,7 +43,7 @@ public class MenuAction {
             case ACTIONBAR:
                 ActionBar.sendActionBar(player,MenuMine.color(action));
                 return true;
-            case SOUND:  XSound.play(player,action); return true;
+            case SOUND:  XSound.of(action).orElse(XSound.BLOCK_AMETHYST_BLOCK_BREAK).play(player); return true;
             case TITLE:
                 String title = action.split("-")[0];
                 String subTitle = action.split("-")[1];

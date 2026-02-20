@@ -1,11 +1,11 @@
 package me.ehsanmna.menumine.models;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.ehsanmna.menumine.Managers.MenuAction;
 import me.ehsanmna.menumine.Managers.MenuManager;
 import me.ehsanmna.menumine.Managers.Storage;
 import me.ehsanmna.menumine.MenuMine;
 import me.ehsanmna.menumine.nbt.NBTItemManager;
-import me.ehsanmna.menumine.utils.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -136,6 +136,7 @@ public class MenuModel implements Cloneable{
     public void openMenu(Player player, List<String> inputs){
         if (!copy) {
             player.openInventory(inv);
+            player.playSound(player.getLocation(), openSound,10,1);
             return;
         }
         if (Storage.papiUse){
@@ -174,9 +175,11 @@ public class MenuModel implements Cloneable{
                 slot++;
             }
             player.openInventory(cloneInv);
+            player.playSound(player.getLocation(), openSound,10,1);
             return;
         }
         player.openInventory(inv);
+        player.playSound(player.getLocation(), openSound,10,1);
     }
 
     public void addAction(int slot, MenuAction action){

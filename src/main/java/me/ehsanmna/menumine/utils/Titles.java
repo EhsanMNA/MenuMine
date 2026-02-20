@@ -1,5 +1,6 @@
 package me.ehsanmna.menumine.utils;
 
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -11,6 +12,10 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Objects;
+
+import static com.cryptomorin.xseries.reflection.XReflection.supports;
+import static com.cryptomorin.xseries.reflection.minecraft.MinecraftConnection.sendPacket;
+import static me.realized.tokenmanager.util.compat.ReflectionUtil.getNMSClass;
 
 /**
  * A reflection API for titles in Minecraft.
@@ -24,7 +29,7 @@ import java.util.Objects;
  *
  * @author Crypto Morin
  * @version 2.1.0
- * @see ReflectionUtils
+ * @see XReflection
  */
 public final class Titles {
     /**
@@ -48,9 +53,9 @@ public final class Titles {
         Object subtitle = null;
         Object clear = null;
 
-        if (!ReflectionUtils.supports(11)) {
-            Class<?> chatComponentText = ReflectionUtils.getNMSClass("ChatComponentText");
-            Class<?> packet = ReflectionUtils.getNMSClass("PacketPlayOutTitle");
+        if (!supports(11)) {
+            Class<?> chatComponentText = getNMSClass("ChatComponentText");
+            Class<?> packet = getNMSClass("PacketPlayOutTitle");
             Class<?> titleTypes = packet.getDeclaredClasses()[0];
 
             for (Object type : titleTypes.getEnumConstants()) {
@@ -75,7 +80,7 @@ public final class Titles {
 
                 packetCtor = lookup.findConstructor(packet,
                         MethodType.methodType(void.class, titleTypes,
-                                ReflectionUtils.getNMSClass("IChatBaseComponent"), int.class, int.class, int.class));
+                                getNMSClass("IChatBaseComponent"), int.class, int.class, int.class));
             } catch (NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -111,22 +116,22 @@ public final class Titles {
                                  @Nullable String title, @Nullable String subtitle) {
         Objects.requireNonNull(player, "Cannot send title to null player");
         if (title == null && subtitle == null) return;
-        if (ReflectionUtils.supports(11)) {
+        if (supports(11)) {
             player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
             return;
         }
 
         try {
             Object timesPacket = PACKET_PLAY_OUT_TITLE.invoke(TIMES, CHAT_COMPONENT_TEXT.invoke(title), fadeIn, stay, fadeOut);
-            ReflectionUtils.sendPacket(player, timesPacket);
+            sendPacket(player, timesPacket);
 
             if (title != null) {
                 Object titlePacket = PACKET_PLAY_OUT_TITLE.invoke(TITLE, CHAT_COMPONENT_TEXT.invoke(title), fadeIn, stay, fadeOut);
-                ReflectionUtils.sendPacket(player, titlePacket);
+                sendPacket(player, titlePacket);
             }
             if (subtitle != null) {
                 Object subtitlePacket = PACKET_PLAY_OUT_TITLE.invoke(SUBTITLE, CHAT_COMPONENT_TEXT.invoke(subtitle), fadeIn, stay, fadeOut);
-                ReflectionUtils.sendPacket(player, subtitlePacket);
+                sendPacket(player, subtitlePacket);
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
@@ -172,7 +177,7 @@ public final class Titles {
      */
     public static void clearTitle(@Nonnull Player player) {
         Objects.requireNonNull(player, "Cannot clear title from null player");
-        if (ReflectionUtils.supports(11)) {
+        if (supports(11)) {
             player.resetTitle();
             return;
         }
@@ -185,7 +190,7 @@ public final class Titles {
             return;
         }
 
-        ReflectionUtils.sendPacket(player, clearPacket);
+        sendPacket(player, clearPacket);
     }
 
     /**
@@ -207,15 +212,14 @@ public final class Titles {
         Objects.requireNonNull(header, "Tab title header cannot be null");
         Objects.requireNonNull(footer, "Tab title footer cannot be null");
 
-        if (ReflectionUtils.supports(13)) {
-            // https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse/src/main/java/org/bukkit/entity/Player.java?until=2975358a021fe25d52a8103f7d7aaeceb3abf245&untilPath=src%2Fmain%2Fjava%2Forg%2Fbukkit%2Fentity%2FPlayer.java
+        if (supports(13)) {
             for (Player player : players) player.setPlayerListHeaderFooter(header, footer);
             return;
         }
 
         try {
-            Class<?> IChatBaseComponent = ReflectionUtils.getNMSClass("network.chat", "IChatBaseComponent");
-            Class<?> PacketPlayOutPlayerListHeaderFooter = ReflectionUtils.getNMSClass("network.protocol.game", "PacketPlayOutPlayerListHeaderFooter");
+            Class<?> IChatBaseComponent = XReflection.getNMSClass("network.chat", "IChatBaseComponent");
+            Class<?> PacketPlayOutPlayerListHeaderFooter = XReflection.getNMSClass("network.protocol.game", "PacketPlayOutPlayerListHeaderFooter");
 
             Method chatComponentBuilderMethod = IChatBaseComponent.getDeclaredClasses()[0].getMethod("a", String.class);
             Object tabHeader = chatComponentBuilderMethod.invoke(null, "{\"text\":\"" + header + "\"}");
@@ -231,7 +235,7 @@ public final class Titles {
             footerField.setAccessible(true);
             footerField.set(packet, tabFooter);
 
-            for (Player player : players) ReflectionUtils.sendPacket(player, packet);
+            for (Player player : players) sendPacket(player, packet);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
