@@ -15,10 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -115,13 +112,26 @@ public class Listeners implements org.bukkit.event.Listener {
     }
 
 
+//    @EventHandler
+//    public void onHotBarSwitch(PlayerItemHeldEvent event) {
+//        if (XReflection.supports(20)) return;
+//        Player player = event.getPlayer();
+//        if (MenuManager.isMenuDisabled(player)) return;
+//        int newSlot = event.getNewSlot();
+//        if (newSlot == MenuManager.slot) event.setCancelled(true);
+//    }
+
     @EventHandler
-    public void onHotBarSwitch(PlayerItemHeldEvent event) {
-        if (XReflection.supports(21)) return;
-        Player player = event.getPlayer();
-        if (MenuManager.isMenuDisabled(player)) return;
-        int newSlot = event.getNewSlot();
-        if (newSlot == MenuManager.slot) event.setCancelled(true);
+    public void onKey(InventoryMoveItemEvent event){
+        ItemStack item = event.getItem();
+        NBTItem nbt = null;
+        try {if (item != null) nbt = NBTItemManager.createNBTItem(item);
+        }catch (Exception ignored){}
+
+        if (nbt != null) {
+            if ((nbt.hasTag("menu") && !Storage.moveItem) || nbt.hasTag("FilterItem")) event.setCancelled(true);
+        }
+
     }
 
 

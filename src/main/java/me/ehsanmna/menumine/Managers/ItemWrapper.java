@@ -19,6 +19,7 @@ import java.util.*;
 public class ItemWrapper {
 
     public static void wrapItemToPath(ConfigurationSection section,ItemStack item,int slot){
+        if (item == null) return;
         section.set(slot +".material", item.getType().toString());
         section.set(slot +".name", Objects.requireNonNull(item.getItemMeta()).getDisplayName());
         try {if (XReflection.supports(16)) if (item.getItemMeta().hasCustomModelData()) section.set(slot +".modeldata", item.getItemMeta().getCustomModelData());}
@@ -51,6 +52,9 @@ public class ItemWrapper {
                 if (section.contains("skull")) {
                     String skullId = section.getString("skull");
                     assert skullId != null;
+                    if (skullId.length() <= 32){
+                        // player skull
+                    }
                     item = XSkull.createItem().profile(Profileable.of(ProfileInputType.BASE64.getProfile(skullId), true)).apply();
                 }
             }
@@ -66,10 +70,13 @@ public class ItemWrapper {
             else {item = XMaterial.valueOf(materialStr.toUpperCase()).parseItem();}
         }catch (Exception error){
             item = XMaterial.STONE.parseItem();
-            MenuMine.getInstance().getLogger().warning("Could not detect tje type of "+section.getName() +" material!");
+            MenuMine.getInstance().getLogger().warning("Could not detect the type of "+section.getName() +" material!");
+        }
+        if (item == null) {
+            MenuMine.getInstance().getLogger().warning("Could not detect the type of "+section.getName() +" material! item is null!");
+            return XMaterial.STONE.parseItem();
         }
         String displayName = MenuMine.color(section.getString("name", "Not defined"));
-        assert item != null;
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
         meta.setDisplayName(displayName);
@@ -96,6 +103,7 @@ public class ItemWrapper {
     }
 
     public static void wrapFilterToPath(ConfigurationSection section,ItemStack item,int slot){
+        if (item == null) return;
         if (section.contains("filter."+item.getType().name())){
             List<Integer> slots = section.getIntegerList("filter."+item.getType().name()+".slots");
             slots.add(slot);

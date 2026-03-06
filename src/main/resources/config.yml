@@ -18,7 +18,7 @@ Metrics: true
 InteractEvent: true
 PlaceholderAPI_support: true
 
-MenuItem: true
+MenuItem: false
 
 # When an action returns false, automatically plugin use preLoaded language messages.
 # if you use the denyActions in new versions, you can disable this
